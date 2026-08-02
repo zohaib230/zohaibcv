@@ -182,6 +182,7 @@
     top: 0;
     left: 0;
     width: 210mm !important;
+    height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
     border: none !important;
