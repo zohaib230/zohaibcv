@@ -179,10 +179,19 @@
 
   .print-area {
     position: absolute;
-    inset: 0;
-    margin: 0;
-    padding: 0;
+    top: 0;
+    left: 0;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+  }
+
+  .cv-scale {
     transform: none !important;
+    width: 210mm !important;
   }
 
   .cv-page {
