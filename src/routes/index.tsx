@@ -148,7 +148,7 @@ function App() {
             Live preview
           </p>
           <div className="print-area origin-top-left overflow-hidden rounded-md border border-border shadow-lg lg:w-[420px]">
-            <div className="w-[210mm] origin-top-left scale-[0.529] [transform-box:fill-box]">
+            <div className="cv-scale w-[210mm] origin-top-left scale-[0.529]">
               <CVPreview data={preview} />
             </div>
           </div>
