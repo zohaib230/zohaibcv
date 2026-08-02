@@ -147,12 +147,13 @@ function App() {
           <p className="no-print mb-2 text-xs uppercase tracking-widest text-muted-foreground">
             Live preview
           </p>
-          <div className="print-area origin-top-left overflow-hidden rounded-md border border-border shadow-lg lg:w-[420px]">
+          <div className="print-area h-[158mm] w-full overflow-hidden rounded-md border border-border shadow-lg lg:w-[420px]">
             <div className="cv-scale w-[210mm] origin-top-left scale-[0.529]">
               <CVPreview data={preview} />
             </div>
           </div>
         </aside>
+
       </main>
     </div>
   );
