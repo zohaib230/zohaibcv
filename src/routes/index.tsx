@@ -382,7 +382,7 @@ function StepStyle({ data, set }: { data: CVData; set: SetFn }) {
           min={0.85}
           max={1.3}
           step={0.05}
-          onValueChange={([v]) => set("fontScale", v)}
+          onValueChange={([v]) => set("fontScale", v ?? 1)}
         />
         <OptionChips
           options={["Small", "Normal", "Big", "Extra big"]}
@@ -958,7 +958,7 @@ function SavedCVsDialog({
     const { error } = await supabase.from("cvs").insert({
       user_id: user.id,
       title: `${fullName(data)} — ${data.template}`,
-      data: data as unknown as Record<string, unknown>,
+      data: data as unknown as never,
     });
     if (error) {
       toast.error(error.message);
