@@ -4,33 +4,33 @@ import { fullName } from "@/lib/cv";
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-4">
     <div className="mb-2 flex items-center gap-2">
-      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F5C518] text-[11px] font-bold text-[#26272b]">
+      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--cv-accent)] text-[length:calc(11px*var(--fs))] font-bold text-[#26272b]">
         ●
       </span>
-      <h2 className="font-display text-[19px] font-bold uppercase tracking-wide text-[#26272b]">
+      <h2 className="font-display text-[length:calc(19px*var(--fs))] font-bold uppercase tracking-wide text-[#26272b]">
         {title}
       </h2>
     </div>
-    <div className="text-[10.5px] leading-[1.45] text-[#333]">{children}</div>
+    <div className="text-[length:calc(10.5px*var(--fs))] leading-[1.45] text-[#333]">{children}</div>
   </div>
 );
 
 const SideHeading = ({ title }: { title: string }) => (
   <div className="mb-2 mt-5 flex items-center gap-2">
-    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F5C518] text-[11px] text-[#26272b]">
+    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--cv-accent)] text-[length:calc(11px*var(--fs))] text-[#26272b]">
       ●
     </span>
-    <h3 className="font-display text-[16px] font-bold uppercase text-[#F5C518]">{title}</h3>
+    <h3 className="font-display text-[length:calc(16px*var(--fs))] font-bold uppercase text-[var(--cv-accent)]">{title}</h3>
   </div>
 );
 
 export function TemplateSidebar({ data }: { data: CVData }) {
   return (
-    <div className="cv-page flex text-[11px]">
+    <div className="cv-page flex text-[length:calc(11px*var(--fs))]">
       {/* Left column */}
       <aside className="w-[38%] bg-[#26272b] px-6 pb-8 text-white">
         {data.withPhoto && (
-          <div className="-mx-6 mb-5 bg-[#F5C518] px-6 pb-8 pt-7">
+          <div className="-mx-6 mb-5 bg-[var(--cv-accent)] px-6 pb-8 pt-7">
             <div className="mx-auto h-[135px] w-[135px] overflow-hidden rounded-full border-4 border-white/90 bg-[#26272b]">
               {data.photo ? (
                 <img src={data.photo} alt={fullName(data)} className="h-full w-full object-cover" />
@@ -38,27 +38,27 @@ export function TemplateSidebar({ data }: { data: CVData }) {
             </div>
           </div>
         )}
-        <h1 className="mt-2 text-center font-display text-[26px] font-bold uppercase leading-tight">
+        <h1 className="mt-2 text-center font-display text-[length:calc(26px*var(--fs))] font-bold uppercase leading-tight">
           {fullName(data)}
         </h1>
 
         <SideHeading title="Contact" />
-        <div className="space-y-2 text-[10.5px]">
+        <div className="space-y-2 text-[length:calc(10.5px*var(--fs))]">
           {data.email && (
             <div>
-              <div className="text-[#F5C518]">Email</div>
+              <div className="text-[var(--cv-accent)]">Email</div>
               <div className="break-all">{data.email}</div>
             </div>
           )}
           {data.phone && (
             <div>
-              <div className="text-[#F5C518]">Phone</div>
+              <div className="text-[var(--cv-accent)]">Phone</div>
               <div>{data.phone}</div>
             </div>
           )}
           {data.dob && (
             <div>
-              <div className="text-[#F5C518]">Date of Birth</div>
+              <div className="text-[var(--cv-accent)]">Date of Birth</div>
               <div>
                 {data.dob}
                 {data.age ? ` (${data.age} years)` : ""}
@@ -67,14 +67,14 @@ export function TemplateSidebar({ data }: { data: CVData }) {
           )}
           {data.address && (
             <div>
-              <div className="text-[#F5C518]">Address</div>
+              <div className="text-[var(--cv-accent)]">Address</div>
               <div>{data.address}</div>
             </div>
           )}
         </div>
 
         <SideHeading title="Personal" />
-        <div className="space-y-1 text-[10.5px]">
+        <div className="space-y-1 text-[length:calc(10.5px*var(--fs))]">
           {data.fatherName && <div>Father: {data.fatherName}</div>}
           {data.gender && <div>Gender: {data.gender}</div>}
           {data.cnic && <div>CNIC: {data.cnic}</div>}
@@ -86,7 +86,7 @@ export function TemplateSidebar({ data }: { data: CVData }) {
         {data.languages.length > 0 && (
           <>
             <SideHeading title="Languages" />
-            <ul className="space-y-1 text-[10.5px]">
+            <ul className="space-y-1 text-[length:calc(10.5px*var(--fs))]">
               {data.languages.map((l) => (
                 <li key={l}>{l}</li>
               ))}
@@ -97,7 +97,7 @@ export function TemplateSidebar({ data }: { data: CVData }) {
         {data.interests.length > 0 && (
           <>
             <SideHeading title="Interests" />
-            <ul className="space-y-1 text-[10.5px]">
+            <ul className="space-y-1 text-[length:calc(10.5px*var(--fs))]">
               {data.interests.map((i) => (
                 <li key={i}>{i}</li>
               ))}

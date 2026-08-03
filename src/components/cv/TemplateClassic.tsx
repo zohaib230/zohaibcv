@@ -2,7 +2,7 @@ import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
 
 const H = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="mb-2 text-center font-display text-[20px] font-bold uppercase tracking-wide text-[#111]">
+  <h2 className="mb-2 text-center font-display text-[length:calc(20px*var(--fs))] font-bold uppercase tracking-wide text-[#111]">
     {children}
   </h2>
 );
@@ -18,8 +18,8 @@ const Row = ({ label, value }: { label: string; value: string }) =>
 
 export function TemplateClassic({ data }: { data: CVData }) {
   return (
-    <div className="cv-page flex flex-col px-10 py-9 text-[11px]">
-      <h1 className="text-center font-display text-[42px] font-bold uppercase tracking-wide text-[#111]">
+    <div className="cv-page flex flex-col px-10 py-9 text-[length:calc(11px*var(--fs))]">
+      <h1 className="text-center font-display text-[length:calc(42px*var(--fs))] font-bold uppercase tracking-wide text-[#111]">
         {fullName(data)}
       </h1>
 
@@ -32,15 +32,15 @@ export function TemplateClassic({ data }: { data: CVData }) {
           />
         )}
         <div>
-          <div className="font-display text-[16px] font-bold uppercase tracking-wide">Profile</div>
-          <p className="mt-1 text-[10.5px] leading-relaxed">{data.profile}</p>
+          <div className="font-display text-[length:calc(16px*var(--fs))] font-bold uppercase tracking-wide">Profile</div>
+          <p className="mt-1 text-[length:calc(10.5px*var(--fs))] leading-relaxed">{data.profile}</p>
         </div>
       </div>
 
       <div className="mt-7 grid flex-1 grid-cols-2 gap-x-9 gap-y-6">
         <section>
           <H>Bio Data</H>
-          <div className="text-[10.5px]">
+          <div className="text-[length:calc(10.5px*var(--fs))]">
             <Row label="Father's Name" value={data.fatherName} />
             <Row label="Gender" value={data.gender} />
             <Row label="Date of Birth" value={data.dob} />
@@ -57,7 +57,7 @@ export function TemplateClassic({ data }: { data: CVData }) {
         {data.skills.length > 0 && (
           <section>
             <H>Skills</H>
-            <ul className="list-disc space-y-1 pl-5 text-[10.5px]">
+            <ul className="list-disc space-y-1 pl-5 text-[length:calc(10.5px*var(--fs))]">
               {data.skills.map((s) => (
                 <li key={s}>{s}</li>
               ))}
@@ -68,7 +68,7 @@ export function TemplateClassic({ data }: { data: CVData }) {
         {data.education.length > 0 && (
           <section>
             <H>Education</H>
-            <ul className="list-disc space-y-1 pl-5 text-[10.5px]">
+            <ul className="list-disc space-y-1 pl-5 text-[length:calc(10.5px*var(--fs))]">
               {data.education.map((e) => (
                 <li key={e.id}>
                   {e.degree}
@@ -83,9 +83,9 @@ export function TemplateClassic({ data }: { data: CVData }) {
         <section>
           <H>Experience</H>
           {data.isFresher || data.experience.length === 0 ? (
-            <p className="text-[10.5px]">Fresh candidate — no prior work experience.</p>
+            <p className="text-[length:calc(10.5px*var(--fs))]">Fresh candidate — no prior work experience.</p>
           ) : (
-            <ul className="list-disc space-y-1 pl-5 text-[10.5px]">
+            <ul className="list-disc space-y-1 pl-5 text-[length:calc(10.5px*var(--fs))]">
               {data.experience.map((e) => (
                 <li key={e.id}>
                   {e.duration ? `${e.duration} — ` : ""}
@@ -101,7 +101,7 @@ export function TemplateClassic({ data }: { data: CVData }) {
         {data.languages.length > 0 && (
           <section>
             <H>Languages</H>
-            <ul className="list-disc space-y-1 pl-5 text-[10.5px]">
+            <ul className="list-disc space-y-1 pl-5 text-[length:calc(10.5px*var(--fs))]">
               {data.languages.map((l) => (
                 <li key={l}>{l}</li>
               ))}
@@ -112,7 +112,7 @@ export function TemplateClassic({ data }: { data: CVData }) {
         {data.interests.length > 0 && (
           <section>
             <H>Interests</H>
-            <ul className="list-disc space-y-1 pl-5 text-[10.5px]">
+            <ul className="list-disc space-y-1 pl-5 text-[length:calc(10.5px*var(--fs))]">
               {data.interests.map((i) => (
                 <li key={i}>{i}</li>
               ))}
@@ -122,7 +122,7 @@ export function TemplateClassic({ data }: { data: CVData }) {
       </div>
 
       {data.address && (
-        <div className="mt-6 bg-[#111] px-4 py-2 text-[11px] text-white">{data.address}</div>
+        <div className="mt-6 bg-[#111] px-4 py-2 text-[length:calc(11px*var(--fs))] text-white">{data.address}</div>
       )}
     </div>
   );
