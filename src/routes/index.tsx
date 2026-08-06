@@ -1037,8 +1037,11 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
       )}
 
       <div className="flex flex-wrap gap-2">
-        <Button onClick={() => window.print()}>
-          <Download /> Download PDF
+        <Button onClick={exportPdf} disabled={busy}>
+          <Download /> {busy ? "Creating PDF…" : "Download PDF"}
+        </Button>
+        <Button variant="outline" onClick={() => window.print()}>
+          <FileText /> Print
         </Button>
         <Button variant="outline" onClick={exportHtml}>
           <Code2 /> Download HTML file
@@ -1046,8 +1049,8 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
       </div>
 
       <p className="text-sm text-muted-foreground">
-        Tip: in the print dialog choose “Save as PDF”, set margins to <em>None</em> and enable
-        background graphics for the best result.
+        The PDF is a true A4 page with all colours and fonts included — ready to email or print.
+
       </p>
     </Card>
   );
