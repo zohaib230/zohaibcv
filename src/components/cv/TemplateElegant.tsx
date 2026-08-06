@@ -6,49 +6,56 @@ const H = ({ children }: { children: React.ReactNode }) => (
   <h2
     className="cv-h uppercase"
     style={{
-      letterSpacing: "0.12em",
-      borderBottom: `${px(2)} solid var(--c-accent)`,
-      paddingBottom: px(3),
-      marginBottom: px(6),
+      letterSpacing: "0.24em",
+      textAlign: "center",
+      marginBottom: px(7),
+      paddingBottom: px(4),
+      borderBottom: `${px(1)} solid var(--c-divider)`,
     }}
   >
     {children}
   </h2>
 );
 
-export function TemplateElevate({ data }: { data: CVData }) {
+export function TemplateElegant({ data }: { data: CVData }) {
   return (
-    <div className="cv-page flex flex-col" style={{ background: "var(--c-page)" }}>
-      <header
-        className="flex items-center cv-pad"
-        style={{ gap: px(20), borderBottom: `${px(1)} solid var(--c-divider)`, paddingBottom: px(18) }}
-      >
-        <Photo d={data} w={100} h={116} />
-        <div className="min-w-0 flex-1">
-          <h1 className="cv-name uppercase">{fullName(data)}</h1>
-          <p className="cv-role uppercase" style={{ letterSpacing: "0.26em", marginTop: px(4) }}>
+    <div className="cv-page flex flex-col cv-pad" style={{ background: "var(--c-page)" }}>
+      {/* Header */}
+      <header className="flex flex-col items-center" style={{ textAlign: "center" }}>
+        {data.withPhoto && (
+          <div style={{ marginBottom: px(10) }}>
+            <Photo d={data} w={96} round ring="var(--c-accent)" />
+          </div>
+        )}
+        <h1 className="cv-name" style={{ letterSpacing: "0.06em" }}>
+          {fullName(data)}
+        </h1>
+        <div
+          className="flex items-center"
+          style={{ gap: px(10), marginTop: px(6), marginBottom: px(6), width: "100%" }}
+        >
+          <span style={{ flex: 1, height: px(1), background: "var(--c-divider)" }} />
+          <span className="cv-role uppercase" style={{ letterSpacing: "0.3em", color: "var(--c-accent)" }}>
             {data.jobTitle || "Professional"}
-          </p>
+          </span>
+          <span style={{ flex: 1, height: px(1), background: "var(--c-divider)" }} />
         </div>
-        <div className="cv-small text-right">
+        <div className="cv-small flex flex-wrap justify-center" style={{ gap: `${px(2)} ${px(14)}` }}>
           {contactRows(data).map(([k, v]) => (
-            <div key={k} style={{ marginTop: px(2) }}>
-              <span style={{ color: "var(--c-accent)" }}>{k}: </span>
-              {v}
-            </div>
+            <span key={k}>{v}</span>
           ))}
         </div>
       </header>
 
-      <div className="flex flex-1" style={{ gap: px(24), padding: `${px(18)} ${px(34)} ${px(28)}` }}>
-        <main style={{ width: "62%" }}>
-          {data.profile && (
-            <section className="cv-sec">
-              <H>Profile</H>
-              <p className="cv-body text-justify">{data.profile}</p>
-            </section>
-          )}
+      {data.profile && (
+        <section className="cv-sec" style={{ marginTop: px(14) }}>
+          <H>Profile</H>
+          <p className="cv-body text-justify">{data.profile}</p>
+        </section>
+      )}
 
+      <div className="flex flex-1" style={{ gap: px(26), marginTop: px(12) }}>
+        <main style={{ width: "60%" }}>
           <section className="cv-sec">
             <H>Experience</H>
             {data.isFresher || data.experience.length === 0 ? (
@@ -58,8 +65,8 @@ export function TemplateElevate({ data }: { data: CVData }) {
                 {data.experience.map((e) => (
                   <div key={e.id}>
                     <div className="cv-sub">{e.role}</div>
-                    <div className="cv-small" style={{ color: "var(--c-accent)" }}>
-                      {[e.company, e.duration].filter(Boolean).join("  ·  ")}
+                    <div className="cv-small italic" style={{ color: "var(--c-accent)" }}>
+                      {[e.company, e.duration].filter(Boolean).join(" — ")}
                     </div>
                     {e.details && (
                       <ul className="cv-bullets cv-body" style={{ marginTop: px(3) }}>
@@ -81,7 +88,7 @@ export function TemplateElevate({ data }: { data: CVData }) {
                 {data.education.map((e) => (
                   <div key={e.id}>
                     <div className="cv-sub">{e.degree}</div>
-                    <div className="cv-small">{[e.institute, e.year].filter(Boolean).join("  ·  ")}</div>
+                    <div className="cv-small italic">{[e.institute, e.year].filter(Boolean).join(" — ")}</div>
                   </div>
                 ))}
               </div>
@@ -100,15 +107,17 @@ export function TemplateElevate({ data }: { data: CVData }) {
           )}
         </main>
 
-        <aside style={{ width: "38%" }}>
+        <aside style={{ width: "40%" }}>
           {personalRows(data).length > 0 && (
             <section className="cv-sec">
               <H>Personal</H>
               <div className="cv-small cv-stack-sm">
                 {personalRows(data).map(([k, v]) => (
-                  <div key={k}>
-                    <span style={{ color: "var(--c-muted)" }}>{k}: </span>
-                    <span style={{ color: "var(--c-sub)" }}>{v}</span>
+                  <div key={k} className="flex justify-between" style={{ gap: px(6) }}>
+                    <span style={{ color: "var(--c-muted)" }}>{k}</span>
+                    <span className="text-right" style={{ color: "var(--c-sub)" }}>
+                      {v}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -118,17 +127,11 @@ export function TemplateElevate({ data }: { data: CVData }) {
           {data.skills.length > 0 && (
             <section className="cv-sec">
               <H>Skills</H>
-              <div className="flex flex-wrap" style={{ gap: px(4) }}>
+              <ul className="cv-bullets cv-body">
                 {data.skills.map((s) => (
-                  <span
-                    key={s}
-                    className="cv-chip cv-small"
-                    style={{ background: "color-mix(in srgb, var(--c-accent) 18%, #ffffff)", color: "var(--c-sub)" }}
-                  >
-                    {s}
-                  </span>
+                  <li key={s}>{s}</li>
                 ))}
-              </div>
+              </ul>
             </section>
           )}
 
@@ -171,6 +174,17 @@ export function TemplateElevate({ data }: { data: CVData }) {
               <ul className="cv-bullets cv-body">
                 {data.interests.map((i) => (
                   <li key={i}>{i}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {data.references.length > 0 && (
+            <section className="cv-sec">
+              <H>References</H>
+              <ul className="cv-bullets cv-body">
+                {data.references.map((r) => (
+                  <li key={r}>{r}</li>
                 ))}
               </ul>
             </section>
