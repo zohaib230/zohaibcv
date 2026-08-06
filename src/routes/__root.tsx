@@ -1,4 +1,6 @@
 import { Toaster } from "@/components/ui/sonner";
+import { GOOGLE_FONT_HREF } from "@/lib/cv";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
