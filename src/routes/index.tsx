@@ -38,20 +38,26 @@ import { CVPreview } from "@/components/cv/CVPreview";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
+import { downloadPdf } from "@/lib/export-pdf";
 import {
   ACCENTS,
-  FONTS,
+  COLOR_PRESETS,
+  FONT_LIST,
   ageFromDob,
   cvScore,
+  defaultTypography,
   emptyCV,
+  fontStack,
   fullName,
   generateProfile,
   normalizeCV,
   uid,
   type CVData,
-  type FontId,
+  type ThemeColors,
   type TemplateId,
+  type TypoPart,
 } from "@/lib/cv";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
