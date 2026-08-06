@@ -989,12 +989,29 @@ function StepSkills({ data, set }: { data: CVData; set: SetFn }) {
 }
 
 function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score: number }) {
+  const [busy, setBusy] = useState(false);
+
   const exportHtml = () => {
     const node = document.getElementById("cv-root");
     if (!node) return;
     downloadHtml(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.html`, `${fullName(data)} — CV`);
     toast.success("HTML file downloaded");
   };
+
+  const exportPdf = async () => {
+    const node = document.getElementById("cv-root");
+    if (!node) return;
+    setBusy(true);
+    try {
+      await downloadPdf(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.pdf`);
+      toast.success("PDF downloaded");
+    } catch {
+      toast.error("PDF could not be created — try again");
+    } finally {
+      setBusy(false);
+    }
+  };
+
 
   return (
     <Card title="Your CV is ready" hint="Check the strength score, then download.">
