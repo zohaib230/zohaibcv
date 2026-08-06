@@ -106,6 +106,7 @@ export function CVPreview({ data }: { data: CVData }) {
           "--pt-small": t.small.size,
           "--c-accent": c.accent,
           "--cv-accent": c.accent,
+          "--fs": String(t.body.size / 9.5),
           "--c-page": c.pageBg,
           "--c-header-bg": c.headerBg,
           "--c-header-text": c.headerText,
