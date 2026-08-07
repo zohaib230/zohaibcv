@@ -39,6 +39,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
 import { downloadPdf } from "@/lib/export-pdf";
+import { downloadWord } from "@/lib/export-word";
+import { StyleRibbon } from "@/components/cv/StyleRibbon";
+import { ScaledPreview } from "@/components/cv/ScaledPreview";
 import {
   ACCENTS,
   COLOR_PRESETS,
