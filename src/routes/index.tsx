@@ -8,6 +8,7 @@ import {
   Code2,
   Download,
   FileText,
+  FileType2,
   FolderOpen,
   LogOut,
   Palette,
