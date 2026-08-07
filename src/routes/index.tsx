@@ -258,7 +258,7 @@ function App() {
           wide ? "" : "lg:grid-cols-[minmax(0,1fr)_420px]"
         }`}
       >
-        <div className="no-print">
+        <div className="no-print min-w-0">
           {step === 0 && <StepDesign data={data} set={set} />}
           {step === 1 && <StepStyle />}
           {step === 2 && <StepPhoto data={data} set={set} />}
@@ -281,7 +281,7 @@ function App() {
           <div className="mt-8 hidden items-center justify-between gap-3 lg:flex">{nav}</div>
         </div>
 
-        <aside className={wide ? "order-first" : ""}>
+        <aside className={`min-w-0 ${wide ? "order-first" : ""}`}>
           <p className="no-print mb-2 text-xs uppercase tracking-widest text-muted-foreground">
             Live preview
           </p>
