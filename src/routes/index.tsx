@@ -868,6 +868,15 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
     toast.success("HTML file downloaded");
   };
 
+  const exportWord = () => {
+    const node = document.getElementById("cv-root");
+    if (!node) return;
+    downloadWord(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.doc`, `${fullName(data)} — CV`);
+    toast.success("Word file downloaded — open it in MS Word");
+  };
+
+
+
   const exportPdf = async () => {
     const node = document.getElementById("cv-root");
     if (!node) return;
