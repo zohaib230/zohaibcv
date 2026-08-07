@@ -910,6 +910,9 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
         <Button onClick={exportPdf} disabled={busy}>
           <Download /> {busy ? "Creating PDF…" : "Download PDF"}
         </Button>
+        <Button variant="outline" onClick={exportWord}>
+          <FileType2 /> Download Word (.doc)
+        </Button>
         <Button variant="outline" onClick={() => window.print()}>
           <FileText /> Print
         </Button>
@@ -917,6 +920,7 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
           <Code2 /> Download HTML file
         </Button>
       </div>
+
 
       <p className="text-sm text-muted-foreground">
         The PDF is a true A4 page with all colours and fonts included — ready to email or print.
