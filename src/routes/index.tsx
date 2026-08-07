@@ -11,7 +11,6 @@ import {
   FileType2,
   FolderOpen,
   LogOut,
-  Palette,
   Plus,
   Sparkles,
   Trash2,
@@ -25,7 +24,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
   DialogContent,
@@ -44,22 +42,15 @@ import { downloadWord } from "@/lib/export-word";
 import { StyleRibbon } from "@/components/cv/StyleRibbon";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
 import {
-  ACCENTS,
-  COLOR_PRESETS,
-  FONT_LIST,
   ageFromDob,
   cvScore,
-  defaultTypography,
   emptyCV,
-  fontStack,
   fullName,
   generateProfile,
   normalizeCV,
   uid,
   type CVData,
-  type ThemeColors,
   type TemplateId,
-  type TypoPart,
 } from "@/lib/cv";
 
 
