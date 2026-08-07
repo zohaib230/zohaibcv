@@ -179,27 +179,61 @@ function App() {
 
   if (!started) return <Splash onStart={() => setStarted(true)} />;
 
+  const wide = step === 1;
+
+  const nav = (
+    <>
+      <Button
+        variant="outline"
+        onClick={() => setStep((s) => Math.max(0, s - 1))}
+        disabled={step === 0}
+      >
+        <ArrowLeft /> Back
+      </Button>
+      <Button
+        variant="ghost"
+        className="hidden sm:inline-flex"
+        onClick={() => {
+          setData((d) => ({ ...d, ...SAMPLE }));
+          toast.success("Sample data filled — now edit it with your own details");
+        }}
+      >
+        <Wand2 /> Fill sample data
+      </Button>
+      {step < STEPS.length - 1 ? (
+        <Button onClick={() => setStep((s) => s + 1)}>
+          Next <ArrowRight />
+        </Button>
+      ) : (
+        <Button onClick={() => setStep(9)}>
+          <Download /> Download
+        </Button>
+      )}
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24 lg:pb-0">
       <header className="no-print sticky top-0 z-30 border-b border-border bg-ink text-ink-foreground">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3">
-          <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-brand" />
-            <span className="font-display text-xl uppercase tracking-wide">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2.5 sm:px-5">
+          <div className="flex min-w-0 items-center gap-2">
+            <FileText className="h-5 w-5 shrink-0 text-brand" />
+            <span className="truncate font-display text-lg uppercase tracking-wide sm:text-xl">
               CV Generator <span className="text-brand">by Zohaib</span>
             </span>
           </div>
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-1.5 text-xs">
             <span className="hidden text-ink-foreground/60 sm:inline">
               Step {step + 1}/{STEPS.length} · {STEPS[step]}
             </span>
             <span className="rounded-full bg-white/10 px-2.5 py-1">
-              CV strength <b className="text-brand">{score}%</b>
+              <b className="text-brand">{score}%</b>
             </span>
             <SavedCVsDialog user={user} data={preview} onLoad={setData} />
             {user ? (
               <Button size="sm" variant="ghost" className="text-ink-foreground" onClick={() => signOut()}>
-                <LogOut className="h-4 w-4" /> Sign out
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign out</span>
               </Button>
             ) : (
               <Button size="sm" variant="ghost" className="text-ink-foreground" asChild>
@@ -208,7 +242,7 @@ function App() {
             )}
           </div>
         </div>
-        <div className="flex gap-[2px] px-5 pb-2">
+        <div className="flex gap-[2px] px-4 pb-2 sm:px-5">
           {STEPS.map((s, i) => (
             <button
               key={s}
@@ -222,10 +256,16 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-6xl gap-8 px-5 py-8 lg:grid-cols-[minmax(0,1fr)_420px]">
+      {step === 1 && <StyleRibbon data={data} set={set} />}
+
+      <main
+        className={`mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-5 sm:py-8 ${
+          wide ? "" : "lg:grid-cols-[minmax(0,1fr)_420px]"
+        }`}
+      >
         <div className="no-print">
           {step === 0 && <StepDesign data={data} set={set} />}
-          {step === 1 && <StepStyle data={data} set={set} />}
+          {step === 1 && <StepStyle />}
           {step === 2 && <StepPhoto data={data} set={set} />}
           {step === 3 && <StepPersonal data={data} set={set} />}
           {step === 4 && <StepContact data={data} set={set} />}
@@ -243,49 +283,27 @@ function App() {
           {step === 8 && <StepSkills data={data} set={set} />}
           {step === 9 && <StepFinish data={preview} tips={tips} score={score} />}
 
-          <div className="mt-8 flex items-center justify-between gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setStep((s) => Math.max(0, s - 1))}
-              disabled={step === 0}
-            >
-              <ArrowLeft /> Back
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setData((d) => ({ ...d, ...SAMPLE }));
-                toast.success("Sample data filled — now edit it with your own details");
-              }}
-            >
-              <Wand2 /> Fill sample data
-            </Button>
-            {step < STEPS.length - 1 ? (
-              <Button onClick={() => setStep((s) => s + 1)}>
-                Next <ArrowRight />
-              </Button>
-            ) : (
-              <Button onClick={() => window.print()}>
-                <Download /> Download PDF
-              </Button>
-            )}
-          </div>
+          <div className="mt-8 hidden items-center justify-between gap-3 lg:flex">{nav}</div>
         </div>
 
-        <aside>
+        <aside className={wide ? "order-first" : ""}>
           <p className="no-print mb-2 text-xs uppercase tracking-widest text-muted-foreground">
             Live preview
           </p>
-          <div className="print-area h-[158mm] w-full overflow-hidden rounded-md border border-border shadow-lg lg:w-[420px]">
-            <div className="cv-scale w-[210mm] origin-top-left scale-[0.529]">
-              <CVPreview data={preview} />
-            </div>
+          <div className={wide ? "mx-auto w-full max-w-[720px]" : ""}>
+            <ScaledPreview data={preview} max={1} />
           </div>
         </aside>
       </main>
+
+      {/* Mobile app-style bottom bar */}
+      <div className="no-print fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-2 border-t border-border bg-card px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:hidden">
+        {nav}
+      </div>
     </div>
   );
 }
+
 
 function Splash({ onStart }: { onStart: () => void }) {
   return (
