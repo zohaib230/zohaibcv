@@ -8,9 +8,9 @@ import {
   Code2,
   Download,
   FileText,
+  FileType2,
   FolderOpen,
   LogOut,
-  Palette,
   Plus,
   Sparkles,
   Trash2,
@@ -24,7 +24,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
 import {
   Dialog,
   DialogContent,
@@ -39,23 +38,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
 import { downloadPdf } from "@/lib/export-pdf";
+import { downloadWord } from "@/lib/export-word";
+import { StyleRibbon } from "@/components/cv/StyleRibbon";
+import { ScaledPreview } from "@/components/cv/ScaledPreview";
 import {
-  ACCENTS,
-  COLOR_PRESETS,
-  FONT_LIST,
   ageFromDob,
   cvScore,
-  defaultTypography,
   emptyCV,
-  fontStack,
   fullName,
   generateProfile,
   normalizeCV,
   uid,
   type CVData,
-  type ThemeColors,
   type TemplateId,
-  type TypoPart,
 } from "@/lib/cv";
 
 
@@ -179,27 +174,61 @@ function App() {
 
   if (!started) return <Splash onStart={() => setStarted(true)} />;
 
+  const wide = step === 1;
+
+  const nav = (
+    <>
+      <Button
+        variant="outline"
+        onClick={() => setStep((s) => Math.max(0, s - 1))}
+        disabled={step === 0}
+      >
+        <ArrowLeft /> Back
+      </Button>
+      <Button
+        variant="ghost"
+        className="hidden sm:inline-flex"
+        onClick={() => {
+          setData((d) => ({ ...d, ...SAMPLE }));
+          toast.success("Sample data filled — now edit it with your own details");
+        }}
+      >
+        <Wand2 /> Fill sample data
+      </Button>
+      {step < STEPS.length - 1 ? (
+        <Button onClick={() => setStep((s) => s + 1)}>
+          Next <ArrowRight />
+        </Button>
+      ) : (
+        <Button onClick={() => setStep(9)}>
+          <Download /> Download
+        </Button>
+      )}
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-24 lg:pb-0">
       <header className="no-print sticky top-0 z-30 border-b border-border bg-ink text-ink-foreground">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-3">
-          <div className="flex items-center gap-2">
-            <FileText className="h-5 w-5 text-brand" />
-            <span className="font-display text-xl uppercase tracking-wide">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-2 px-4 py-2.5 sm:px-5">
+          <div className="flex min-w-0 items-center gap-2">
+            <FileText className="h-5 w-5 shrink-0 text-brand" />
+            <span className="truncate font-display text-lg uppercase tracking-wide sm:text-xl">
               CV Generator <span className="text-brand">by Zohaib</span>
             </span>
           </div>
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-1.5 text-xs">
             <span className="hidden text-ink-foreground/60 sm:inline">
               Step {step + 1}/{STEPS.length} · {STEPS[step]}
             </span>
             <span className="rounded-full bg-white/10 px-2.5 py-1">
-              CV strength <b className="text-brand">{score}%</b>
+              <b className="text-brand">{score}%</b>
             </span>
             <SavedCVsDialog user={user} data={preview} onLoad={setData} />
             {user ? (
               <Button size="sm" variant="ghost" className="text-ink-foreground" onClick={() => signOut()}>
-                <LogOut className="h-4 w-4" /> Sign out
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Sign out</span>
               </Button>
             ) : (
               <Button size="sm" variant="ghost" className="text-ink-foreground" asChild>
@@ -208,7 +237,7 @@ function App() {
             )}
           </div>
         </div>
-        <div className="flex gap-[2px] px-5 pb-2">
+        <div className="flex gap-[2px] px-4 pb-2 sm:px-5">
           {STEPS.map((s, i) => (
             <button
               key={s}
@@ -222,10 +251,16 @@ function App() {
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-6xl gap-8 px-5 py-8 lg:grid-cols-[minmax(0,1fr)_420px]">
-        <div className="no-print">
+      {step === 1 && <StyleRibbon data={data} set={set} />}
+
+      <main
+        className={`mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-5 sm:py-8 ${
+          wide ? "" : "lg:grid-cols-[minmax(0,1fr)_420px]"
+        }`}
+      >
+        <div className="no-print min-w-0">
           {step === 0 && <StepDesign data={data} set={set} />}
-          {step === 1 && <StepStyle data={data} set={set} />}
+          {step === 1 && <StepStyle />}
           {step === 2 && <StepPhoto data={data} set={set} />}
           {step === 3 && <StepPersonal data={data} set={set} />}
           {step === 4 && <StepContact data={data} set={set} />}
@@ -243,49 +278,27 @@ function App() {
           {step === 8 && <StepSkills data={data} set={set} />}
           {step === 9 && <StepFinish data={preview} tips={tips} score={score} />}
 
-          <div className="mt-8 flex items-center justify-between gap-3">
-            <Button
-              variant="outline"
-              onClick={() => setStep((s) => Math.max(0, s - 1))}
-              disabled={step === 0}
-            >
-              <ArrowLeft /> Back
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setData((d) => ({ ...d, ...SAMPLE }));
-                toast.success("Sample data filled — now edit it with your own details");
-              }}
-            >
-              <Wand2 /> Fill sample data
-            </Button>
-            {step < STEPS.length - 1 ? (
-              <Button onClick={() => setStep((s) => s + 1)}>
-                Next <ArrowRight />
-              </Button>
-            ) : (
-              <Button onClick={() => window.print()}>
-                <Download /> Download PDF
-              </Button>
-            )}
-          </div>
+          <div className="mt-8 hidden items-center justify-between gap-3 lg:flex">{nav}</div>
         </div>
 
-        <aside>
+        <aside className={`min-w-0 ${wide ? "order-first" : ""}`}>
           <p className="no-print mb-2 text-xs uppercase tracking-widest text-muted-foreground">
             Live preview
           </p>
-          <div className="print-area h-[158mm] w-full overflow-hidden rounded-md border border-border shadow-lg lg:w-[420px]">
-            <div className="cv-scale w-[210mm] origin-top-left scale-[0.529]">
-              <CVPreview data={preview} />
-            </div>
+          <div className={wide ? "mx-auto w-full max-w-[720px]" : ""}>
+            <ScaledPreview data={preview} max={1} />
           </div>
         </aside>
       </main>
+
+      {/* Mobile app-style bottom bar */}
+      <div className="no-print fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-2 border-t border-border bg-card px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:hidden">
+        {nav}
+      </div>
     </div>
   );
 }
+
 
 function Splash({ onStart }: { onStart: () => void }) {
   return (
@@ -364,181 +377,30 @@ function StepDesign({ data, set }: { data: CVData; set: SetFn }) {
   );
 }
 
-const TYPO_PARTS: { id: TypoPart; label: string }[] = [
-  { id: "name", label: "Name" },
-  { id: "role", label: "Job title" },
-  { id: "heading", label: "Section headings" },
-  { id: "sub", label: "Sub headings" },
-  { id: "body", label: "Body text" },
-  { id: "small", label: "Small text" },
-];
-
-const COLOR_FIELDS: { id: keyof ThemeColors; label: string }[] = [
-  { id: "accent", label: "Accent" },
-  { id: "pageBg", label: "Page background" },
-  { id: "headerBg", label: "Header background" },
-  { id: "headerText", label: "Header text" },
-  { id: "sidebarBg", label: "Sidebar background" },
-  { id: "sidebarText", label: "Sidebar text" },
-  { id: "sidebarHeading", label: "Sidebar headings" },
-  { id: "name", label: "Name colour" },
-  { id: "role", label: "Job title colour" },
-  { id: "heading", label: "Headings colour" },
-  { id: "sub", label: "Sub heading colour" },
-  { id: "body", label: "Body text colour" },
-  { id: "muted", label: "Muted text" },
-  { id: "divider", label: "Lines / dividers" },
-];
-
-function StepStyle({ data, set }: { data: CVData; set: SetFn }) {
-  const setTypo = (part: TypoPart, patch: Partial<{ font: string; size: number }>) =>
-    set("typo", { ...data.typo, [part]: { ...data.typo[part], ...patch } });
-
-  const setColor = (key: keyof ThemeColors, value: string) => {
-    set("colors", { ...data.colors, [key]: value });
-    if (key === "accent") set("accent", value);
-  };
-
-  const scaleAll = (delta: number) =>
-    set(
-      "typo",
-      Object.fromEntries(
-        (Object.keys(data.typo) as TypoPart[]).map((k) => [
-          k,
-          { ...data.typo[k], size: Math.max(6, Math.round((data.typo[k].size + delta) * 10) / 10) },
-        ]),
-      ) as typeof data.typo,
-    );
-
+function StepStyle() {
   return (
-    <Card title="Writing style" hint="Choose the font, exact point size and colour of every part — just like MS Word.">
-      <Field label="Text size of the whole CV">
-        <div className="flex flex-wrap items-center gap-2">
-          <Button type="button" size="sm" variant="outline" onClick={() => scaleAll(-0.5)}>
-            A− Smaller
-          </Button>
-          <Button type="button" size="sm" variant="outline" onClick={() => scaleAll(0.5)}>
-            A+ Bigger
-          </Button>
-          <Button type="button" size="sm" variant="ghost" onClick={() => set("typo", defaultTypography)}>
-            Reset
-          </Button>
-        </div>
-      </Field>
-
-      <Field label="Fonts & point size — set each part on its own">
-        <div className="space-y-2">
-          {TYPO_PARTS.map((p) => (
-            <div key={p.id} className="grid grid-cols-[1fr_auto] items-end gap-2 rounded-lg border border-border p-3">
-              <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">{p.label}</Label>
-                <select
-                  value={data.typo[p.id].font}
-                  onChange={(e) => setTypo(p.id, { font: e.target.value })}
-                  style={{ fontFamily: fontStack(data.typo[p.id].font) }}
-                  className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm"
-                >
-                  {FONT_LIST.map((f) => (
-                    <option key={f.id} value={f.id} style={{ fontFamily: f.stack }}>
-                      {f.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-1">
-                <Label className="text-xs text-muted-foreground">Size (pt)</Label>
-                <div className="flex items-center gap-1">
-                  <Button type="button" size="icon" variant="outline" className="h-9 w-9"
-                    onClick={() => setTypo(p.id, { size: Math.max(6, data.typo[p.id].size - 0.5) })}>
-                    −
-                  </Button>
-                  <Input
-                    type="number"
-                    step="0.5"
-                    min={6}
-                    max={72}
-                    value={data.typo[p.id].size}
-                    onChange={(e) => setTypo(p.id, { size: Number(e.target.value) || 10 })}
-                    className="h-9 w-20 text-center"
-                  />
-                  <Button type="button" size="icon" variant="outline" className="h-9 w-9"
-                    onClick={() => setTypo(p.id, { size: Math.min(72, data.typo[p.id].size + 0.5) })}>
-                    +
-                  </Button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </Field>
-
-      <Field label="Colour presets">
-        <div className="flex flex-wrap gap-2">
-          {COLOR_PRESETS.map((p) => (
-            <button
-              key={p.name}
-              type="button"
-              onClick={() => {
-                set("colors", { ...data.colors, ...p.colors });
-                if (p.colors.accent) set("accent", p.colors.accent);
-              }}
-              className="flex items-center gap-2 rounded-full border border-border px-3 py-1.5 text-xs hover:bg-secondary"
-            >
-              <span className="h-4 w-4 rounded-full" style={{ background: p.colors.accent }} />
-              {p.name}
-            </button>
-          ))}
-        </div>
-      </Field>
-
-      <Field label="Change any area's colour">
-        <div className="grid gap-2 sm:grid-cols-2">
-          {COLOR_FIELDS.map((c) => (
-            <label key={c.id} className="flex items-center justify-between gap-2 rounded-lg border border-border px-3 py-2 text-sm">
-              <span className="flex items-center gap-2">
-                <Palette className="h-3.5 w-3.5 text-muted-foreground" />
-                {c.label}
-              </span>
-              <input
-                type="color"
-                value={data.colors[c.id]}
-                onChange={(e) => setColor(c.id, e.target.value)}
-                className="h-7 w-10 cursor-pointer border-0 bg-transparent p-0"
-              />
-            </label>
-          ))}
-        </div>
-      </Field>
-
-      <Field label="Quick accents">
-        <div className="flex flex-wrap gap-2">
-          {ACCENTS.map((a) => (
-            <button
-              key={a.value}
-              type="button"
-              title={a.name}
-              onClick={() => setColor("accent", a.value)}
-              className={`h-9 w-9 rounded-full border-2 transition-transform ${
-                data.colors.accent === a.value ? "scale-110 border-foreground" : "border-transparent"
-              }`}
-              style={{ background: a.value }}
-            />
-          ))}
-        </div>
-      </Field>
-
-      <div className="flex items-center justify-between rounded-lg border border-border p-3">
-        <div>
-          <p className="text-sm font-medium">Auto-fill the page</p>
-          <p className="text-xs text-muted-foreground">
-            Automatically grows or shrinks everything so the CV always fills one full A4 page.
-          </p>
-        </div>
-        <Switch checked={data.autoFit} onCheckedChange={(v) => set("autoFit", v)} />
-      </div>
+    <Card
+      title="Writing style"
+      hint="Use the toolbar above — just like MS Word. Pick the part (Name, Headings, Body…), then its font, exact point size and colour. Your CV updates live."
+    >
+      <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
+        <li>
+          <b className="text-foreground">Font tab</b> — choose which part of the CV you are styling,
+          then set its font and size in points (or use A− / A+ for the whole CV).
+        </li>
+        <li>
+          <b className="text-foreground">Colours tab</b> — one-click themes, accent colours and a
+          separate colour for every single area of the page.
+        </li>
+        <li>
+          <b className="text-foreground">Page tab</b> — auto-fill the A4 page, show or hide your
+          picture and choose its shape.
+        </li>
+      </ul>
     </Card>
   );
 }
+
 
 
 function StepPhoto({ data, set }: { data: CVData; set: SetFn }) {
@@ -998,6 +860,15 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
     toast.success("HTML file downloaded");
   };
 
+  const exportWord = () => {
+    const node = document.getElementById("cv-root");
+    if (!node) return;
+    downloadWord(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.doc`, `${fullName(data)} — CV`);
+    toast.success("Word file downloaded — open it in MS Word");
+  };
+
+
+
   const exportPdf = async () => {
     const node = document.getElementById("cv-root");
     if (!node) return;
@@ -1040,6 +911,9 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
         <Button onClick={exportPdf} disabled={busy}>
           <Download /> {busy ? "Creating PDF…" : "Download PDF"}
         </Button>
+        <Button variant="outline" onClick={exportWord}>
+          <FileType2 /> Download Word (.doc)
+        </Button>
         <Button variant="outline" onClick={() => window.print()}>
           <FileText /> Print
         </Button>
@@ -1047,6 +921,7 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
           <Code2 /> Download HTML file
         </Button>
       </div>
+
 
       <p className="text-sm text-muted-foreground">
         The PDF is a true A4 page with all colours and fonts included — ready to email or print.

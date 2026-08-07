@@ -1,0 +1,13 @@
+{
+  "name": "CV Generator by Zohaib",
+  "short_name": "CV Generator",
+  "description": "Build a professional full-page CV and download it as PDF or Word.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1d2733",
+  "theme_color": "#1d2733",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
