@@ -57,21 +57,22 @@ import {
 export const Route = createFileRoute("/builder")({
   head: () => ({
     meta: [
-      { title: "CV Generator by Zohaib — 7 Designs, Free CV Maker" },
+      { title: "CV Builder — Create Your CV | CV Generator by Zohaib" },
       {
         name: "description",
         content:
-          "Build a full-page professional CV in minutes: pick one of 7 designs, answer guided questions with ready-made options, choose fonts and colours, then download as PDF or HTML.",
+          "Guided CV builder: pick from 11 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF or Word.",
       },
-      { property: "og:title", content: "CV Generator by Zohaib" },
+      { property: "og:title", content: "CV Builder — CV Generator by Zohaib" },
       {
         property: "og:description",
-        content: "7 professional CV designs, guided questions, PDF and HTML download.",
+        content: "11 professional CV designs, guided questions, PDF and Word download.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+
   component: App,
 });
 
