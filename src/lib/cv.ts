@@ -23,7 +23,9 @@ export type TemplateId =
   | "navy"
   | "executive"
   | "slate"
-  | "elegant";
+  | "elegant"
+  | "ats";
+
 
 /** Font families available for every single part of the CV (MS-Word style list). */
 export const FONT_LIST: { id: string; label: string; stack: string; google?: string }[] = [
