@@ -54,7 +54,7 @@ import {
 } from "@/lib/cv";
 
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/builder")({
   head: () => ({
     meta: [
       { title: "CV Generator by Zohaib — 7 Designs, Free CV Maker" },
