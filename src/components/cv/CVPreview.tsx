@@ -11,6 +11,7 @@ import { TemplateNavy } from "./TemplateNavy";
 import { TemplateExecutive } from "./TemplateExecutive";
 import { TemplateSlate } from "./TemplateSlate";
 import { TemplateElegant } from "./TemplateElegant";
+import { TemplateAts } from "./TemplateAts";
 
 function Inner({ data }: { data: CVData }) {
   switch (data.template) {
@@ -32,10 +33,13 @@ function Inner({ data }: { data: CVData }) {
       return <TemplateSlate data={data} />;
     case "elegant":
       return <TemplateElegant data={data} />;
+    case "ats":
+      return <TemplateAts data={data} />;
     default:
       return <TemplateExecutive data={data} />;
   }
 }
+
 
 /** A4 height in CSS pixels (297mm @ 96dpi). */
 const PAGE_H = 1122;
