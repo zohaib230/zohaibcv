@@ -92,8 +92,10 @@ const DRAFT_KEY = "cv-generator-draft";
 
 const TEMPLATES: { id: TemplateId; name: string; note: string; preview: string[] }[] = [
   { id: "executive", name: "Executive", note: "Premium header + skill bars", preview: ["#1d2733", "#ffffff", "#C8A24A"] },
+  { id: "ats", name: "ATS Minimal", note: "Plain, no graphics — ATS safe", preview: ["#ffffff", "#ffffff", "#e2e5e9"] },
   { id: "slate", name: "Slate Pro", note: "Clean corporate two-column", preview: ["#1d2733", "#f6f2ea", "#8a8f96"] },
   { id: "elegant", name: "Elegant", note: "Centred serif, classy lines", preview: ["#ffffff", "#ffffff", "#c8a24a"] },
+
   { id: "elevate", name: "Elevate", note: "Two-column with skill chips", preview: ["#ffffff", "#eceef1", "#8a8f96"] },
 
   { id: "timeline", name: "Timeline", note: "Dark sidebar + timeline dots", preview: ["#1f2833", "#ffffff", "#6b7078"] },
