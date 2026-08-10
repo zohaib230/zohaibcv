@@ -43,38 +43,55 @@ function Inner({ data }: { data: CVData }) {
 
 /** A4 height in CSS pixels (297mm @ 96dpi). */
 const PAGE_H = 1122;
+const MAX_PAGES = 4;
 
 export function CVPreview({ data }: { data: CVData }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  // Auto-fit: grows or shrinks all type + spacing so the page is always
-  // nicely filled, never empty at the bottom and never overflowing.
+  // Auto-fit: grows or shrinks all type + spacing so every page is always
+  // nicely filled. If there is genuinely too much content for one A4 page,
+  // the CV automatically continues onto a second (or third) page.
   const fit = () => {
     const el = ref.current;
     if (!el) return;
     const page = el.querySelector<HTMLElement>(".cv-page");
     if (!page) return;
+
     if (!data.autoFit) {
       el.style.setProperty("--fill", "1");
+      page.style.height = "";
+      page.style.minHeight = "";
       return;
     }
+
     const prevMin = page.style.minHeight;
     page.style.minHeight = "0px";
+    page.style.height = "auto";
+
+    // How many A4 pages does the content really need at normal size?
+    el.style.setProperty("--fill", "1");
+    const natural = page.scrollHeight || PAGE_H;
+    const pages = Math.min(MAX_PAGES, Math.max(1, Math.ceil((natural * 0.9) / PAGE_H)));
+    const target = pages * PAGE_H;
+
     let f = 1;
     for (let i = 0; i < 8; i++) {
       el.style.setProperty("--fill", String(f));
       const h = page.scrollHeight;
       if (!h) break;
-      const ratio = PAGE_H / h;
+      const ratio = target / h;
       if (ratio > 0.985 && ratio <= 1.005) break;
       f = Math.min(1.5, Math.max(0.7, f * Math.min(1.22, Math.max(0.82, ratio))));
     }
-    // safety: never let the content spill onto a second page
-    for (let i = 0; i < 20 && page.scrollHeight > PAGE_H; i++) {
+    // safety: never let the content spill past the last page
+    for (let i = 0; i < 20 && page.scrollHeight > target; i++) {
       f = Math.max(0.6, f * 0.975);
       el.style.setProperty("--fill", String(f));
     }
+
     page.style.minHeight = prevMin;
+    page.style.height = `${target}px`;
+    el.dataset['pages'] = String(pages);
   };
 
   useLayoutEffect(fit);
@@ -85,6 +102,7 @@ export function CVPreview({ data }: { data: CVData }) {
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
 
   const c = data.colors;
   const t = data.typo;

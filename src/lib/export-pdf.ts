@@ -5,7 +5,8 @@ const A4_W = 794; // 210mm @96dpi
 const A4_H = 1123; // 297mm @96dpi
 
 /**
- * Renders the CV into a true A4 PDF.
+ * Renders the CV into a true A4 PDF. If the CV is longer than one page the
+ * capture is sliced automatically into as many A4 pages as needed.
  * The node is cloned into an off-screen, un-scaled A4 box first so the live
  * preview's CSS transform can never produce edge lines or blurry output.
  */
@@ -22,9 +23,13 @@ export async function downloadPdf(node: HTMLElement, fileName: string) {
   document.body.appendChild(wrap);
 
   const page = (clone.querySelector(".cv-page") as HTMLElement) ?? clone;
+  const liveHeight = ((node.querySelector(".cv-page") as HTMLElement) ?? node).offsetHeight;
+  const pages = Math.max(1, Math.round(liveHeight / A4_H) || Math.ceil(liveHeight / A4_H));
+  const totalH = pages * A4_H;
+
   page.style.width = `${A4_W}px`;
-  page.style.minHeight = `${A4_H}px`;
-  page.style.height = `${A4_H}px`;
+  page.style.minHeight = `${totalH}px`;
+  page.style.height = `${totalH}px`;
   page.style.margin = "0";
   page.style.border = "none";
   page.style.boxShadow = "none";
@@ -38,28 +43,44 @@ export async function downloadPdf(node: HTMLElement, fileName: string) {
       useCORS: true,
       backgroundColor: "#ffffff",
       width: A4_W,
-      height: A4_H,
+      height: totalH,
       windowWidth: A4_W,
-      windowHeight: A4_H,
+      windowHeight: totalH,
       scrollX: 0,
       scrollY: 0,
     });
 
-    // Trim 1 device pixel from every edge: removes the thin border/anti-alias
-    // line some browsers leave at the top of the captured page.
-    const t = Math.max(1, Math.round(scale / 2));
-    const cropped = document.createElement("canvas");
-    cropped.width = raw.width - t * 2;
-    cropped.height = raw.height - t * 2;
-    const ctx = cropped.getContext("2d")!;
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, cropped.width, cropped.height);
-    ctx.drawImage(raw, t, t, cropped.width, cropped.height, 0, 0, cropped.width, cropped.height);
-
     const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
     const pw = pdf.internal.pageSize.getWidth();
     const ph = pdf.internal.pageSize.getHeight();
-    pdf.addImage(cropped.toDataURL("image/jpeg", 0.97), "JPEG", 0, 0, pw, ph, undefined, "FAST");
+
+    // Trim 1 device pixel from the side edges: removes the thin border /
+    // anti-alias line some browsers leave around the captured page.
+    const t = Math.max(1, Math.round(scale / 2));
+    const sliceH = raw.height / pages;
+
+    for (let i = 0; i < pages; i++) {
+      const slice = document.createElement("canvas");
+      slice.width = raw.width - t * 2;
+      slice.height = Math.round(sliceH) - (pages === 1 ? t * 2 : 0);
+      const ctx = slice.getContext("2d")!;
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, slice.width, slice.height);
+      ctx.drawImage(
+        raw,
+        t,
+        Math.round(i * sliceH) + (pages === 1 ? t : 0),
+        slice.width,
+        slice.height,
+        0,
+        0,
+        slice.width,
+        slice.height,
+      );
+      if (i > 0) pdf.addPage();
+      pdf.addImage(slice.toDataURL("image/jpeg", 0.97), "JPEG", 0, 0, pw, ph, undefined, "FAST");
+    }
+
     pdf.save(fileName);
   } finally {
     document.body.removeChild(wrap);
