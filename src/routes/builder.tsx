@@ -12,6 +12,7 @@ import {
   FolderOpen,
   LogOut,
   Plus,
+  Share2,
   Sparkles,
   Trash2,
   UserRound,
@@ -34,6 +35,8 @@ import {
 import { TagInput } from "@/components/cv/TagInput";
 import { OptionChips } from "@/components/cv/OptionChips";
 import { CVPreview } from "@/components/cv/CVPreview";
+import { CityInput } from "@/components/cv/CityInput";
+import { PhrasePicker } from "@/components/cv/PhrasePicker";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
@@ -41,6 +44,15 @@ import { downloadPdf } from "@/lib/export-pdf";
 import { downloadWord } from "@/lib/export-word";
 import { StyleRibbon } from "@/components/cv/StyleRibbon";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
+import {
+  completeness,
+  EDU_PRESETS,
+  PHRASE_LIBRARY,
+  PROFILE_LIBRARY,
+  skillsForRole,
+  whatsappShareUrl,
+} from "@/lib/presets";
+
 import {
   ageFromDob,
   cvScore,
@@ -78,7 +90,6 @@ export const Route = createFileRoute("/builder")({
 
 const STEPS = [
   "Design",
-  "Style",
   "Photo",
   "Personal",
   "Contact",
@@ -86,8 +97,15 @@ const STEPS = [
   "Experience",
   "Education",
   "Skills",
+  "Style",
   "Finish",
 ];
+
+const STYLE_STEP = 8;
+const FINISH_STEP = 9;
+const EDU_FLAT_SET = new Set(EDU_PRESETS.flatMap((g) => g.items));
+
+
 
 const DRAFT_KEY = "cv-generator-draft";
 
@@ -177,7 +195,7 @@ function App() {
 
   if (!started) return <Splash onStart={() => setStarted(true)} />;
 
-  const wide = step === 1;
+  const wide = step === STYLE_STEP;
 
   const nav = (
     <>
@@ -198,15 +216,16 @@ function App() {
       >
         <Wand2 /> Fill sample data
       </Button>
-      {step < STEPS.length - 1 ? (
+      {step < FINISH_STEP ? (
         <Button onClick={() => setStep((s) => s + 1)}>
           Next <ArrowRight />
         </Button>
       ) : (
-        <Button onClick={() => setStep(9)}>
+        <Button onClick={() => setStep(FINISH_STEP)}>
           <Download /> Download
         </Button>
       )}
+
     </>
   );
 
@@ -254,7 +273,7 @@ function App() {
         </div>
       </header>
 
-      {step === 1 && <StyleRibbon data={data} set={set} />}
+      {step === STYLE_STEP && <StyleRibbon data={data} set={set} />}
 
       <main
         className={`mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-5 sm:py-8 ${
@@ -263,11 +282,10 @@ function App() {
       >
         <div className="no-print min-w-0">
           {step === 0 && <StepDesign data={data} set={set} />}
-          {step === 1 && <StepStyle />}
-          {step === 2 && <StepPhoto data={data} set={set} />}
-          {step === 3 && <StepPersonal data={data} set={set} />}
-          {step === 4 && <StepContact data={data} set={set} />}
-          {step === 5 && (
+          {step === 1 && <StepPhoto data={data} set={set} />}
+          {step === 2 && <StepPersonal data={data} set={set} />}
+          {step === 3 && <StepContact data={data} set={set} />}
+          {step === 4 && (
             <StepProfile
               data={data}
               set={set}
@@ -276,10 +294,11 @@ function App() {
               generated={generateProfile(data)}
             />
           )}
-          {step === 6 && <StepExperience data={data} set={set} />}
-          {step === 7 && <StepEducation data={data} set={set} />}
-          {step === 8 && <StepSkills data={data} set={set} />}
-          {step === 9 && <StepFinish data={preview} tips={tips} score={score} />}
+          {step === 5 && <StepExperience data={data} set={set} />}
+          {step === 6 && <StepEducation data={data} set={set} />}
+          {step === 7 && <StepSkills data={data} set={set} />}
+          {step === STYLE_STEP && <StepStyle />}
+          {step === FINISH_STEP && <StepFinish data={preview} tips={tips} score={score} />}
 
           <div className="mt-8 hidden items-center justify-between gap-3 lg:flex">{nav}</div>
         </div>
@@ -291,8 +310,10 @@ function App() {
           <div className={wide ? "mx-auto w-full max-w-[720px]" : ""}>
             <ScaledPreview data={preview} max={1} />
           </div>
+          {!wide && <CompletenessMeter data={preview} />}
         </aside>
       </main>
+
 
       {/* Mobile app-style bottom bar */}
       <div className="no-print fixed inset-x-0 bottom-0 z-30 flex items-center justify-between gap-2 border-t border-border bg-card px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] lg:hidden">
@@ -347,6 +368,33 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     </div>
   );
 }
+
+/** Simple section-by-section completeness meter (no scoring magic). */
+function CompletenessMeter({ data }: { data: CVData }) {
+  const { percent, items } = completeness(data);
+  return (
+    <div className="no-print mt-4 rounded-xl border border-border bg-card p-4">
+      <div className="mb-1 flex items-center justify-between text-sm">
+        <span className="font-medium">CV completeness</span>
+        <b className="text-brand">{percent}%</b>
+      </div>
+      <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+        <div className="h-full bg-brand transition-all" style={{ width: `${percent}%` }} />
+      </div>
+      <ul className="mt-3 grid gap-1 text-xs sm:grid-cols-2">
+        {items.map((i) => (
+          <li
+            key={i.label}
+            className={i.done ? "text-muted-foreground line-through" : "font-medium text-foreground"}
+          >
+            {i.done ? "✓" : "•"} {i.label}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 
 function StepDesign({ data, set }: { data: CVData; set: SetFn }) {
   return (
@@ -598,14 +646,13 @@ function StepContact({ data, set }: { data: CVData; set: SetFn }) {
           onChange={(e) => set("website", e.target.value)}
         />
       </Field>
-      <Field label="Address">
-        <Textarea rows={2} value={data.address} onChange={(e) => set("address", e.target.value)} />
-        <OptionChips
-          value={data.address}
-          onPick={(v) => set("address", v)}
-          options={["Lahore, Pakistan", "Karachi, Pakistan", "Islamabad, Pakistan", "Faisalabad, Pakistan", "Multan, Pakistan", "Dubai, UAE"]}
-        />
+      <Field label="City / location">
+        <CityInput value={data.address} onChange={(v) => set("address", v)} />
+        <p className="mt-1 text-xs text-muted-foreground">
+          Start typing — major Pakistani and Gulf cities appear automatically.
+        </p>
       </Field>
+
       <Field label="Languages">
         <TagInput
           value={data.languages}
@@ -656,6 +703,13 @@ function StepProfile({
             placeholder="Write about yourself…"
             onChange={(e) => set("profile", e.target.value)}
           />
+          <PhrasePicker
+            label="Ready-made summaries"
+            title="Professional profile summaries"
+            description="Pick the one closest to you, then edit the details."
+            groups={[{ category: "Profiles", lines: PROFILE_LIBRARY.map((p) => p.text) }]}
+            onPick={(v) => set("profile", v)}
+          />
           <OptionChips
             onPick={(v) => set("profile", data.profile ? `${data.profile} ${v}` : v)}
             options={[
@@ -666,6 +720,7 @@ function StepProfile({
               "Honest, disciplined and result oriented.",
             ]}
           />
+
         </>
       )}
     </Card>
@@ -713,16 +768,12 @@ function StepExperience({ data, set }: { data: CVData; set: SetFn }) {
               </div>
               <Field label="What did you do? (one point per line)">
                 <Textarea rows={3} value={e.details} onChange={(ev) => update(e.id, { details: ev.target.value })} />
-                <OptionChips
+                <PhrasePicker
+                  groups={PHRASE_LIBRARY.map((g) => ({ category: g.category, lines: g.lines }))}
                   onPick={(v) => update(e.id, { details: e.details ? `${e.details}\n${v}` : v })}
-                  options={[
-                    "Handled daily customer sales and support.",
-                    "Maintained stock and record files.",
-                    "Prepared monthly reports for management.",
-                    "Trained and supervised junior staff.",
-                  ]}
                 />
               </Field>
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -761,13 +812,30 @@ function StepEducation({ data, set }: { data: CVData; set: SetFn }) {
       {data.education.map((e) => (
         <div key={e.id} className="space-y-3 rounded-lg border border-border p-4">
           <Field label="Degree / course">
-            <Input value={e.degree} placeholder="Matric" onChange={(ev) => update(e.id, { degree: ev.target.value })} />
-            <OptionChips
+            <select
+              value={EDU_FLAT_SET.has(e.degree) ? e.degree : ""}
+              onChange={(ev) => ev.target.value && update(e.id, { degree: ev.target.value })}
+              className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+            >
+              <option value="">Choose a qualification…</option>
+              {EDU_PRESETS.map((g) => (
+                <optgroup key={g.group} label={g.group}>
+                  {g.items.map((i) => (
+                    <option key={i} value={i}>
+                      {i}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            <Input
+              className="mt-2"
               value={e.degree}
-              onPick={(v) => update(e.id, { degree: v })}
-              options={["Matric", "Intermediate (F.Sc)", "Intermediate (I.Com)", "BA / BSc", "BS Computer Science", "BS Commerce", "MA / MSc", "Diploma (DAE)"]}
+              placeholder="Or type it yourself, e.g. Matric (Science)"
+              onChange={(ev) => update(e.id, { degree: ev.target.value })}
             />
           </Field>
+
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Institute / board">
               <Input value={e.institute} placeholder="BISE Lahore" onChange={(ev) => update(e.id, { institute: ev.target.value })} />
@@ -796,8 +864,22 @@ function StepEducation({ data, set }: { data: CVData; set: SetFn }) {
 }
 
 function StepSkills({ data, set }: { data: CVData; set: SetFn }) {
+  const roleSkills = skillsForRole(data.jobTitle);
   return (
     <Card title="Skills & extras" hint="These fill your page and make the CV look complete.">
+      <div className="rounded-lg border border-border bg-secondary/50 p-4">
+        <p className="text-sm font-medium">
+          Popular skills for {data.jobTitle || "your role"} in Pakistan
+        </p>
+        <OptionChips
+          value={data.skills}
+          multi
+          options={roleSkills}
+          onPick={(v) =>
+            set("skills", data.skills.includes(v) ? data.skills.filter((x) => x !== v) : [...data.skills, v])
+          }
+        />
+      </div>
       <Field label="Hard skills">
         <TagInput
           value={data.skills}
@@ -923,7 +1005,21 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
         <Button variant="outline" onClick={exportHtml}>
           <Code2 /> Download HTML file
         </Button>
+        <Button variant="outline" asChild>
+          <a
+            href={whatsappShareUrl(
+              `${fullName(data)} — ${data.jobTitle || "CV"}\nPhone: ${data.phone}\nEmail: ${data.email}\n\nMade with CV Generator by Zohaib`,
+            )}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Share2 /> Share on WhatsApp
+          </a>
+        </Button>
       </div>
+      <p className="text-xs text-muted-foreground">
+        Tip: download the PDF first, then attach it in the WhatsApp chat that opens.
+      </p>
 
 
       <p className="text-sm text-muted-foreground">

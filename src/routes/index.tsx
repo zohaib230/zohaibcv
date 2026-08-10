@@ -2,16 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   BadgeCheck,
-  Bot,
   Check,
   Download,
   FileText,
-  Gauge,
-  Languages,
+  GraduationCap,
+  ListChecks,
+  MapPin,
+  Palette,
   PenLine,
   Sparkles,
   Star,
-  Target,
   Users,
 } from "lucide-react";
 
@@ -26,13 +26,13 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Create a professional, ATS-friendly CV in minutes. 11 designs, AI-assisted writing, bilingual support and instant PDF or Word download — made for Pakistani job seekers.",
+          "Create a professional, ATS-friendly CV in minutes. 11 designs, MS Word-style styling, Pakistani education presets and instant PDF or Word download.",
       },
       { property: "og:title", content: "Build a Job-Winning CV in Minutes — CV Generator by Zohaib" },
       {
         property: "og:description",
         content:
-          "Professional CV templates, AI writing help, ATS score checker and instant PDF download.",
+          "Professional CV templates, ready-made phrases, full font and colour control, and instant PDF download.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -40,6 +40,7 @@ export const Route = createFileRoute("/")({
   }),
   component: Landing,
 });
+
 
 const DEMO: CVData = normalizeCV({
   ...emptyCV,
@@ -87,23 +88,24 @@ const GALLERY: { id: TemplateId; name: string }[] = [
 ];
 
 const FEATURES = [
-  { icon: Bot, title: "AI Content Assistant", note: "Turn rough notes into polished, quantified bullet points." },
-  { icon: Gauge, title: "ATS Score Checker", note: "See how recruiter software reads your CV, out of 100." },
-  { icon: Target, title: "Job Match", note: "Paste a job ad and find the keywords you're missing." },
-  { icon: Languages, title: "Bilingual Support", note: "Write your CV in English or Urdu — your choice." },
   { icon: PenLine, title: "MS Word-style Styling", note: "Exact point sizes, 38 fonts and per-area colours." },
   { icon: Download, title: "PDF & Word Export", note: "Pixel-perfect A4 PDF, or an editable .doc file." },
+  { icon: GraduationCap, title: "Pakistani Education Presets", note: "Matric, FSc, ICS, A-Levels, BS, MBA and more in one tap." },
+  { icon: MapPin, title: "City Autocomplete", note: "Type two letters and pick your city instantly." },
+  { icon: Sparkles, title: "Ready-Made Phrase Library", note: "Hand-written summary and duty lines for every job type." },
+  { icon: ListChecks, title: "Completeness Meter", note: "See exactly which sections are still missing." },
 ];
 
 const STEPS = [
   { icon: FileText, title: "Fill Your Details", note: "Simple guided questions with ready-made answer options." },
-  { icon: Sparkles, title: "AI Enhances It", note: "Your summary and experience get written professionally." },
-  { icon: Download, title: "Download & Apply", note: "Export a perfect one-page A4 CV as PDF or Word." },
+  { icon: Palette, title: "Pick Your Style", note: "Choose a design, fonts, sizes and colours — like MS Word." },
+  { icon: Download, title: "Download & Apply", note: "Export a perfectly filled A4 CV as PDF or Word." },
 ];
+
 
 const TESTIMONIALS = [
   { name: "Sana Iqbal", role: "Fresh Graduate, Karachi", quote: "Meri pehli CV 10 minute mein ban gayi — aur interview call bhi aa gayi." },
-  { name: "Bilal Ahmad", role: "Accountant, Islamabad", quote: "The ATS score tips told me exactly what was missing. Very easy to use." },
+  { name: "Bilal Ahmad", role: "Accountant, Islamabad", quote: "The completeness meter told me exactly what was missing. Very easy to use." },
   { name: "Hira Noor", role: "Teacher, Multan", quote: "Designs bohot professional hain aur PDF download bilkul perfect aata hai." },
 ];
 
@@ -156,10 +158,10 @@ function Landing() {
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
-              <Sparkles className="h-3.5 w-3.5 text-brand" /> AI-powered CV builder
+              <Sparkles className="h-3.5 w-3.5 text-brand" /> Free professional CV builder
             </span>
             <h1 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
-              Build a Job-Winning CV in Minutes with AI
+              Build a Job-Winning CV in Minutes
             </h1>
             <p className="mt-4 max-w-lg text-base text-muted-foreground md:text-lg">
               Answer a few simple questions and get a beautifully designed, ATS-friendly CV that
@@ -234,7 +236,7 @@ function Landing() {
       <Section id="features" className="bg-card border-y border-border">
         <h2 className="text-center font-display text-3xl font-bold md:text-4xl">Everything you need</h2>
         <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
-          Smart tools that do the hard writing and formatting work for you.
+          Practical tools that do the formatting and the wording work for you.
         </p>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((f) => (
@@ -304,7 +306,7 @@ function Landing() {
       <Section id="pricing">
         <h2 className="text-center font-display text-3xl font-bold md:text-4xl">Simple pricing</h2>
         <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
-          Start free. Upgrade when you need unlimited CVs and AI tools.
+          Start free. Upgrade when you need unlimited CVs and every template.
         </p>
         <div className="mx-auto mt-10 grid max-w-3xl gap-5 md:grid-cols-2">
           <div className="rounded-2xl border border-border bg-card p-7 shadow-sm">
@@ -312,7 +314,7 @@ function Landing() {
             <div className="mt-2 text-3xl font-bold">PKR 0</div>
             <p className="text-sm text-muted-foreground">Forever</p>
             <ul className="mt-6 space-y-2 text-sm">
-              {["1 saved CV", "Basic templates", "3 AI enhancements per day", "PDF download"].map((f) => (
+              {["1 saved CV", "Basic templates", "Phrase library", "PDF download"].map((f) => (
                 <li key={f} className="flex gap-2">
                   <Check className="h-4 w-4 shrink-0 text-teal" /> {f}
                 </li>
@@ -336,10 +338,10 @@ function Landing() {
               {[
                 "Unlimited CVs",
                 "All 11 templates",
-                "Unlimited AI writing",
-                "ATS score checker",
-                "Job match tool",
-                "Cover letter generator",
+                "Full MS Word-style styling",
+                "Multi-page CVs",
+                "WhatsApp sharing",
+                "Cloud save & sync",
                 "PDF + Word export",
               ].map((f) => (
                 <li key={f} className="flex gap-2">
