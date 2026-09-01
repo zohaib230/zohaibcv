@@ -24,7 +24,12 @@ export type TemplateId =
   | "executive"
   | "slate"
   | "elegant"
-  | "ats";
+  | "ats"
+  | "finance"
+  | "contactside"
+  | "headline"
+  | "monogram"
+  | "grid";
 
 
 /** Font families available for every single part of the CV (MS-Word style list). */
