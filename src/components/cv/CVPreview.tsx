@@ -40,6 +40,16 @@ function Inner({ data }: { data: CVData }) {
       return <TemplateElegant data={data} />;
     case "ats":
       return <TemplateAts data={data} />;
+    case "finance":
+      return <TemplateFinance data={data} />;
+    case "contactside":
+      return <TemplateContactSide data={data} />;
+    case "headline":
+      return <TemplateHeadline data={data} />;
+    case "monogram":
+      return <TemplateMonogram data={data} />;
+    case "grid":
+      return <TemplateGrid data={data} />;
     default:
       return <TemplateExecutive data={data} />;
   }
