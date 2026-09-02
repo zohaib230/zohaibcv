@@ -950,11 +950,36 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
     toast.success("HTML file downloaded");
   };
 
-  const exportWord = () => {
+  const exportWord = async () => {
     const node = document.getElementById("cv-root");
     if (!node) return;
-    downloadWord(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.doc`, `${fullName(data)} — CV`);
-    toast.success("Word file downloaded — open it in MS Word");
+    setBusy(true);
+    try {
+      await downloadWord(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.doc`, `${fullName(data)} — CV`);
+      toast.success("Word file downloaded — full design included");
+    } catch {
+      toast.error("Word file could not be created — try again");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const shareWhatsApp = async () => {
+    const node = document.getElementById("cv-root");
+    if (!node) return;
+    setBusy(true);
+    try {
+      const text = `${fullName(data)} — ${data.jobTitle || "CV"}\nMade with CV Generator by Zohaib`;
+      const shared = await sharePdf(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.pdf`, text);
+      if (!shared) {
+        toast.success("PDF downloaded — ab WhatsApp mein attach karein");
+        window.open(whatsappShareUrl(text), "_blank", "noreferrer");
+      }
+    } catch {
+      toast.error("Share failed — try downloading the PDF instead");
+    } finally {
+      setBusy(false);
+    }
   };
 
 
