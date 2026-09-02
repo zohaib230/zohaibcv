@@ -17,6 +17,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
+import founderImg from "@/assets/zohaib-hassan-shah.png";
 import { emptyCV, normalizeCV, uid, type CVData, type TemplateId } from "@/lib/cv";
 
 export const Route = createFileRoute("/")({
@@ -140,7 +141,7 @@ function Landing() {
             <a href="#how" className="hover:text-foreground">How it works</a>
             <a href="#features" className="hover:text-foreground">Features</a>
             <a href="#templates" className="hover:text-foreground">Templates</a>
-            <a href="#pricing" className="hover:text-foreground">Pricing</a>
+            <a href="#founder" className="hover:text-foreground">About</a>
           </nav>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
@@ -302,59 +303,53 @@ function Landing() {
         </div>
       </Section>
 
-      {/* Pricing */}
-      <Section id="pricing">
-        <h2 className="text-center font-display text-3xl font-bold md:text-4xl">Simple pricing</h2>
-        <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
-          Start free. Upgrade when you need unlimited CVs and every template.
-        </p>
-        <div className="mx-auto mt-10 grid max-w-3xl gap-5 md:grid-cols-2">
-          <div className="rounded-2xl border border-border bg-card p-7 shadow-sm">
-            <h3 className="font-display text-xl font-bold uppercase tracking-wide">Free</h3>
-            <div className="mt-2 text-3xl font-bold">PKR 0</div>
-            <p className="text-sm text-muted-foreground">Forever</p>
-            <ul className="mt-6 space-y-2 text-sm">
-              {["1 saved CV", "Basic templates", "Phrase library", "PDF download"].map((f) => (
-                <li key={f} className="flex gap-2">
-                  <Check className="h-4 w-4 shrink-0 text-teal" /> {f}
-                </li>
-              ))}
-            </ul>
-            <Button asChild variant="outline" className="mt-7 w-full">
-              <Link to="/builder">Start free</Link>
-            </Button>
+      {/* Founder */}
+      <Section id="founder">
+        <div className="grid items-center gap-10 md:grid-cols-[380px_minmax(0,1fr)]">
+          <div className="relative mx-auto w-full max-w-sm">
+            <div className="absolute -inset-3 rounded-3xl bg-brand/10" aria-hidden />
+            <img
+              src={founderImg}
+              alt="Zohaib Hassan Shah, founder of ZM Technology"
+              className="relative w-full rounded-3xl border border-border object-cover shadow-lg"
+              loading="lazy"
+            />
           </div>
-
-          <div className="relative rounded-2xl border-2 border-brand bg-card p-7 shadow-md">
-            <span className="absolute -top-3 right-6 rounded-full bg-brand px-3 py-1 text-xs font-semibold text-brand-foreground">
-              Most popular
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">
+              <BadgeCheck className="h-4 w-4" /> 100% Free — no hidden charges
             </span>
-            <h3 className="font-display text-xl font-bold uppercase tracking-wide">Pro</h3>
-            <div className="mt-2 text-3xl font-bold">
-              PKR 999<span className="text-base font-normal text-muted-foreground"> / month</span>
-            </div>
-            <p className="text-sm text-muted-foreground">Cancel any time</p>
-            <ul className="mt-6 space-y-2 text-sm">
+            <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">
+              Built by Zohaib Hassan Shah
+            </h2>
+            <p className="mt-2 text-lg font-semibold text-teal">Founder & CEO — ZM Technology</p>
+            <p className="mt-4 leading-relaxed text-muted-foreground">
+              Main Zohaib Hassan Shah hoon, is CV Generator ka owner aur ZM Technology ka founder.
+              ZM Technology Pakistan bhar mein logon ko Artificial Intelligence sikhati hai — AI tools,
+              automation, content creation aur online earning ki practical training, aasan Urdu mein.
+              Ye CV builder meri taraf se har Pakistani job seeker ke liye bilkul free hai.
+            </p>
+            <ul className="mt-6 grid gap-2 text-sm sm:grid-cols-2">
               {[
-                "Unlimited CVs",
-                "All 11 templates",
-                "Full MS Word-style styling",
-                "Multi-page CVs",
-                "WhatsApp sharing",
-                "Cloud save & sync",
-                "PDF + Word export",
+                "AI training for students & professionals",
+                "Practical, Urdu-medium courses",
+                "Free tools for Pakistani job seekers",
+                "Trusted by thousands of learners",
               ].map((f) => (
                 <li key={f} className="flex gap-2">
                   <Check className="h-4 w-4 shrink-0 text-teal" /> {f}
                 </li>
               ))}
             </ul>
-            <Button asChild className="mt-7 w-full">
-              <Link to="/builder">Get Pro</Link>
+            <Button asChild size="lg" className="mt-7 gap-2">
+              <Link to="/builder">
+                Build My CV Free <ArrowRight className="h-4 w-4" />
+              </Link>
             </Button>
           </div>
         </div>
       </Section>
+
 
       {/* Final CTA */}
       <Section className="bg-brand text-brand-foreground">
@@ -389,7 +384,7 @@ function Landing() {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li><Link to="/builder" className="hover:text-foreground">CV Builder</Link></li>
               <li><a href="#templates" className="hover:text-foreground">Templates</a></li>
-              <li><a href="#pricing" className="hover:text-foreground">Pricing</a></li>
+              <li><a href="#founder" className="hover:text-foreground">About</a></li>
             </ul>
           </div>
           <div>

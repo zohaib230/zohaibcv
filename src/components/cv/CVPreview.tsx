@@ -12,6 +12,11 @@ import { TemplateExecutive } from "./TemplateExecutive";
 import { TemplateSlate } from "./TemplateSlate";
 import { TemplateElegant } from "./TemplateElegant";
 import { TemplateAts } from "./TemplateAts";
+import { TemplateFinance } from "./TemplateFinance";
+import { TemplateContactSide } from "./TemplateContactSide";
+import { TemplateHeadline } from "./TemplateHeadline";
+import { TemplateMonogram } from "./TemplateMonogram";
+import { TemplateGrid } from "./TemplateGrid";
 
 function Inner({ data }: { data: CVData }) {
   switch (data.template) {
@@ -35,6 +40,16 @@ function Inner({ data }: { data: CVData }) {
       return <TemplateElegant data={data} />;
     case "ats":
       return <TemplateAts data={data} />;
+    case "finance":
+      return <TemplateFinance data={data} />;
+    case "contactside":
+      return <TemplateContactSide data={data} />;
+    case "headline":
+      return <TemplateHeadline data={data} />;
+    case "monogram":
+      return <TemplateMonogram data={data} />;
+    case "grid":
+      return <TemplateGrid data={data} />;
     default:
       return <TemplateExecutive data={data} />;
   }

@@ -5,12 +5,11 @@ const A4_W = 794; // 210mm @96dpi
 const A4_H = 1123; // 297mm @96dpi
 
 /**
- * Renders the CV into a true A4 PDF. If the CV is longer than one page the
- * capture is sliced automatically into as many A4 pages as needed.
- * The node is cloned into an off-screen, un-scaled A4 box first so the live
- * preview's CSS transform can never produce edge lines or blurry output.
+ * Renders the live CV node off-screen at a true A4 width and returns one
+ * JPEG data-url per A4 page. Shared by the PDF and Word exporters so both
+ * keep the exact design of the preview.
  */
-export async function downloadPdf(node: HTMLElement, fileName: string) {
+export async function renderPageImages(node: HTMLElement): Promise<string[]> {
   const wrap = document.createElement("div");
   wrap.style.cssText =
     "position:fixed;left:-20000px;top:0;width:794px;background:#ffffff;z-index:-1;pointer-events:none;";
@@ -50,14 +49,11 @@ export async function downloadPdf(node: HTMLElement, fileName: string) {
       scrollY: 0,
     });
 
-    const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
-    const pw = pdf.internal.pageSize.getWidth();
-    const ph = pdf.internal.pageSize.getHeight();
-
     // Trim 1 device pixel from the side edges: removes the thin border /
     // anti-alias line some browsers leave around the captured page.
     const t = Math.max(1, Math.round(scale / 2));
     const sliceH = raw.height / pages;
+    const out: string[] = [];
 
     for (let i = 0; i < pages; i++) {
       const slice = document.createElement("canvas");
@@ -77,12 +73,65 @@ export async function downloadPdf(node: HTMLElement, fileName: string) {
         slice.width,
         slice.height,
       );
-      if (i > 0) pdf.addPage();
-      pdf.addImage(slice.toDataURL("image/jpeg", 0.97), "JPEG", 0, 0, pw, ph, undefined, "FAST");
+      out.push(slice.toDataURL("image/jpeg", 0.97));
     }
-
-    pdf.save(fileName);
+    return out;
   } finally {
     document.body.removeChild(wrap);
   }
+}
+
+/** Builds a true A4 PDF (one page per rendered page) and returns it as a Blob. */
+export async function buildPdfBlob(node: HTMLElement): Promise<Blob> {
+  const images = await renderPageImages(node);
+  const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait", compress: true });
+  const pw = pdf.internal.pageSize.getWidth();
+  const ph = pdf.internal.pageSize.getHeight();
+
+  images.forEach((img, i) => {
+    if (i > 0) pdf.addPage();
+    pdf.addImage(img, "JPEG", 0, 0, pw, ph, undefined, "FAST");
+  });
+
+  return pdf.output("blob");
+}
+
+/** Downloads the CV as a true A4 PDF. */
+export async function downloadPdf(node: HTMLElement, fileName: string) {
+  const blob = await buildPdfBlob(node);
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/**
+ * Shares the CV as a real PDF file through the native share sheet (WhatsApp,
+ * email, etc.). Returns false when the device cannot share files, so the
+ * caller can fall back to a download + wa.me link.
+ */
+export async function sharePdf(node: HTMLElement, fileName: string, text: string): Promise<boolean> {
+  const blob = await buildPdfBlob(node);
+  const file = new File([blob], fileName, { type: "application/pdf" });
+  const nav = navigator as Navigator & {
+    canShare?: (d: ShareData) => boolean;
+    share?: (d: ShareData) => Promise<void>;
+  };
+  if (nav.share && nav.canShare?.({ files: [file] })) {
+    try {
+      await nav.share({ files: [file], title: fileName, text });
+      return true;
+    } catch {
+      return true; // user cancelled — do not fall back
+    }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  return false;
 }

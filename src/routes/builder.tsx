@@ -12,6 +12,7 @@ import {
   FolderOpen,
   LogOut,
   Plus,
+  ClipboardPaste,
   Share2,
   Sparkles,
   Trash2,
@@ -40,7 +41,8 @@ import { PhrasePicker } from "@/components/cv/PhrasePicker";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
-import { downloadPdf } from "@/lib/export-pdf";
+import { downloadPdf, sharePdf } from "@/lib/export-pdf";
+import { parsePastedCV } from "@/lib/parse-cv";
 import { downloadWord } from "@/lib/export-word";
 import { StyleRibbon } from "@/components/cv/StyleRibbon";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
@@ -123,6 +125,11 @@ const TEMPLATES: { id: TemplateId; name: string; note: string; preview: string[]
   { id: "sidebar", name: "Bold Sidebar", note: "Round photo, big headings", preview: ["#26272b", "#ffffff", "#5a5a5a"] },
   { id: "modern", name: "Modern Band", note: "Header band, clean grid", preview: ["#1b1c1f", "#f4f2ec", "#777777"] },
   { id: "classic", name: "Classic Black", note: "Formal bio-data style", preview: ["#111111", "#ffffff", "#888888"] },
+  { id: "finance", name: "Finance Pro", note: "Boxed sections, banker style", preview: ["#12314a", "#ffffff", "#2E6B8A"] },
+  { id: "contactside", name: "Contact Side", note: "Right contact rail", preview: ["#ffffff", "#eef1f4", "#1d2733"] },
+  { id: "headline", name: "Headline", note: "Big name headline, wide bars", preview: ["#ffffff", "#1d2733", "#C8A24A"] },
+  { id: "monogram", name: "Monogram", note: "Initials badge, refined serif", preview: ["#ffffff", "#f4f2ec", "#8a6d3b"] },
+  { id: "grid", name: "Grid Cards", note: "Card grid for skills & info", preview: ["#f6f7f9", "#ffffff", "#2F6F4E"] },
 ];
 
 const SAMPLE: Partial<CVData> = {
@@ -246,6 +253,7 @@ function App() {
             <span className="rounded-full bg-white/10 px-2.5 py-1">
               <b className="text-brand">{score}%</b>
             </span>
+            <ImportCVDialog onImport={(patch) => setData((d) => ({ ...d, ...patch }))} />
             <SavedCVsDialog user={user} data={preview} onLoad={setData} />
             {user ? (
               <Button size="sm" variant="ghost" className="text-ink-foreground" onClick={() => signOut()}>
@@ -945,11 +953,36 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
     toast.success("HTML file downloaded");
   };
 
-  const exportWord = () => {
+  const exportWord = async () => {
     const node = document.getElementById("cv-root");
     if (!node) return;
-    downloadWord(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.doc`, `${fullName(data)} — CV`);
-    toast.success("Word file downloaded — open it in MS Word");
+    setBusy(true);
+    try {
+      await downloadWord(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.doc`, `${fullName(data)} — CV`);
+      toast.success("Word file downloaded — full design included");
+    } catch {
+      toast.error("Word file could not be created — try again");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const shareWhatsApp = async () => {
+    const node = document.getElementById("cv-root");
+    if (!node) return;
+    setBusy(true);
+    try {
+      const text = `${fullName(data)} — ${data.jobTitle || "CV"}\nMade with CV Generator by Zohaib`;
+      const shared = await sharePdf(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.pdf`, text);
+      if (!shared) {
+        toast.success("PDF downloaded — ab WhatsApp mein attach karein");
+        window.open(whatsappShareUrl(text), "_blank", "noreferrer");
+      }
+    } catch {
+      toast.error("Share failed — try downloading the PDF instead");
+    } finally {
+      setBusy(false);
+    }
   };
 
 
@@ -1005,20 +1038,12 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
         <Button variant="outline" onClick={exportHtml}>
           <Code2 /> Download HTML file
         </Button>
-        <Button variant="outline" asChild>
-          <a
-            href={whatsappShareUrl(
-              `${fullName(data)} — ${data.jobTitle || "CV"}\nPhone: ${data.phone}\nEmail: ${data.email}\n\nMade with CV Generator by Zohaib`,
-            )}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Share2 /> Share on WhatsApp
-          </a>
+        <Button variant="outline" onClick={shareWhatsApp} disabled={busy}>
+          <Share2 /> Share PDF on WhatsApp
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        Tip: download the PDF first, then attach it in the WhatsApp chat that opens.
+        Sharing sends the CV as a real PDF file. On desktop the PDF downloads and WhatsApp Web opens so you can attach it.
       </p>
 
 
@@ -1136,6 +1161,54 @@ function SavedCVsDialog({
             </div>
           </div>
         )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ImportCVDialog({ onImport }: { onImport: (patch: Partial<CVData>) => void }) {
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+
+  const run = () => {
+    const patch = parsePastedCV(text);
+    const found = Object.keys(patch).length;
+    if (!found) {
+      toast.error("Kuch detect nahi hua — poori CV ka text paste karein");
+      return;
+    }
+    onImport(patch);
+    setOpen(false);
+    setText("");
+    toast.success(`Purani CV import ho gayi — ${found} sections bhar diye`);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="ghost" className="text-ink-foreground">
+          <ClipboardPaste className="h-4 w-4" />
+          <span className="hidden sm:inline">Import old CV</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Paste your old CV</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">
+          Apni purani CV ka poora text copy karke yahan paste karein (Word, PDF ya kisi bhi site se).
+          Naam, contact, profile, experience, education, skills aur languages khud apni jagah bhar
+          jayenge — phir aap koi bhi naya design laga sakte hain.
+        </p>
+        <Textarea
+          rows={12}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={"Ahmed Raza\nSales Officer\n+92 300 1234567 | ahmed@email.com\n\nEXPERIENCE\nSales Officer, Gourmet Foods 2021 - 2024\n..."}
+        />
+        <Button onClick={run} disabled={text.trim().length < 20}>
+          <ClipboardPaste /> Import & fill my CV
+        </Button>
       </DialogContent>
     </Dialog>
   );
