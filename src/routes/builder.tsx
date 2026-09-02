@@ -123,6 +123,11 @@ const TEMPLATES: { id: TemplateId; name: string; note: string; preview: string[]
   { id: "sidebar", name: "Bold Sidebar", note: "Round photo, big headings", preview: ["#26272b", "#ffffff", "#5a5a5a"] },
   { id: "modern", name: "Modern Band", note: "Header band, clean grid", preview: ["#1b1c1f", "#f4f2ec", "#777777"] },
   { id: "classic", name: "Classic Black", note: "Formal bio-data style", preview: ["#111111", "#ffffff", "#888888"] },
+  { id: "finance", name: "Finance Pro", note: "Boxed sections, banker style", preview: ["#12314a", "#ffffff", "#2E6B8A"] },
+  { id: "contactside", name: "Contact Side", note: "Right contact rail", preview: ["#ffffff", "#eef1f4", "#1d2733"] },
+  { id: "headline", name: "Headline", note: "Big name headline, wide bars", preview: ["#ffffff", "#1d2733", "#C8A24A"] },
+  { id: "monogram", name: "Monogram", note: "Initials badge, refined serif", preview: ["#ffffff", "#f4f2ec", "#8a6d3b"] },
+  { id: "grid", name: "Grid Cards", note: "Card grid for skills & info", preview: ["#f6f7f9", "#ffffff", "#2F6F4E"] },
 ];
 
 const SAMPLE: Partial<CVData> = {
