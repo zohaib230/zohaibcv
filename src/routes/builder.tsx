@@ -40,7 +40,7 @@ import { PhrasePicker } from "@/components/cv/PhrasePicker";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
-import { downloadPdf } from "@/lib/export-pdf";
+import { downloadPdf, sharePdf } from "@/lib/export-pdf";
 import { downloadWord } from "@/lib/export-word";
 import { StyleRibbon } from "@/components/cv/StyleRibbon";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
@@ -1035,20 +1035,12 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
         <Button variant="outline" onClick={exportHtml}>
           <Code2 /> Download HTML file
         </Button>
-        <Button variant="outline" asChild>
-          <a
-            href={whatsappShareUrl(
-              `${fullName(data)} — ${data.jobTitle || "CV"}\nPhone: ${data.phone}\nEmail: ${data.email}\n\nMade with CV Generator by Zohaib`,
-            )}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Share2 /> Share on WhatsApp
-          </a>
+        <Button variant="outline" onClick={shareWhatsApp} disabled={busy}>
+          <Share2 /> Share PDF on WhatsApp
         </Button>
       </div>
       <p className="text-xs text-muted-foreground">
-        Tip: download the PDF first, then attach it in the WhatsApp chat that opens.
+        Sharing sends the CV as a real PDF file. On desktop the PDF downloads and WhatsApp Web opens so you can attach it.
       </p>
 
 

@@ -209,7 +209,7 @@ export const emptyCV: CVData = {
   accent: "#C8A24A",
   colors: defaultColors,
   typo: defaultTypography,
-  autoFit: true,
+  autoFit: false,
 };
 
 /** Merges a stored/partial CV with the defaults so old saves keep working. */
