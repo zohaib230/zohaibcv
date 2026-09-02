@@ -41,6 +41,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
 import { downloadPdf, sharePdf } from "@/lib/export-pdf";
+import { parsePastedCV } from "@/lib/parse-cv";
 import { downloadWord } from "@/lib/export-word";
 import { StyleRibbon } from "@/components/cv/StyleRibbon";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
@@ -251,6 +252,7 @@ function App() {
             <span className="rounded-full bg-white/10 px-2.5 py-1">
               <b className="text-brand">{score}%</b>
             </span>
+            <ImportCVDialog onImport={(patch) => setData((d) => ({ ...d, ...patch }))} />
             <SavedCVsDialog user={user} data={preview} onLoad={setData} />
             {user ? (
               <Button size="sm" variant="ghost" className="text-ink-foreground" onClick={() => signOut()}>
@@ -1158,6 +1160,54 @@ function SavedCVsDialog({
             </div>
           </div>
         )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ImportCVDialog({ onImport }: { onImport: (patch: Partial<CVData>) => void }) {
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+
+  const run = () => {
+    const patch = parsePastedCV(text);
+    const found = Object.keys(patch).length;
+    if (!found) {
+      toast.error("Kuch detect nahi hua — poori CV ka text paste karein");
+      return;
+    }
+    onImport(patch);
+    setOpen(false);
+    setText("");
+    toast.success(`Purani CV import ho gayi — ${found} sections bhar diye`);
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button size="sm" variant="ghost" className="text-ink-foreground">
+          <ClipboardPaste className="h-4 w-4" />
+          <span className="hidden sm:inline">Import old CV</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Paste your old CV</DialogTitle>
+        </DialogHeader>
+        <p className="text-sm text-muted-foreground">
+          Apni purani CV ka poora text copy karke yahan paste karein (Word, PDF ya kisi bhi site se).
+          Naam, contact, profile, experience, education, skills aur languages khud apni jagah bhar
+          jayenge — phir aap koi bhi naya design laga sakte hain.
+        </p>
+        <Textarea
+          rows={12}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder={"Ahmed Raza\nSales Officer\n+92 300 1234567 | ahmed@email.com\n\nEXPERIENCE\nSales Officer, Gourmet Foods 2021 - 2024\n..."}
+        />
+        <Button onClick={run} disabled={text.trim().length < 20}>
+          <ClipboardPaste /> Import & fill my CV
+        </Button>
       </DialogContent>
     </Dialog>
   );
