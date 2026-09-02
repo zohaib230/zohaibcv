@@ -12,6 +12,7 @@ import {
   FolderOpen,
   LogOut,
   Plus,
+  ClipboardPaste,
   Share2,
   Sparkles,
   Trash2,
