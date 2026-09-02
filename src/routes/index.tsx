@@ -17,6 +17,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
+import founderImg from "@/assets/zohaib-hassan-shah.png";
 import { emptyCV, normalizeCV, uid, type CVData, type TemplateId } from "@/lib/cv";
 
 export const Route = createFileRoute("/")({
@@ -140,7 +141,7 @@ function Landing() {
             <a href="#how" className="hover:text-foreground">How it works</a>
             <a href="#features" className="hover:text-foreground">Features</a>
             <a href="#templates" className="hover:text-foreground">Templates</a>
-            <a href="#pricing" className="hover:text-foreground">Pricing</a>
+            <a href="#founder" className="hover:text-foreground">About</a>
           </nav>
           <div className="flex items-center gap-2">
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
@@ -383,7 +384,7 @@ function Landing() {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li><Link to="/builder" className="hover:text-foreground">CV Builder</Link></li>
               <li><a href="#templates" className="hover:text-foreground">Templates</a></li>
-              <li><a href="#pricing" className="hover:text-foreground">Pricing</a></li>
+              <li><a href="#founder" className="hover:text-foreground">About</a></li>
             </ul>
           </div>
           <div>
