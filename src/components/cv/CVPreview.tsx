@@ -12,6 +12,11 @@ import { TemplateExecutive } from "./TemplateExecutive";
 import { TemplateSlate } from "./TemplateSlate";
 import { TemplateElegant } from "./TemplateElegant";
 import { TemplateAts } from "./TemplateAts";
+import { TemplateFinance } from "./TemplateFinance";
+import { TemplateContactSide } from "./TemplateContactSide";
+import { TemplateHeadline } from "./TemplateHeadline";
+import { TemplateMonogram } from "./TemplateMonogram";
+import { TemplateGrid } from "./TemplateGrid";
 
 function Inner({ data }: { data: CVData }) {
   switch (data.template) {
