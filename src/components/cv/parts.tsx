@@ -83,6 +83,10 @@ export const personalRows = (d: CVData): [string, string][] =>
       ["Nationality", d.nationality],
       ["Religion", d.religion],
       ["Marital Status", d.maritalStatus],
+      ["Driving Licence", d.drivingLicence],
+      ["Visa / Work Status", d.visaStatus],
+      ["Notice Period", d.noticePeriod],
+      ["Expected Salary", d.expectedSalary],
     ] as [string, string][]
   ).filter(([, v]) => !!v);
 
@@ -93,8 +97,11 @@ export const contactRows = (d: CVData): [string, string][] =>
       ["Email", d.email],
       ["Address", d.address],
       ["Website", d.website],
+      ["LinkedIn", d.linkedin],
+      ["Portfolio", d.portfolio],
     ] as [string, string][]
   ).filter(([, v]) => !!v);
+
 
 export const fresherLine =
   "Fresh candidate — no prior work experience, highly motivated, disciplined and ready to learn quickly from day one.";
