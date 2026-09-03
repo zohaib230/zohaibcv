@@ -177,14 +177,101 @@ export type CVData = {
 
 export const uid = () => Math.random().toString(36).slice(2, 9);
 
+const typo = (font: string, size: number, extra: Partial<TypoStyle> = {}): TypoStyle => ({
+  font,
+  size,
+  bold: false,
+  italic: false,
+  underline: false,
+  caps: false,
+  spacing: 0,
+  ...extra,
+});
+
 export const defaultTypography: Typography = {
-  name: { font: "montserrat", size: 30 },
-  role: { font: "montserrat", size: 12 },
-  heading: { font: "montserrat", size: 12 },
-  sub: { font: "manrope", size: 10 },
-  body: { font: "manrope", size: 9.5 },
-  small: { font: "manrope", size: 8.5 },
+  name: typo("montserrat", 30, { bold: true }),
+  role: typo("montserrat", 12),
+  heading: typo("montserrat", 12, { bold: true }),
+  sub: typo("manrope", 10, { bold: true }),
+  body: typo("manrope", 9.5),
+  small: typo("manrope", 8.5),
 };
+
+export const defaultPage: PageSetup = {
+  lineHeight: 1.42,
+  sectionGap: 15,
+  margin: 30,
+  bullet: "disc",
+};
+
+/** MS-Word style "Styles" gallery — one click restyles the whole CV. */
+export const STYLE_PRESETS: {
+  name: string;
+  typo: Typography;
+  page: PageSetup;
+}[] = [
+  { name: "Normal", typo: defaultTypography, page: defaultPage },
+  {
+    name: "Compact",
+    typo: {
+      name: typo("inter", 26, { bold: true }),
+      role: typo("inter", 11),
+      heading: typo("inter", 10.5, { bold: true, caps: true, spacing: 0.6 }),
+      sub: typo("inter", 9.5, { bold: true }),
+      body: typo("inter", 8.8),
+      small: typo("inter", 8),
+    },
+    page: { lineHeight: 1.3, sectionGap: 11, margin: 24, bullet: "disc" },
+  },
+  {
+    name: "Formal",
+    typo: {
+      name: typo("playfair", 30, { bold: true }),
+      role: typo("lora", 12, { italic: true }),
+      heading: typo("playfair", 12.5, { bold: true, caps: true, spacing: 1 }),
+      sub: typo("lora", 10, { bold: true }),
+      body: typo("lora", 9.5),
+      small: typo("lora", 8.5),
+    },
+    page: { lineHeight: 1.5, sectionGap: 16, margin: 32, bullet: "dash" },
+  },
+  {
+    name: "Modern",
+    typo: {
+      name: typo("poppins", 32, { bold: true, spacing: -0.5 }),
+      role: typo("poppins", 11.5, { caps: true, spacing: 2 }),
+      heading: typo("poppins", 11, { bold: true, caps: true, spacing: 1.4 }),
+      sub: typo("worksans", 10, { bold: true }),
+      body: typo("worksans", 9.5),
+      small: typo("worksans", 8.5),
+    },
+    page: { lineHeight: 1.45, sectionGap: 16, margin: 30, bullet: "square" },
+  },
+  {
+    name: "Elegant",
+    typo: {
+      name: typo("cormorant", 36, { bold: true }),
+      role: typo("montserrat", 10.5, { caps: true, spacing: 3 }),
+      heading: typo("montserrat", 10.5, { bold: true, caps: true, spacing: 2 }),
+      sub: typo("cormorant", 11, { bold: true }),
+      body: typo("karla", 9.4),
+      small: typo("karla", 8.4),
+    },
+    page: { lineHeight: 1.5, sectionGap: 18, margin: 34, bullet: "circle" },
+  },
+  {
+    name: "ATS Safe",
+    typo: {
+      name: typo("arial", 26, { bold: true }),
+      role: typo("arial", 11.5),
+      heading: typo("arial", 11.5, { bold: true, caps: true }),
+      sub: typo("arial", 10, { bold: true }),
+      body: typo("arial", 10),
+      small: typo("arial", 9),
+    },
+    page: { lineHeight: 1.4, sectionGap: 14, margin: 28, bullet: "disc" },
+  },
+];
 
 export const defaultColors: ThemeColors = {
   accent: "#C8A24A",
@@ -225,6 +312,12 @@ export const emptyCV: CVData = {
   email: "",
   address: "",
   website: "",
+  linkedin: "",
+  portfolio: "",
+  drivingLicence: "",
+  visaStatus: "",
+  noticePeriod: "",
+  expectedSalary: "",
   languages: [],
   profile: "",
   isFresher: false,
@@ -233,26 +326,39 @@ export const emptyCV: CVData = {
   skills: [],
   softSkills: [],
   certificates: [],
+  projects: [],
+  volunteer: [],
   interests: [],
   achievements: [],
   references: [],
+  referencesOnRequest: true,
+  declaration: false,
   template: "executive",
   accent: "#C8A24A",
   colors: defaultColors,
   typo: defaultTypography,
+  page: defaultPage,
   autoFit: false,
 };
 
 /** Merges a stored/partial CV with the defaults so old saves keep working. */
 export const normalizeCV = (raw: unknown): CVData => {
   const p = (typeof raw === "object" && raw ? raw : {}) as Partial<CVData> & { font?: string };
+  const parts = Object.fromEntries(
+    (Object.keys(defaultTypography) as TypoPart[]).map((k) => [
+      k,
+      { ...defaultTypography[k], ...((p.typo?.[k] ?? {}) as Partial<TypoStyle>) },
+    ]),
+  ) as Typography;
   return {
     ...emptyCV,
     ...p,
     colors: { ...defaultColors, ...(p.colors ?? {}) },
-    typo: { ...defaultTypography, ...(p.typo ?? {}) },
+    typo: parts,
+    page: { ...defaultPage, ...(p.page ?? {}) },
   };
 };
+
 
 /** Presets that recolour every area of the CV in one click. */
 export const COLOR_PRESETS: { name: string; colors: Partial<ThemeColors> }[] = [
