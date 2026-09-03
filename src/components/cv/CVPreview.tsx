@@ -121,6 +121,21 @@ export function CVPreview({ data }: { data: CVData }) {
 
   const c = data.colors;
   const t = data.typo;
+  const pg = data.page;
+  const bullet =
+    pg.bullet === "dash" ? '"–  "' : pg.bullet === "none" ? "none" : pg.bullet;
+
+  const partVars: Record<string, string> = {};
+  (Object.keys(t) as (keyof typeof t)[]).forEach((k) => {
+    const s = t[k];
+    partVars[`--ff-${k}`] = fontStack(s.font);
+    partVars[`--pt-${k}`] = String(s.size);
+    partVars[`--fw-${k}`] = s.bold ? "800" : k === "name" || k === "heading" ? "500" : "400";
+    partVars[`--fi-${k}`] = s.italic ? "italic" : "normal";
+    partVars[`--fu-${k}`] = s.underline ? "underline" : "none";
+    partVars[`--fc-${k}`] = s.caps ? "uppercase" : "none";
+    partVars[`--ls-${k}`] = `${s.spacing}px`;
+  });
 
   return (
     <div
@@ -129,18 +144,11 @@ export function CVPreview({ data }: { data: CVData }) {
       ref={ref}
       style={
         {
-          "--ff-name": fontStack(t.name.font),
-          "--ff-role": fontStack(t.role.font),
-          "--ff-heading": fontStack(t.heading.font),
-          "--ff-sub": fontStack(t.sub.font),
-          "--ff-body": fontStack(t.body.font),
-          "--ff-small": fontStack(t.small.font),
-          "--pt-name": t.name.size,
-          "--pt-role": t.role.size,
-          "--pt-heading": t.heading.size,
-          "--pt-sub": t.sub.size,
-          "--pt-body": t.body.size,
-          "--pt-small": t.small.size,
+          ...partVars,
+          "--lh-body": String(pg.lineHeight),
+          "--sec-gap": `${pg.sectionGap}px`,
+          "--pg-margin": `${pg.margin}px`,
+          "--bullet": bullet,
           "--c-accent": c.accent,
           "--cv-accent": c.accent,
           "--fs": String(t.body.size / 9.5),
@@ -161,6 +169,7 @@ export function CVPreview({ data }: { data: CVData }) {
         } as React.CSSProperties
       }
     >
+
       <Inner data={data} />
     </div>
   );
