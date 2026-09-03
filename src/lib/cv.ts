@@ -84,7 +84,26 @@ export const fontStack = (id: string) =>
 /** Every text part of the CV can pick its own family + point size (like MS Word). */
 export type TypoPart = "name" | "role" | "heading" | "sub" | "body" | "small";
 
-export type Typography = Record<TypoPart, { font: string; size: number }>;
+export type TypoStyle = {
+  font: string;
+  size: number;
+  bold: boolean;
+  italic: boolean;
+  underline: boolean;
+  caps: boolean;
+  /** letter spacing in px */
+  spacing: number;
+};
+
+export type Typography = Record<TypoPart, TypoStyle>;
+
+/** Page / paragraph layout settings (MS Word "Paragraph" + "Layout" groups). */
+export type PageSetup = {
+  lineHeight: number;
+  sectionGap: number;
+  margin: number;
+  bullet: "disc" | "circle" | "square" | "dash" | "none";
+};
 
 /** Every coloured area of the CV can be changed independently. */
 export type ThemeColors = {
@@ -126,6 +145,12 @@ export type CVData = {
   email: string;
   address: string;
   website: string;
+  linkedin: string;
+  portfolio: string;
+  drivingLicence: string;
+  visaStatus: string;
+  noticePeriod: string;
+  expectedSalary: string;
   languages: string[];
   profile: string;
   isFresher: boolean;
@@ -134,15 +159,21 @@ export type CVData = {
   skills: string[];
   softSkills: string[];
   certificates: string[];
+  projects: string[];
+  volunteer: string[];
   interests: string[];
   achievements: string[];
   references: string[];
+  referencesOnRequest: boolean;
+  declaration: boolean;
   template: TemplateId;
   accent: string;
   colors: ThemeColors;
   typo: Typography;
+  page: PageSetup;
   autoFit: boolean;
 };
+
 
 export const uid = () => Math.random().toString(36).slice(2, 9);
 
