@@ -1,5 +1,16 @@
 import { useState } from "react";
-import { Bold, Palette, RotateCcw, Type as TypeIcon } from "lucide-react";
+import {
+  AlignJustify,
+  Bold,
+  CaseUpper,
+  Italic,
+  List,
+  Palette,
+  Replace,
+  RotateCcw,
+  Type as TypeIcon,
+  Underline,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,11 +19,15 @@ import {
   ACCENTS,
   COLOR_PRESETS,
   FONT_LIST,
+  STYLE_PRESETS,
+  defaultPage,
   defaultTypography,
   fontStack,
   type CVData,
+  type PageSetup,
   type ThemeColors,
   type TypoPart,
+  type TypoStyle,
 } from "@/lib/cv";
 
 type SetFn = <K extends keyof CVData>(key: K, value: CVData[K]) => void;
@@ -25,6 +40,15 @@ const TYPO_PARTS: { id: TypoPart; label: string }[] = [
   { id: "body", label: "Body text" },
   { id: "small", label: "Small text" },
 ];
+
+const PART_COLOR: Record<TypoPart, keyof ThemeColors> = {
+  name: "name",
+  role: "role",
+  heading: "heading",
+  sub: "sub",
+  body: "body",
+  small: "muted",
+};
 
 const COLOR_FIELDS: { id: keyof ThemeColors; label: string }[] = [
   { id: "accent", label: "Accent" },
@@ -44,6 +68,7 @@ const COLOR_FIELDS: { id: keyof ThemeColors; label: string }[] = [
 ];
 
 const SIZES = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 42, 48];
+const LINE_SPACING = [1, 1.15, 1.3, 1.42, 1.5, 1.75, 2];
 
 /** One ribbon group with a caption underneath, exactly like MS Word. */
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
@@ -57,13 +82,42 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
+function Toggle({
+  on,
+  onClick,
+  title,
+  children,
+}: {
+  on: boolean;
+  onClick: () => void;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Button
+      type="button"
+      size="icon"
+      title={title}
+      variant={on ? "default" : "outline"}
+      className="h-8 w-8"
+      onClick={onClick}
+    >
+      {children}
+    </Button>
+  );
+}
+
 export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
-  const [tab, setTab] = useState<"text" | "colours" | "page">("text");
+  const [tab, setTab] = useState<"home" | "colours" | "layout">("home");
   const [part, setPart] = useState<TypoPart>("body");
+  const [find, setFind] = useState("");
+  const [replace, setReplace] = useState("");
   const t = data.typo[part];
 
-  const setTypo = (p: TypoPart, patch: Partial<{ font: string; size: number }>) =>
+  const setTypo = (p: TypoPart, patch: Partial<TypoStyle>) =>
     set("typo", { ...data.typo, [p]: { ...data.typo[p], ...patch } });
+
+  const setPage = (patch: Partial<PageSetup>) => set("page", { ...data.page, ...patch });
 
   const setColor = (key: keyof ThemeColors, value: string) => {
     set("colors", { ...data.colors, [key]: value });
@@ -81,10 +135,50 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
       ) as typeof data.typo,
     );
 
+  /** Find & replace across every piece of written text in the CV. */
+  const runReplace = () => {
+    if (!find) return;
+    const re = new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
+    const s = (v: string) => v.replace(re, replace);
+    const list = (v: string[]) => v.map(s);
+    set("firstName", s(data.firstName));
+    set("lastName", s(data.lastName));
+    set("jobTitle", s(data.jobTitle));
+    set("profile", s(data.profile));
+    set("address", s(data.address));
+    set("skills", list(data.skills));
+    set("softSkills", list(data.softSkills));
+    set("certificates", list(data.certificates));
+    set("achievements", list(data.achievements));
+    set("interests", list(data.interests));
+    set("projects", list(data.projects));
+    set("volunteer", list(data.volunteer));
+    set("references", list(data.references));
+    set(
+      "experience",
+      data.experience.map((e) => ({
+        ...e,
+        role: s(e.role),
+        company: s(e.company),
+        duration: s(e.duration),
+        details: s(e.details),
+      })),
+    );
+    set(
+      "education",
+      data.education.map((e) => ({
+        ...e,
+        degree: s(e.degree),
+        institute: s(e.institute),
+        year: s(e.year),
+      })),
+    );
+  };
+
   const TABS = [
-    { id: "text", label: "Font" },
+    { id: "home", label: "Home" },
     { id: "colours", label: "Colours" },
-    { id: "page", label: "Page" },
+    { id: "layout", label: "Layout" },
   ] as const;
 
   return (
@@ -108,7 +202,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
         </div>
 
         <div className="flex items-stretch gap-1 overflow-x-auto bg-secondary/60 px-2 py-2">
-          {tab === "text" && (
+          {tab === "home" && (
             <>
               <Group label="Apply to">
                 <select
@@ -129,7 +223,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                   value={t.font}
                   onChange={(e) => setTypo(part, { font: e.target.value })}
                   style={{ fontFamily: fontStack(t.font) }}
-                  className="h-8 w-44 rounded-md border border-input bg-background px-2 text-sm"
+                  className="h-8 w-40 rounded-md border border-input bg-background px-2 text-sm"
                 >
                   {FONT_LIST.map((f) => (
                     <option key={f.id} value={f.id} style={{ fontFamily: f.stack }}>
@@ -142,6 +236,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                     type="button"
                     size="icon"
                     variant="outline"
+                    title="Shrink font"
                     className="h-8 w-8"
                     onClick={() => setTypo(part, { size: Math.max(6, t.size - 0.5) })}
                   >
@@ -160,6 +255,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                     type="button"
                     size="icon"
                     variant="outline"
+                    title="Grow font"
                     className="h-8 w-8"
                     onClick={() => setTypo(part, { size: Math.min(72, t.size + 0.5) })}
                   >
@@ -178,6 +274,44 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                     ))}
                   </select>
                 </div>
+                <Toggle on={t.bold} title="Bold" onClick={() => setTypo(part, { bold: !t.bold })}>
+                  <Bold className="h-3.5 w-3.5" />
+                </Toggle>
+                <Toggle on={t.italic} title="Italic" onClick={() => setTypo(part, { italic: !t.italic })}>
+                  <Italic className="h-3.5 w-3.5" />
+                </Toggle>
+                <Toggle
+                  on={t.underline}
+                  title="Underline"
+                  onClick={() => setTypo(part, { underline: !t.underline })}
+                >
+                  <Underline className="h-3.5 w-3.5" />
+                </Toggle>
+                <Toggle on={t.caps} title="UPPERCASE" onClick={() => setTypo(part, { caps: !t.caps })}>
+                  <CaseUpper className="h-4 w-4" />
+                </Toggle>
+                <label
+                  title="Text colour"
+                  className="flex h-8 items-center gap-1 rounded-md border border-input bg-background px-2 text-[10px]"
+                >
+                  <Palette className="h-3 w-3 text-muted-foreground" />
+                  <input
+                    type="color"
+                    value={data.colors[PART_COLOR[part]]}
+                    onChange={(e) => setColor(PART_COLOR[part], e.target.value)}
+                    className="h-5 w-6 cursor-pointer border-0 bg-transparent p-0"
+                  />
+                </label>
+                <div className="flex items-center gap-1" title="Letter spacing">
+                  <span className="text-[10px] text-muted-foreground">A↔A</span>
+                  <Input
+                    type="number"
+                    step="0.25"
+                    value={t.spacing}
+                    onChange={(e) => setTypo(part, { spacing: Number(e.target.value) || 0 })}
+                    className="h-8 w-14 text-center"
+                  />
+                </div>
               </Group>
 
               <Group label="Whole CV">
@@ -187,20 +321,9 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                 <Button type="button" size="sm" variant="outline" className="h-8" onClick={() => scaleAll(0.5)}>
                   <Bold className="h-3.5 w-3.5" /> A+
                 </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant="ghost"
-                  className="h-8"
-                  onClick={() => set("typo", defaultTypography)}
-                >
-                  <RotateCcw className="h-3.5 w-3.5" /> Reset
-                </Button>
-              </Group>
-
-              <Group label="Same font everywhere">
                 <select
                   value=""
+                  title="Use the same font everywhere"
                   onChange={(e) => {
                     const f = e.target.value;
                     if (!f) return;
@@ -211,15 +334,64 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                       ) as typeof data.typo,
                     );
                   }}
-                  className="h-8 w-40 rounded-md border border-input bg-background px-2 text-sm"
+                  className="h-8 w-36 rounded-md border border-input bg-background px-2 text-sm"
                 >
-                  <option value="">Choose a font…</option>
+                  <option value="">Same font everywhere…</option>
                   {FONT_LIST.map((f) => (
                     <option key={f.id} value={f.id} style={{ fontFamily: f.stack }}>
                       {f.label}
                     </option>
                   ))}
                 </select>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="h-8"
+                  onClick={() => {
+                    set("typo", defaultTypography);
+                    set("page", defaultPage);
+                  }}
+                >
+                  <RotateCcw className="h-3.5 w-3.5" /> Reset
+                </Button>
+              </Group>
+
+              <Group label="Styles">
+                {STYLE_PRESETS.map((p) => (
+                  <button
+                    key={p.name}
+                    type="button"
+                    onClick={() => {
+                      set("typo", p.typo);
+                      set("page", p.page);
+                    }}
+                    className="flex h-12 w-20 flex-col items-center justify-center rounded-md border border-border bg-background text-[11px] hover:bg-secondary"
+                  >
+                    <span style={{ fontFamily: fontStack(p.typo.heading.font), fontWeight: 700 }}>
+                      AaBbCc
+                    </span>
+                    <span className="text-[9px] text-muted-foreground">{p.name}</span>
+                  </button>
+                ))}
+              </Group>
+
+              <Group label="Editing">
+                <Input
+                  value={find}
+                  onChange={(e) => setFind(e.target.value)}
+                  placeholder="Find"
+                  className="h-8 w-24"
+                />
+                <Input
+                  value={replace}
+                  onChange={(e) => setReplace(e.target.value)}
+                  placeholder="Replace with"
+                  className="h-8 w-28"
+                />
+                <Button type="button" size="sm" variant="outline" className="h-8" onClick={runReplace}>
+                  <Replace className="h-3.5 w-3.5" /> Replace all
+                </Button>
               </Group>
             </>
           )}
@@ -280,15 +452,76 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
             </>
           )}
 
-          {tab === "page" && (
+          {tab === "layout" && (
             <>
-              <Group label="Fit to page">
+              <Group label="Auto-fill">
                 <div className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs">
                   <Switch checked={data.autoFit} onCheckedChange={(v) => set("autoFit", v)} />
-                  Auto-fill one A4 page
+                  Fill the whole A4 page
                 </div>
               </Group>
-              <Group label="Photo shape">
+
+              <Group label="Paragraph">
+                <label className="flex items-center gap-1 text-[11px]" title="Line spacing">
+                  <AlignJustify className="h-3.5 w-3.5 text-muted-foreground" />
+                  <select
+                    value={data.page.lineHeight}
+                    onChange={(e) => setPage({ lineHeight: Number(e.target.value) })}
+                    className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+                  >
+                    {LINE_SPACING.map((l) => (
+                      <option key={l} value={l}>
+                        {l.toFixed(2)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-1 text-[11px]" title="Bullet style">
+                  <List className="h-3.5 w-3.5 text-muted-foreground" />
+                  <select
+                    value={data.page.bullet}
+                    onChange={(e) => setPage({ bullet: e.target.value as PageSetup["bullet"] })}
+                    className="h-8 rounded-md border border-input bg-background px-2 text-sm"
+                  >
+                    <option value="disc">• Dot</option>
+                    <option value="circle">◦ Circle</option>
+                    <option value="square">▪ Square</option>
+                    <option value="dash">– Dash</option>
+                    <option value="none">No bullet</option>
+                  </select>
+                </label>
+              </Group>
+
+              <Group label="Spacing">
+                <div className="flex items-center gap-1 text-[11px]">
+                  Sections
+                  <Input
+                    type="number"
+                    min={4}
+                    max={40}
+                    value={data.page.sectionGap}
+                    onChange={(e) => setPage({ sectionGap: Number(e.target.value) || 12 })}
+                    className="h-8 w-16 text-center"
+                  />
+                </div>
+                <div className="flex items-center gap-1 text-[11px]">
+                  Margins
+                  <Input
+                    type="number"
+                    min={12}
+                    max={60}
+                    value={data.page.margin}
+                    onChange={(e) => setPage({ margin: Number(e.target.value) || 30 })}
+                    className="h-8 w-16 text-center"
+                  />
+                </div>
+              </Group>
+
+              <Group label="Photo">
+                <div className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs">
+                  <Switch checked={data.withPhoto} onCheckedChange={(v) => set("withPhoto", v)} />
+                  Show picture
+                </div>
                 {(["circle", "rounded", "square"] as const).map((s) => (
                   <Button
                     key={s}
@@ -301,12 +534,6 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                     {s}
                   </Button>
                 ))}
-              </Group>
-              <Group label="Photo">
-                <div className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs">
-                  <Switch checked={data.withPhoto} onCheckedChange={(v) => set("withPhoto", v)} />
-                  Show picture
-                </div>
               </Group>
             </>
           )}
