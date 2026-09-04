@@ -650,13 +650,30 @@ function StepContact({ data, set }: { data: CVData; set: SetFn }) {
           />
         </Field>
       </div>
-      <Field label="Website / LinkedIn (optional)">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Website (optional)">
+          <Input
+            value={data.website}
+            placeholder="www.myportfolio.com"
+            onChange={(e) => set("website", e.target.value)}
+          />
+        </Field>
+        <Field label="LinkedIn (optional)">
+          <Input
+            value={data.linkedin}
+            placeholder="linkedin.com/in/username"
+            onChange={(e) => set("linkedin", e.target.value)}
+          />
+        </Field>
+      </div>
+      <Field label="Portfolio / GitHub / Behance (optional)">
         <Input
-          value={data.website}
-          placeholder="linkedin.com/in/username"
-          onChange={(e) => set("website", e.target.value)}
+          value={data.portfolio}
+          placeholder="github.com/username"
+          onChange={(e) => set("portfolio", e.target.value)}
         />
       </Field>
+
       <Field label="City / location">
         <CityInput value={data.address} onChange={(v) => set("address", v)} />
         <p className="mt-1 text-xs text-muted-foreground">
