@@ -12,7 +12,6 @@ import {
   FolderOpen,
   LogOut,
   Plus,
-  ClipboardPaste,
   Share2,
   Sparkles,
   Trash2,
@@ -42,7 +41,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
 import { downloadPdf, sharePdf } from "@/lib/export-pdf";
-import { parsePastedCV } from "@/lib/parse-cv";
 import { downloadWord } from "@/lib/export-word";
 import { StyleRibbon } from "@/components/cv/StyleRibbon";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
@@ -75,12 +73,12 @@ export const Route = createFileRoute("/builder")({
       {
         name: "description",
         content:
-          "Guided CV builder: pick from 11 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF or Word.",
+          "Guided CV builder: pick from 16 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF or Word.",
       },
       { property: "og:title", content: "CV Builder — CV Generator by Zohaib" },
       {
         property: "og:description",
-        content: "11 professional CV designs, guided questions, PDF and Word download.",
+        content: "16 professional CV designs, guided questions, PDF and Word download.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -172,7 +170,7 @@ function App() {
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
   const [data, setData] = useState<CVData>(emptyCV);
-  const [autoProfile, setAutoProfile] = useState(true);
+  const [autoProfile, setAutoProfile] = useState(false);
   const { user, signOut } = useAuth();
 
   const set = <K extends keyof CVData>(key: K, value: CVData[K]) =>
@@ -253,8 +251,13 @@ function App() {
             <span className="rounded-full bg-white/10 px-2.5 py-1">
               <b className="text-brand">{score}%</b>
             </span>
-            <ImportCVDialog onImport={(patch) => setData((d) => ({ ...d, ...patch }))} />
+            <label className="flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1">
+              <Sparkles className="h-3.5 w-3.5 text-brand" />
+              <span className="hidden sm:inline">Auto-fill profile</span>
+              <Switch checked={autoProfile} onCheckedChange={setAutoProfile} />
+            </label>
             <SavedCVsDialog user={user} data={preview} onLoad={setData} />
+
             {user ? (
               <Button size="sm" variant="ghost" className="text-ink-foreground" onClick={() => signOut()}>
                 <LogOut className="h-4 w-4" />
@@ -343,7 +346,7 @@ function Splash({ onStart }: { onStart: () => void }) {
       </h1>
       <p className="mt-3 font-display text-2xl uppercase tracking-[0.3em] text-brand">by Zohaib</p>
       <p className="mt-6 max-w-md text-sm text-ink-foreground/70">
-        Pick one of 7 professional designs, answer simple questions with ready-made options, choose
+        Pick one of 16 professional designs, answer simple questions with ready-made options, choose
         your fonts and colours — then download your full-page CV as PDF or HTML.
       </p>
       <Button size="lg" className="mt-8 bg-brand text-brand-foreground hover:bg-brand/90" onClick={onStart}>
@@ -627,6 +630,40 @@ function StepPersonal({ data, set }: { data: CVData; set: SetFn }) {
           <Input value={data.age} onChange={(e) => set("age", e.target.value)} />
         </Field>
       </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Driving licence (optional)">
+          <Input value={data.drivingLicence} placeholder="LTV / Valid" onChange={(e) => set("drivingLicence", e.target.value)} />
+          <OptionChips
+            value={data.drivingLicence}
+            onPick={(v) => set("drivingLicence", v)}
+            options={["Valid (Car)", "LTV", "HTV", "Motorcycle", "None"]}
+          />
+        </Field>
+        <Field label="Visa / work status (optional)">
+          <Input value={data.visaStatus} onChange={(e) => set("visaStatus", e.target.value)} />
+          <OptionChips
+            value={data.visaStatus}
+            onPick={(v) => set("visaStatus", v)}
+            options={["Available for relocation", "Work visa holder", "Visit visa", "Requires sponsorship", "Citizen"]}
+          />
+        </Field>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Notice period (optional)">
+          <Input value={data.noticePeriod} onChange={(e) => set("noticePeriod", e.target.value)} />
+          <OptionChips
+            value={data.noticePeriod}
+            onPick={(v) => set("noticePeriod", v)}
+            options={["Immediate", "15 Days", "1 Month", "2 Months"]}
+          />
+        </Field>
+        <Field label="Expected salary (optional)">
+          <Input value={data.expectedSalary} placeholder="PKR 60,000 / month" onChange={(e) => set("expectedSalary", e.target.value)} />
+        </Field>
+      </div>
+
     </Card>
   );
 }
@@ -647,13 +684,30 @@ function StepContact({ data, set }: { data: CVData; set: SetFn }) {
           />
         </Field>
       </div>
-      <Field label="Website / LinkedIn (optional)">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Website (optional)">
+          <Input
+            value={data.website}
+            placeholder="www.myportfolio.com"
+            onChange={(e) => set("website", e.target.value)}
+          />
+        </Field>
+        <Field label="LinkedIn (optional)">
+          <Input
+            value={data.linkedin}
+            placeholder="linkedin.com/in/username"
+            onChange={(e) => set("linkedin", e.target.value)}
+          />
+        </Field>
+      </div>
+      <Field label="Portfolio / GitHub / Behance (optional)">
         <Input
-          value={data.website}
-          placeholder="linkedin.com/in/username"
-          onChange={(e) => set("website", e.target.value)}
+          value={data.portfolio}
+          placeholder="github.com/username"
+          onChange={(e) => set("portfolio", e.target.value)}
         />
       </Field>
+
       <Field label="City / location">
         <CityInput value={data.address} onChange={(v) => set("address", v)} />
         <p className="mt-1 text-xs text-muted-foreground">
@@ -975,7 +1029,7 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
       const text = `${fullName(data)} — ${data.jobTitle || "CV"}\nMade with CV Generator by Zohaib`;
       const shared = await sharePdf(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.pdf`, text);
       if (!shared) {
-        toast.success("PDF downloaded — ab WhatsApp mein attach karein");
+        toast.success("PDF downloaded — now attach it in WhatsApp");
         window.open(whatsappShareUrl(text), "_blank", "noreferrer");
       }
     } catch {
@@ -1161,54 +1215,6 @@ function SavedCVsDialog({
             </div>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
-  );
-}
-
-function ImportCVDialog({ onImport }: { onImport: (patch: Partial<CVData>) => void }) {
-  const [open, setOpen] = useState(false);
-  const [text, setText] = useState("");
-
-  const run = () => {
-    const patch = parsePastedCV(text);
-    const found = Object.keys(patch).length;
-    if (!found) {
-      toast.error("Kuch detect nahi hua — poori CV ka text paste karein");
-      return;
-    }
-    onImport(patch);
-    setOpen(false);
-    setText("");
-    toast.success(`Purani CV import ho gayi — ${found} sections bhar diye`);
-  };
-
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button size="sm" variant="ghost" className="text-ink-foreground">
-          <ClipboardPaste className="h-4 w-4" />
-          <span className="hidden sm:inline">Import old CV</span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Paste your old CV</DialogTitle>
-        </DialogHeader>
-        <p className="text-sm text-muted-foreground">
-          Apni purani CV ka poora text copy karke yahan paste karein (Word, PDF ya kisi bhi site se).
-          Naam, contact, profile, experience, education, skills aur languages khud apni jagah bhar
-          jayenge — phir aap koi bhi naya design laga sakte hain.
-        </p>
-        <Textarea
-          rows={12}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={"Ahmed Raza\nSales Officer\n+92 300 1234567 | ahmed@email.com\n\nEXPERIENCE\nSales Officer, Gourmet Foods 2021 - 2024\n..."}
-        />
-        <Button onClick={run} disabled={text.trim().length < 20}>
-          <ClipboardPaste /> Import & fill my CV
-        </Button>
       </DialogContent>
     </Dialog>
   );

@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Create a professional, ATS-friendly CV in minutes. 11 designs, MS Word-style styling, Pakistani education presets and instant PDF or Word download.",
+          "Create a professional, ATS-friendly CV in minutes. 16 designs, MS Word-style styling, Pakistani education presets and instant PDF or Word download.",
       },
       { property: "og:title", content: "Build a Job-Winning CV in Minutes — CV Generator by Zohaib" },
       {
@@ -198,7 +198,7 @@ function Landing() {
           {[
             { icon: Users, label: "10,000+ CVs created" },
             { icon: BadgeCheck, label: "Trusted by Pakistani job seekers" },
-            { icon: FileText, label: "11 professional designs" },
+            { icon: FileText, label: "16 professional designs" },
             { icon: Star, label: "4.8 / 5 average rating" },
           ].map((t) => (
             <div key={t.label} className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
