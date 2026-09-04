@@ -71,12 +71,12 @@ export const Route = createFileRoute("/builder")({
       {
         name: "description",
         content:
-          "Guided CV builder: pick from 16 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF or Word.",
+          "Guided CV builder: pick from 16 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF.",
       },
       { property: "og:title", content: "CV Builder — CV Generator by Zohaib" },
       {
         property: "og:description",
-        content: "16 professional CV designs, guided questions, PDF and Word download.",
+        content: "16 professional CV designs, guided questions, PDF download.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
