@@ -198,7 +198,7 @@ function Landing() {
           {[
             { icon: Users, label: "10,000+ CVs created" },
             { icon: BadgeCheck, label: "Trusted by Pakistani job seekers" },
-            { icon: FileText, label: "11 professional designs" },
+            { icon: FileText, label: "16 professional designs" },
             { icon: Star, label: "4.8 / 5 average rating" },
           ].map((t) => (
             <div key={t.label} className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
