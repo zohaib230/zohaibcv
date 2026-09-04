@@ -630,6 +630,40 @@ function StepPersonal({ data, set }: { data: CVData; set: SetFn }) {
           <Input value={data.age} onChange={(e) => set("age", e.target.value)} />
         </Field>
       </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Driving licence (optional)">
+          <Input value={data.drivingLicence} placeholder="LTV / Valid" onChange={(e) => set("drivingLicence", e.target.value)} />
+          <OptionChips
+            value={data.drivingLicence}
+            onPick={(v) => set("drivingLicence", v)}
+            options={["Valid (Car)", "LTV", "HTV", "Motorcycle", "None"]}
+          />
+        </Field>
+        <Field label="Visa / work status (optional)">
+          <Input value={data.visaStatus} onChange={(e) => set("visaStatus", e.target.value)} />
+          <OptionChips
+            value={data.visaStatus}
+            onPick={(v) => set("visaStatus", v)}
+            options={["Available for relocation", "Work visa holder", "Visit visa", "Requires sponsorship", "Citizen"]}
+          />
+        </Field>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Notice period (optional)">
+          <Input value={data.noticePeriod} onChange={(e) => set("noticePeriod", e.target.value)} />
+          <OptionChips
+            value={data.noticePeriod}
+            onPick={(v) => set("noticePeriod", v)}
+            options={["Immediate", "15 Days", "1 Month", "2 Months"]}
+          />
+        </Field>
+        <Field label="Expected salary (optional)">
+          <Input value={data.expectedSalary} placeholder="PKR 60,000 / month" onChange={(e) => set("expectedSalary", e.target.value)} />
+        </Field>
+      </div>
+
     </Card>
   );
 }
