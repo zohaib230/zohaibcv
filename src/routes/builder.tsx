@@ -8,7 +8,6 @@ import {
   Code2,
   Download,
   FileText,
-  FileType2,
   FolderOpen,
   LogOut,
   Plus,
@@ -41,7 +40,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
 import { downloadPdf, sharePdf } from "@/lib/export-pdf";
-import { downloadWord } from "@/lib/export-word";
 import { StyleRibbon } from "@/components/cv/StyleRibbon";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
 import {
@@ -73,12 +71,12 @@ export const Route = createFileRoute("/builder")({
       {
         name: "description",
         content:
-          "Guided CV builder: pick from 16 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF or Word.",
+          "Guided CV builder: pick from 16 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF.",
       },
       { property: "og:title", content: "CV Builder — CV Generator by Zohaib" },
       {
         property: "og:description",
-        content: "16 professional CV designs, guided questions, PDF and Word download.",
+        content: "16 professional CV designs, guided questions, PDF download.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -1007,20 +1005,6 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
     toast.success("HTML file downloaded");
   };
 
-  const exportWord = async () => {
-    const node = document.getElementById("cv-root");
-    if (!node) return;
-    setBusy(true);
-    try {
-      await downloadWord(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.doc`, `${fullName(data)} — CV`);
-      toast.success("Word file downloaded — full design included");
-    } catch {
-      toast.error("Word file could not be created — try again");
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const shareWhatsApp = async () => {
     const node = document.getElementById("cv-root");
     if (!node) return;
@@ -1082,9 +1066,6 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
       <div className="flex flex-wrap gap-2">
         <Button onClick={exportPdf} disabled={busy}>
           <Download /> {busy ? "Creating PDF…" : "Download PDF"}
-        </Button>
-        <Button variant="outline" onClick={exportWord}>
-          <FileType2 /> Download Word (.doc)
         </Button>
         <Button variant="outline" onClick={() => window.print()}>
           <FileText /> Print
