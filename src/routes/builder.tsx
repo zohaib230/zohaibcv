@@ -1005,20 +1005,6 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
     toast.success("HTML file downloaded");
   };
 
-  const exportWord = async () => {
-    const node = document.getElementById("cv-root");
-    if (!node) return;
-    setBusy(true);
-    try {
-      await downloadWord(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.doc`, `${fullName(data)} — CV`);
-      toast.success("Word file downloaded — full design included");
-    } catch {
-      toast.error("Word file could not be created — try again");
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const shareWhatsApp = async () => {
     const node = document.getElementById("cv-root");
     if (!node) return;
