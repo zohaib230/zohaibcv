@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Create a professional, ATS-friendly CV in minutes. 11 designs, MS Word-style styling, Pakistani education presets and instant PDF or Word download.",
+          "Create a professional, ATS-friendly CV in minutes. 16 designs, MS Word-style styling, Pakistani education presets and instant PDF or Word download.",
       },
       { property: "og:title", content: "Build a Job-Winning CV in Minutes — CV Generator by Zohaib" },
       {
