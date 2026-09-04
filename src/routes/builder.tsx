@@ -251,7 +251,13 @@ function App() {
             <span className="rounded-full bg-white/10 px-2.5 py-1">
               <b className="text-brand">{score}%</b>
             </span>
+            <label className="flex items-center gap-1.5 rounded-full bg-white/10 px-2.5 py-1">
+              <Sparkles className="h-3.5 w-3.5 text-brand" />
+              <span className="hidden sm:inline">Auto-fill profile</span>
+              <Switch checked={autoProfile} onCheckedChange={setAutoProfile} />
+            </label>
             <SavedCVsDialog user={user} data={preview} onLoad={setData} />
+
             {user ? (
               <Button size="sm" variant="ghost" className="text-ink-foreground" onClick={() => signOut()}>
                 <LogOut className="h-4 w-4" />
