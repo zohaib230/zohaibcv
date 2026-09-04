@@ -1067,9 +1067,6 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
         <Button onClick={exportPdf} disabled={busy}>
           <Download /> {busy ? "Creating PDF…" : "Download PDF"}
         </Button>
-        <Button variant="outline" onClick={exportWord}>
-          <FileType2 /> Download Word (.doc)
-        </Button>
         <Button variant="outline" onClick={() => window.print()}>
           <FileText /> Print
         </Button>
