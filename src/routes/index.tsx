@@ -27,7 +27,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Create a professional, ATS-friendly CV in minutes. 16 designs, MS Word-style styling, Pakistani education presets and instant PDF or Word download.",
+          "Create a professional, ATS-friendly CV in minutes. Choose from 16 designs, use Pakistani education presets and download an instant PDF.",
       },
       { property: "og:title", content: "Build a Job-Winning CV in Minutes — CV Generator by Zohaib" },
       {
@@ -90,7 +90,7 @@ const GALLERY: { id: TemplateId; name: string }[] = [
 
 const FEATURES = [
   { icon: PenLine, title: "MS Word-style Styling", note: "Exact point sizes, 38 fonts and per-area colours." },
-  { icon: Download, title: "PDF & Word Export", note: "Pixel-perfect A4 PDF, or an editable .doc file." },
+  { icon: Download, title: "A4 PDF Export", note: "Download a polished, print-ready PDF in one click." },
   { icon: GraduationCap, title: "Pakistani Education Presets", note: "Matric, FSc, ICS, A-Levels, BS, MBA and more in one tap." },
   { icon: MapPin, title: "City Autocomplete", note: "Type two letters and pick your city instantly." },
   { icon: Sparkles, title: "Ready-Made Phrase Library", note: "Hand-written summary and duty lines for every job type." },
@@ -100,14 +100,14 @@ const FEATURES = [
 const STEPS = [
   { icon: FileText, title: "Fill Your Details", note: "Simple guided questions with ready-made answer options." },
   { icon: Palette, title: "Pick Your Style", note: "Choose a design, fonts, sizes and colours — like MS Word." },
-  { icon: Download, title: "Download & Apply", note: "Export a perfectly filled A4 CV as PDF or Word." },
+  { icon: Download, title: "Download & Apply", note: "Export a polished, print-ready A4 CV as a PDF." },
 ];
 
 
 const TESTIMONIALS = [
-  { name: "Sana Iqbal", role: "Fresh Graduate, Karachi", quote: "Meri pehli CV 10 minute mein ban gayi — aur interview call bhi aa gayi." },
+  { name: "Sana Iqbal", role: "Fresh Graduate, Karachi", quote: "I created my first CV in 10 minutes and even received an interview call." },
   { name: "Bilal Ahmad", role: "Accountant, Islamabad", quote: "The completeness meter told me exactly what was missing. Very easy to use." },
-  { name: "Hira Noor", role: "Teacher, Multan", quote: "Designs bohot professional hain aur PDF download bilkul perfect aata hai." },
+  { name: "Hira Noor", role: "Teacher, Multan", quote: "The designs look very professional, and the downloaded PDF is excellent." },
 ];
 
 function Section({
@@ -166,7 +166,7 @@ function Landing() {
             </h1>
             <p className="mt-4 max-w-lg text-base text-muted-foreground md:text-lg">
               Answer a few simple questions and get a beautifully designed, ATS-friendly CV that
-              always fills the page perfectly. Download as PDF or Word — free to start.
+              uses the available page space effectively. Download it as a PDF — completely free.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild size="lg" className="gap-2">
@@ -324,10 +324,10 @@ function Landing() {
             </h2>
             <p className="mt-2 text-lg font-semibold text-teal">Founder & CEO — ZM Technology</p>
             <p className="mt-4 leading-relaxed text-muted-foreground">
-              Main Zohaib Hassan Shah hoon, is CV Generator ka owner aur ZM Technology ka founder.
-              ZM Technology Pakistan bhar mein logon ko Artificial Intelligence sikhati hai — AI tools,
-              automation, content creation aur online earning ki practical training, aasan Urdu mein.
-              Ye CV builder meri taraf se har Pakistani job seeker ke liye bilkul free hai.
+              I am Zohaib Hassan Shah, the owner of this CV Generator and the founder of ZM Technology.
+              ZM Technology teaches practical Artificial Intelligence skills across Pakistan, including
+              AI tools, automation, content creation and online earning in easy-to-understand Urdu.
+              I have made this CV builder completely free for every Pakistani job seeker.
             </p>
             <ul className="mt-6 grid gap-2 text-sm sm:grid-cols-2">
               {[

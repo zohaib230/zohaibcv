@@ -983,6 +983,22 @@ function StepSkills({ data, set }: { data: CVData; set: SetFn }) {
           suggestions={["Employee of the month", "Increased sales by 30%", "Position holder in class", "Sports team captain"]}
         />
       </Field>
+      <Field label="Projects">
+        <TagInput
+          value={data.projects}
+          onChange={(v) => set("projects", v)}
+          placeholder="Type a project and press Enter"
+          suggestions={["Portfolio website", "Final-year research project", "Sales reporting dashboard", "Community awareness campaign"]}
+        />
+      </Field>
+      <Field label="Volunteer experience">
+        <TagInput
+          value={data.volunteer}
+          onChange={(v) => set("volunteer", v)}
+          placeholder="Type volunteer work and press Enter"
+          suggestions={["Community event volunteer", "Student society member", "Fundraising volunteer", "Sports club organiser"]}
+        />
+      </Field>
       <Field label="Interests / hobbies">
         <TagInput
           value={data.interests}
@@ -991,6 +1007,22 @@ function StepSkills({ data, set }: { data: CVData; set: SetFn }) {
           suggestions={["Cricket", "Reading", "Travelling", "Technology", "Photography", "Cooking"]}
         />
       </Field>
+      <Field label="References">
+        <TagInput
+          value={data.references}
+          onChange={(v) => set("references", v)}
+          placeholder="Name — position — phone or email"
+          suggestions={[]}
+        />
+        <label className="flex items-center justify-between rounded-lg border border-border p-3 text-sm">
+          <span>Show “References available on request”</span>
+          <Switch checked={data.referencesOnRequest} onCheckedChange={(v) => set("referencesOnRequest", v)} />
+        </label>
+      </Field>
+      <label className="flex items-center justify-between rounded-lg border border-border p-3 text-sm">
+        <span>Include a declaration</span>
+        <Switch checked={data.declaration} onCheckedChange={(v) => set("declaration", v)} />
+      </label>
     </Card>
   );
 }

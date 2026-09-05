@@ -20,7 +20,9 @@ const H = ({ children }: { children: React.ReactNode }) => (
 );
 
 export function TemplateAts({ data }: { data: CVData }) {
-  const contact = [data.phone, data.email, data.address, data.website].filter(Boolean).join("  |  ");
+  const contact = [data.phone, data.email, data.address, data.website, data.linkedin, data.portfolio]
+    .filter(Boolean)
+    .join("  |  ");
 
   return (
     <div
@@ -148,6 +150,28 @@ export function TemplateAts({ data }: { data: CVData }) {
         </section>
       )}
 
+      {data.projects.length > 0 && (
+        <section>
+          <H>Projects</H>
+          <ul className="ml-4 list-disc">
+            {data.projects.map((project) => (
+              <li key={project}>{project}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {data.volunteer.length > 0 && (
+        <section>
+          <H>Volunteer Experience</H>
+          <ul className="ml-4 list-disc">
+            {data.volunteer.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {(data.languages.length > 0 || data.interests.length > 0) && (
         <section>
           <H>Additional Information</H>
@@ -156,12 +180,19 @@ export function TemplateAts({ data }: { data: CVData }) {
         </section>
       )}
 
-      {data.references.length > 0 && (
+      {(data.references.length > 0 || data.referencesOnRequest) && (
         <section>
           <H>References</H>
-          {data.references.map((r, i) => (
-            <p key={i}>{r}</p>
-          ))}
+          {data.references.length > 0
+            ? data.references.map((r, i) => <p key={i}>{r}</p>)
+            : <p>References available on request.</p>}
+        </section>
+      )}
+
+      {data.declaration && (
+        <section>
+          <H>Declaration</H>
+          <p>I declare that the information provided in this CV is true and complete to the best of my knowledge.</p>
         </section>
       )}
     </div>

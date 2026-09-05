@@ -65,7 +65,7 @@ export function TemplateExecutive({ data }: { data: CVData }) {
         </div>
       </header>
 
-      <div className="flex flex-1">
+      <div className="flex flex-1" style={{ minHeight: "calc(297mm - (158px * var(--fill)))" }}>
         {/* Main */}
         <main className="cv-pad flex-1" style={{ width: "63%" }}>
           {data.profile && (
@@ -144,14 +144,47 @@ export function TemplateExecutive({ data }: { data: CVData }) {
             </section>
           )}
 
-          {data.references.length > 0 && (
+          {data.projects.length > 0 && (
             <section className="cv-sec">
-              <H>References</H>
+              <H>Projects</H>
               <ul className="cv-bullets cv-body">
-                {data.references.map((r) => (
-                  <li key={r}>{r}</li>
+                {data.projects.map((project) => (
+                  <li key={project}>{project}</li>
                 ))}
               </ul>
+            </section>
+          )}
+
+          {data.volunteer.length > 0 && (
+            <section className="cv-sec">
+              <H>Volunteer Experience</H>
+              <ul className="cv-bullets cv-body">
+                {data.volunteer.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {(data.references.length > 0 || data.referencesOnRequest) && (
+            <section className="cv-sec">
+              <H>References</H>
+              {data.references.length > 0 ? (
+                <ul className="cv-bullets cv-body">
+                  {data.references.map((r) => (
+                    <li key={r}>{r}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="cv-body">References available on request.</p>
+              )}
+            </section>
+          )}
+
+          {data.declaration && (
+            <section className="cv-sec">
+              <H>Declaration</H>
+              <p className="cv-body">I declare that the information provided in this CV is true and complete to the best of my knowledge.</p>
             </section>
           )}
         </main>
