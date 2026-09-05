@@ -6,8 +6,7 @@ const A4_H = 1123; // 297mm @96dpi
 
 /**
  * Renders the live CV node off-screen at a true A4 width and returns one
- * JPEG data-url per A4 page. Shared by the PDF and Word exporters so both
- * keep the exact design of the preview.
+ * JPEG data-url per A4 page, preserving the exact design of the preview.
  */
 export async function renderPageImages(node: HTMLElement): Promise<string[]> {
   const wrap = document.createElement("div");
