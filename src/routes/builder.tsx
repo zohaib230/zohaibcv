@@ -58,9 +58,9 @@ import {
   fullName,
   generateProfile,
   normalizeCV,
+  TEMPLATES,
   uid,
   type CVData,
-  type TemplateId,
 } from "@/lib/cv";
 
 
