@@ -1156,6 +1156,20 @@ function StepFinish({
         The PDF is a true A4 page with all colours and fonts included — ready to email or print.
 
       </p>
+
+      <ThankYouDialog
+        open={thanks}
+        name={fullName(data)}
+        onSave={async () => {
+          setThanks(false);
+          await onSave();
+        }}
+        onReset={() => {
+          setThanks(false);
+          onReset();
+          toast.success("All details cleared — you can start a fresh CV");
+        }}
+      />
     </Card>
   );
 }
