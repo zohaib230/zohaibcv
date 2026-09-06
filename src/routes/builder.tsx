@@ -155,6 +155,40 @@ function App() {
   const set = <K extends keyof CVData>(key: K, value: CVData[K]) =>
     setData((d) => ({ ...d, [key]: value }));
 
+  /** Clears every answer and starts a brand-new blank CV. */
+  const clearEverything = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setData(emptyCV);
+    setAutoProfile(false);
+    setStep(0);
+  };
+
+  /** Saves the finished CV (cloud when signed in, on this device otherwise) then clears it. */
+  const saveAndClear = async (finished: CVData) => {
+    const title = `${fullName(finished)} — ${finished.template}`;
+    if (user) {
+      const { error } = await supabase
+        .from("cvs")
+        .insert({ user_id: user.id, title, data: finished as unknown as never });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("CV saved to your account");
+    } else {
+      try {
+        const list = JSON.parse(localStorage.getItem(SAVED_KEY) ?? "[]") as unknown[];
+        list.unshift({ id: uid(), title, updated_at: new Date().toISOString(), data: finished });
+        localStorage.setItem(SAVED_KEY, JSON.stringify(list.slice(0, 20)));
+        toast.success("CV saved on this device");
+      } catch {
+        toast.error("Could not save the CV");
+        return;
+      }
+    }
+    clearEverything();
+  };
+
   // Feature: local auto-save so nothing is lost on refresh
   useEffect(() => {
     const raw = localStorage.getItem(DRAFT_KEY);
