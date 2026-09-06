@@ -1050,8 +1050,21 @@ function StepSkills({ data, set }: { data: CVData; set: SetFn }) {
   );
 }
 
-function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score: number }) {
+function StepFinish({
+  data,
+  tips,
+  score,
+  onSave,
+  onReset,
+}: {
+  data: CVData;
+  tips: string[];
+  score: number;
+  onSave: () => void | Promise<void>;
+  onReset: () => void;
+}) {
   const [busy, setBusy] = useState(false);
+  const [thanks, setThanks] = useState(false);
 
   const exportHtml = () => {
     const node = document.getElementById("cv-root");
