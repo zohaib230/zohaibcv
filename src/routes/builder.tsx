@@ -1237,6 +1237,14 @@ function SavedCVsDialog({
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState<{ id: string; title: string; updated_at: string; data: unknown }[]>([]);
 
+  const loadLocal = () => {
+    try {
+      setRows(JSON.parse(localStorage.getItem(SAVED_KEY) ?? "[]"));
+    } catch {
+      setRows([]);
+    }
+  };
+
   const load = async () => {
     const { data: list, error } = await supabase
       .from("cvs")
@@ -1250,7 +1258,9 @@ function SavedCVsDialog({
   };
 
   useEffect(() => {
-    if (open && user) void load();
+    if (!open) return;
+    if (user) void load();
+    else loadLocal();
   }, [open, user]);
 
   const save = async () => {
@@ -1289,12 +1299,52 @@ function SavedCVsDialog({
           <DialogTitle>My saved CVs</DialogTitle>
         </DialogHeader>
         {!user ? (
-          <p className="text-sm text-muted-foreground">
-            <Link to="/auth" className="underline">
-              Sign in
-            </Link>{" "}
-            to save your CVs in the cloud and open them from any device.
-          </p>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              These CVs are saved on this device.{" "}
+              <Link to="/auth" className="underline">
+                Sign in
+              </Link>{" "}
+              to keep them in the cloud and open them anywhere.
+            </p>
+            <div className="max-h-72 space-y-2 overflow-auto">
+              {rows.length === 0 && <p className="text-sm text-muted-foreground">No saved CVs yet.</p>}
+              {rows.map((r) => (
+                <div key={r.id} className="flex items-center justify-between gap-2 rounded-lg border border-border p-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium">{r.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(r.updated_at).toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        onLoad(normalizeCV(r.data));
+                        setOpen(false);
+                        toast.success("CV loaded");
+                      }}
+                    >
+                      Open
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const left = rows.filter((x) => x.id !== r.id);
+                        setRows(left);
+                        localStorage.setItem(SAVED_KEY, JSON.stringify(left));
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
           <div className="space-y-3">
             <Button onClick={save} className="w-full">
