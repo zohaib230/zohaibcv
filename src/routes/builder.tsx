@@ -1084,6 +1084,7 @@ function StepFinish({
         toast.success("PDF downloaded — now attach it in WhatsApp");
         window.open(whatsappShareUrl(text), "_blank", "noreferrer");
       }
+      setThanks(true);
     } catch {
       toast.error("Share failed — try downloading the PDF instead");
     } finally {
@@ -1100,6 +1101,7 @@ function StepFinish({
     try {
       await downloadPdf(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.pdf`);
       toast.success("PDF downloaded");
+      setThanks(true);
     } catch {
       toast.error("PDF could not be created — try again");
     } finally {
