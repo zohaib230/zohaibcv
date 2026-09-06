@@ -11,6 +11,7 @@ import {
   FolderOpen,
   LogOut,
   Plus,
+  RefreshCcw,
   Share2,
   Sparkles,
   Trash2,
@@ -36,6 +37,7 @@ import { OptionChips } from "@/components/cv/OptionChips";
 import { CVPreview } from "@/components/cv/CVPreview";
 import { CityInput } from "@/components/cv/CityInput";
 import { PhrasePicker } from "@/components/cv/PhrasePicker";
+import founderPhoto from "@/assets/zohaib-hassan-shah.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
@@ -1171,6 +1173,55 @@ function StepFinish({
         }}
       />
     </Card>
+  );
+}
+
+/** Shown automatically once the CV has been downloaded. */
+function ThankYouDialog({
+  open,
+  name,
+  onSave,
+  onReset,
+}: {
+  open: boolean;
+  name: string;
+  onSave: () => void | Promise<void>;
+  onReset: () => void;
+}) {
+  return (
+    <Dialog open={open}>
+      <DialogContent className="max-w-md text-center [&>button]:hidden">
+        <DialogHeader>
+          <DialogTitle className="text-center">Thank you{name ? `, ${name.split(" ")[0]}` : ""}!</DialogTitle>
+        </DialogHeader>
+        <img
+          src={founderPhoto}
+          alt="Zohaib Hassan Shah, founder of ZM Technology"
+          className="mx-auto h-28 w-28 rounded-full border-4 border-brand object-cover"
+          loading="lazy"
+        />
+        <p className="text-sm text-muted-foreground">
+          Your CV has been downloaded successfully. Thank you for using CV Generator by Zohaib — it is
+          completely free, and I truly hope it helps you land the job you deserve. Best of luck with
+          your applications!
+        </p>
+        <p className="text-xs font-medium">
+          Zohaib Hassan Shah · Founder, ZM Technology
+        </p>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <Button onClick={() => void onSave()}>
+            <CloudUpload /> Save my CV
+          </Button>
+          <Button variant="outline" onClick={onReset}>
+            <RefreshCcw /> Reset everything
+          </Button>
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          Saving keeps a copy in “My CVs” and then clears this form. Reset simply deletes all details
+          without saving.
+        </p>
+      </DialogContent>
+    </Dialog>
   );
 }
 
