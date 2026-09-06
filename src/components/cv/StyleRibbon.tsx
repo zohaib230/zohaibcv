@@ -20,6 +20,7 @@ import {
   COLOR_PRESETS,
   FONT_LIST,
   STYLE_PRESETS,
+  TEMPLATES,
   defaultPage,
   defaultTypography,
   fontStack,
@@ -108,7 +109,7 @@ function Toggle({
 }
 
 export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
-  const [tab, setTab] = useState<"home" | "colours" | "layout">("home");
+  const [tab, setTab] = useState<"home" | "design" | "colours" | "layout">("home");
   const [part, setPart] = useState<TypoPart>("body");
   const [find, setFind] = useState("");
   const [replace, setReplace] = useState("");
@@ -177,6 +178,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
 
   const TABS = [
     { id: "home", label: "Home" },
+    { id: "design", label: "Design" },
     { id: "colours", label: "Colours" },
     { id: "layout", label: "Layout" },
   ] as const;
@@ -394,6 +396,34 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                 </Button>
               </Group>
             </>
+          )}
+
+          {tab === "design" && (
+            <Group label="Template — works with every style setting">
+              {TEMPLATES.map((tpl) => (
+                <button
+                  key={tpl.id}
+                  type="button"
+                  title={tpl.note}
+                  onClick={() => set("template", tpl.id)}
+                  className={`flex w-[86px] shrink-0 flex-col items-center gap-1 rounded-md border-2 p-1.5 text-[10px] transition-colors ${
+                    data.template === tpl.id
+                      ? "border-brand bg-brand/10"
+                      : "border-border bg-background hover:bg-secondary"
+                  }`}
+                >
+                  <span className="flex h-10 w-full overflow-hidden rounded border border-border">
+                    <span className="w-1/3" style={{ background: tpl.preview[0] }} />
+                    <span className="flex-1" style={{ background: tpl.preview[1] }}>
+                      <span className="mx-1 mt-1 block h-1 rounded" style={{ background: data.colors.accent }} />
+                      <span className="mx-1 mt-1 block h-[2px]" style={{ background: tpl.preview[2] }} />
+                      <span className="mx-1 mt-1 block h-[2px]" style={{ background: tpl.preview[2] }} />
+                    </span>
+                  </span>
+                  <span className="truncate">{tpl.name}</span>
+                </button>
+              ))}
+            </Group>
           )}
 
           {tab === "colours" && (

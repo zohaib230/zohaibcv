@@ -11,6 +11,7 @@ import {
   FolderOpen,
   LogOut,
   Plus,
+  RefreshCcw,
   Share2,
   Sparkles,
   Trash2,
@@ -36,6 +37,7 @@ import { OptionChips } from "@/components/cv/OptionChips";
 import { CVPreview } from "@/components/cv/CVPreview";
 import { CityInput } from "@/components/cv/CityInput";
 import { PhrasePicker } from "@/components/cv/PhrasePicker";
+import founderPhoto from "@/assets/zohaib-hassan-shah.png";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { downloadHtml } from "@/lib/export-html";
@@ -58,9 +60,9 @@ import {
   fullName,
   generateProfile,
   normalizeCV,
+  TEMPLATES,
   uid,
   type CVData,
-  type TemplateId,
 } from "@/lib/cv";
 
 
@@ -107,26 +109,7 @@ const EDU_FLAT_SET = new Set(EDU_PRESETS.flatMap((g) => g.items));
 
 const DRAFT_KEY = "cv-generator-draft";
 
-const TEMPLATES: { id: TemplateId; name: string; note: string; preview: string[] }[] = [
-  { id: "executive", name: "Executive", note: "Premium header + skill bars", preview: ["#1d2733", "#ffffff", "#C8A24A"] },
-  { id: "ats", name: "ATS Minimal", note: "Plain, no graphics — ATS safe", preview: ["#ffffff", "#ffffff", "#e2e5e9"] },
-  { id: "slate", name: "Slate Pro", note: "Clean corporate two-column", preview: ["#1d2733", "#f6f2ea", "#8a8f96"] },
-  { id: "elegant", name: "Elegant", note: "Centred serif, classy lines", preview: ["#ffffff", "#ffffff", "#c8a24a"] },
-
-  { id: "elevate", name: "Elevate", note: "Two-column with skill chips", preview: ["#ffffff", "#eceef1", "#8a8f96"] },
-
-  { id: "timeline", name: "Timeline", note: "Dark sidebar + timeline dots", preview: ["#1f2833", "#ffffff", "#6b7078"] },
-  { id: "navy", name: "Navy Pro", note: "Deep navy left panel", preview: ["#22313f", "#ffffff", "#cfe1ef"] },
-  { id: "peach", name: "Curved", note: "Curved header + skill bars", preview: ["#f1f1f1", "#ffffff", "#c9c9c9"] },
-  { id: "sidebar", name: "Bold Sidebar", note: "Round photo, big headings", preview: ["#26272b", "#ffffff", "#5a5a5a"] },
-  { id: "modern", name: "Modern Band", note: "Header band, clean grid", preview: ["#1b1c1f", "#f4f2ec", "#777777"] },
-  { id: "classic", name: "Classic Black", note: "Formal bio-data style", preview: ["#111111", "#ffffff", "#888888"] },
-  { id: "finance", name: "Finance Pro", note: "Boxed sections, banker style", preview: ["#12314a", "#ffffff", "#2E6B8A"] },
-  { id: "contactside", name: "Contact Side", note: "Right contact rail", preview: ["#ffffff", "#eef1f4", "#1d2733"] },
-  { id: "headline", name: "Headline", note: "Big name headline, wide bars", preview: ["#ffffff", "#1d2733", "#C8A24A"] },
-  { id: "monogram", name: "Monogram", note: "Initials badge, refined serif", preview: ["#ffffff", "#f4f2ec", "#8a6d3b"] },
-  { id: "grid", name: "Grid Cards", note: "Card grid for skills & info", preview: ["#f6f7f9", "#ffffff", "#2F6F4E"] },
-];
+const SAVED_KEY = "cv-generator-saved";
 
 const SAMPLE: Partial<CVData> = {
   firstName: "Ahmed",
@@ -173,6 +156,40 @@ function App() {
 
   const set = <K extends keyof CVData>(key: K, value: CVData[K]) =>
     setData((d) => ({ ...d, [key]: value }));
+
+  /** Clears every answer and starts a brand-new blank CV. */
+  const clearEverything = () => {
+    localStorage.removeItem(DRAFT_KEY);
+    setData(emptyCV);
+    setAutoProfile(false);
+    setStep(0);
+  };
+
+  /** Saves the finished CV (cloud when signed in, on this device otherwise) then clears it. */
+  const saveAndClear = async (finished: CVData) => {
+    const title = `${fullName(finished)} — ${finished.template}`;
+    if (user) {
+      const { error } = await supabase
+        .from("cvs")
+        .insert({ user_id: user.id, title, data: finished as unknown as never });
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      toast.success("CV saved to your account");
+    } else {
+      try {
+        const list = JSON.parse(localStorage.getItem(SAVED_KEY) ?? "[]") as unknown[];
+        list.unshift({ id: uid(), title, updated_at: new Date().toISOString(), data: finished });
+        localStorage.setItem(SAVED_KEY, JSON.stringify(list.slice(0, 20)));
+        toast.success("CV saved on this device");
+      } catch {
+        toast.error("Could not save the CV");
+        return;
+      }
+    }
+    clearEverything();
+  };
 
   // Feature: local auto-save so nothing is lost on refresh
   useEffect(() => {
@@ -307,7 +324,15 @@ function App() {
           {step === 6 && <StepEducation data={data} set={set} />}
           {step === 7 && <StepSkills data={data} set={set} />}
           {step === STYLE_STEP && <StepStyle />}
-          {step === FINISH_STEP && <StepFinish data={preview} tips={tips} score={score} />}
+          {step === FINISH_STEP && (
+            <StepFinish
+              data={preview}
+              tips={tips}
+              score={score}
+              onSave={() => saveAndClear(preview)}
+              onReset={clearEverything}
+            />
+          )}
 
           <div className="mt-8 hidden items-center justify-between gap-3 lg:flex">{nav}</div>
         </div>
@@ -1027,8 +1052,21 @@ function StepSkills({ data, set }: { data: CVData; set: SetFn }) {
   );
 }
 
-function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score: number }) {
+function StepFinish({
+  data,
+  tips,
+  score,
+  onSave,
+  onReset,
+}: {
+  data: CVData;
+  tips: string[];
+  score: number;
+  onSave: () => void | Promise<void>;
+  onReset: () => void;
+}) {
   const [busy, setBusy] = useState(false);
+  const [thanks, setThanks] = useState(false);
 
   const exportHtml = () => {
     const node = document.getElementById("cv-root");
@@ -1048,6 +1086,7 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
         toast.success("PDF downloaded — now attach it in WhatsApp");
         window.open(whatsappShareUrl(text), "_blank", "noreferrer");
       }
+      setThanks(true);
     } catch {
       toast.error("Share failed — try downloading the PDF instead");
     } finally {
@@ -1064,6 +1103,7 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
     try {
       await downloadPdf(node, `${fullName(data).replace(/\s+/g, "-") || "my"}-cv.pdf`);
       toast.success("PDF downloaded");
+      setThanks(true);
     } catch {
       toast.error("PDF could not be created — try again");
     } finally {
@@ -1118,7 +1158,70 @@ function StepFinish({ data, tips, score }: { data: CVData; tips: string[]; score
         The PDF is a true A4 page with all colours and fonts included — ready to email or print.
 
       </p>
+
+      <ThankYouDialog
+        open={thanks}
+        name={fullName(data)}
+        onSave={async () => {
+          setThanks(false);
+          await onSave();
+        }}
+        onReset={() => {
+          setThanks(false);
+          onReset();
+          toast.success("All details cleared — you can start a fresh CV");
+        }}
+      />
     </Card>
+  );
+}
+
+/** Shown automatically once the CV has been downloaded. */
+function ThankYouDialog({
+  open,
+  name,
+  onSave,
+  onReset,
+}: {
+  open: boolean;
+  name: string;
+  onSave: () => void | Promise<void>;
+  onReset: () => void;
+}) {
+  return (
+    <Dialog open={open}>
+      <DialogContent className="max-w-md text-center [&>button]:hidden">
+        <DialogHeader>
+          <DialogTitle className="text-center">Thank you{name ? `, ${name.split(" ")[0]}` : ""}!</DialogTitle>
+        </DialogHeader>
+        <img
+          src={founderPhoto}
+          alt="Zohaib Hassan Shah, founder of ZM Technology"
+          className="mx-auto h-28 w-28 rounded-full border-4 border-brand object-cover"
+          loading="lazy"
+        />
+        <p className="text-sm text-muted-foreground">
+          Your CV has been downloaded successfully. Thank you for using CV Generator by Zohaib — it is
+          completely free, and I truly hope it helps you land the job you deserve. Best of luck with
+          your applications!
+        </p>
+        <p className="text-xs font-medium">
+          Zohaib Hassan Shah · Founder, ZM Technology
+        </p>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <Button onClick={() => void onSave()}>
+            <CloudUpload /> Save my CV
+          </Button>
+          <Button variant="outline" onClick={onReset}>
+            <RefreshCcw /> Reset everything
+          </Button>
+        </div>
+        <p className="text-[11px] text-muted-foreground">
+          Saving keeps a copy in “My CVs” and then clears this form. Reset simply deletes all details
+          without saving.
+        </p>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -1134,6 +1237,14 @@ function SavedCVsDialog({
   const [open, setOpen] = useState(false);
   const [rows, setRows] = useState<{ id: string; title: string; updated_at: string; data: unknown }[]>([]);
 
+  const loadLocal = () => {
+    try {
+      setRows(JSON.parse(localStorage.getItem(SAVED_KEY) ?? "[]"));
+    } catch {
+      setRows([]);
+    }
+  };
+
   const load = async () => {
     const { data: list, error } = await supabase
       .from("cvs")
@@ -1147,7 +1258,9 @@ function SavedCVsDialog({
   };
 
   useEffect(() => {
-    if (open && user) void load();
+    if (!open) return;
+    if (user) void load();
+    else loadLocal();
   }, [open, user]);
 
   const save = async () => {
@@ -1186,12 +1299,52 @@ function SavedCVsDialog({
           <DialogTitle>My saved CVs</DialogTitle>
         </DialogHeader>
         {!user ? (
-          <p className="text-sm text-muted-foreground">
-            <Link to="/auth" className="underline">
-              Sign in
-            </Link>{" "}
-            to save your CVs in the cloud and open them from any device.
-          </p>
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground">
+              These CVs are saved on this device.{" "}
+              <Link to="/auth" className="underline">
+                Sign in
+              </Link>{" "}
+              to keep them in the cloud and open them anywhere.
+            </p>
+            <div className="max-h-72 space-y-2 overflow-auto">
+              {rows.length === 0 && <p className="text-sm text-muted-foreground">No saved CVs yet.</p>}
+              {rows.map((r) => (
+                <div key={r.id} className="flex items-center justify-between gap-2 rounded-lg border border-border p-3">
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium">{r.title}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {new Date(r.updated_at).toLocaleString()}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 gap-1">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        onLoad(normalizeCV(r.data));
+                        setOpen(false);
+                        toast.success("CV loaded");
+                      }}
+                    >
+                      Open
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        const left = rows.filter((x) => x.id !== r.id);
+                        setRows(left);
+                        localStorage.setItem(SAVED_KEY, JSON.stringify(left));
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
           <div className="space-y-3">
             <Button onClick={save} className="w-full">

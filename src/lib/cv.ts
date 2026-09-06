@@ -472,3 +472,23 @@ export const FONTS = {
   sans: { label: "Modern Sans", stack: '"Manrope", sans-serif' },
 } as const;
 export type FontId = keyof typeof FONTS;
+
+/** Every design the builder and the style ribbon can offer. */
+export const TEMPLATES: { id: TemplateId; name: string; note: string; preview: string[] }[] = [
+  { id: "executive", name: "Executive", note: "Premium header + skill bars", preview: ["#1d2733", "#ffffff", "#C8A24A"] },
+  { id: "ats", name: "ATS Minimal", note: "Plain, no graphics — ATS safe", preview: ["#ffffff", "#ffffff", "#e2e5e9"] },
+  { id: "slate", name: "Slate Pro", note: "Clean corporate two-column", preview: ["#1d2733", "#f6f2ea", "#8a8f96"] },
+  { id: "elegant", name: "Elegant", note: "Centred serif, classy lines", preview: ["#ffffff", "#ffffff", "#c8a24a"] },
+  { id: "elevate", name: "Elevate", note: "Two-column with skill chips", preview: ["#ffffff", "#eceef1", "#8a8f96"] },
+  { id: "timeline", name: "Timeline", note: "Dark sidebar + timeline dots", preview: ["#1f2833", "#ffffff", "#6b7078"] },
+  { id: "navy", name: "Navy Pro", note: "Deep navy left panel", preview: ["#22313f", "#ffffff", "#cfe1ef"] },
+  { id: "peach", name: "Curved", note: "Curved header + skill bars", preview: ["#f1f1f1", "#ffffff", "#c9c9c9"] },
+  { id: "sidebar", name: "Bold Sidebar", note: "Round photo, big headings", preview: ["#26272b", "#ffffff", "#5a5a5a"] },
+  { id: "modern", name: "Modern Band", note: "Header band, clean grid", preview: ["#1b1c1f", "#f4f2ec", "#777777"] },
+  { id: "classic", name: "Classic Black", note: "Formal bio-data style", preview: ["#111111", "#ffffff", "#888888"] },
+  { id: "finance", name: "Finance Pro", note: "Boxed sections, banker style", preview: ["#12314a", "#ffffff", "#2E6B8A"] },
+  { id: "contactside", name: "Contact Side", note: "Right contact rail", preview: ["#ffffff", "#eef1f4", "#1d2733"] },
+  { id: "headline", name: "Headline", note: "Big name headline, wide bars", preview: ["#ffffff", "#1d2733", "#C8A24A"] },
+  { id: "monogram", name: "Monogram", note: "Initials badge, refined serif", preview: ["#ffffff", "#f4f2ec", "#8a6d3b"] },
+  { id: "grid", name: "Grid Cards", note: "Card grid for skills & info", preview: ["#f6f7f9", "#ffffff", "#2F6F4E"] },
+];
