@@ -322,7 +322,15 @@ function App() {
           {step === 6 && <StepEducation data={data} set={set} />}
           {step === 7 && <StepSkills data={data} set={set} />}
           {step === STYLE_STEP && <StepStyle />}
-          {step === FINISH_STEP && <StepFinish data={preview} tips={tips} score={score} />}
+          {step === FINISH_STEP && (
+            <StepFinish
+              data={preview}
+              tips={tips}
+              score={score}
+              onSave={() => saveAndClear(preview)}
+              onReset={clearEverything}
+            />
+          )}
 
           <div className="mt-8 hidden items-center justify-between gap-3 lg:flex">{nav}</div>
         </div>
