@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ScaledPreview } from "@/components/cv/ScaledPreview";
 import founderImg from "@/assets/zohaib-hassan-shah.png";
+import { InstallAppButton } from "@/components/InstallAppButton";
 import { emptyCV, normalizeCV, uid, type CVData, type TemplateId } from "@/lib/cv";
 
 export const Route = createFileRoute("/")({
@@ -144,6 +145,7 @@ function Landing() {
             <a href="#founder" className="hover:text-foreground">About</a>
           </nav>
           <div className="flex items-center gap-2">
+            <InstallAppButton />
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link to="/auth">Sign in</Link>
             </Button>
