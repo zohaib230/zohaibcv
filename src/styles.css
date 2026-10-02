@@ -323,3 +323,53 @@
   }
 }
 
+
+/* Five editable A4 designs adapted from uploaded CV references. */
+.reference-page { display: flex; flex-direction: column; font-family: var(--ff-body); }
+.reference-page .reference-section { margin-bottom: calc(var(--sec-gap) * var(--fill)); break-inside: avoid; }
+.reference-page .reference-heading { padding-bottom: 4px; margin-bottom: 6px; border-bottom: 1px solid var(--c-divider); font-weight: 800; }
+.reference-page .reference-list { margin-top: 4px; columns: 2; column-gap: 20px; }
+.reference-page .reference-list li { break-inside: avoid; }
+.reference-page .reference-contact { display: grid; gap: 5px; overflow-wrap: anywhere; }
+.reference-page .reference-item { break-inside: avoid; }
+.reference-page .reference-date { color: var(--c-muted); }
+.reference-page .reference-main { flex: 1; min-width: 0; padding: 30px 34px; }
+.reference-page .reference-columns { display: flex; flex: 1; min-height: 0; }
+.reference-page .reference-columns > * { min-width: 0; }
+.reference-page .reference-banner { display: flex; align-items: center; gap: 24px; background: var(--c-header-bg); color: var(--c-header-text); padding: 28px 38px; }
+.reference-page .reference-banner .cv-name, .reference-page .reference-banner .cv-role, .reference-page .reference-banner .cv-small { color: var(--c-header-text); }
+.reference-page .reference-footer { height: 22px; background: var(--c-accent); margin-top: auto; }
+.reference-02 { flex-direction: row; }
+.reference-02 .reference-rail { width: 33%; flex-shrink: 0; background: var(--c-side-bg); color: var(--c-side-text); }
+.reference-02 .reference-02-name { padding: 34px 28px 22px; }
+.reference-02 .reference-02-name .cv-name { font-size: calc(24px * var(--fill)); line-height: 1.05; color: var(--c-side-text); }
+.reference-02 .reference-02-name em { color: var(--c-accent); font-style: normal; }
+.reference-02 .reference-02-name .cv-role { color: var(--c-side-text); margin-top: 7px; }
+.reference-02 .reference-rail > div:nth-child(2) { max-width: 100%; }
+.reference-02 .reference-rail-body { padding: 26px 28px; }
+.reference-02 .reference-rail .reference-heading, .reference-0005 .reference-rail .reference-heading { color: var(--c-side-heading); border-color: var(--c-side-heading); }
+.reference-02 .reference-rail .cv-small, .reference-0005 .reference-rail .cv-small, .reference-0005 .reference-rail .cv-body { color: var(--c-side-text); }
+.reference-03 .reference-banner { min-height: 142px; background: var(--c-accent); }
+.reference-03 .reference-banner-name { flex: 1; min-width: 0; text-transform: uppercase; }
+.reference-03 .reference-banner .reference-contact { width: 34%; }
+.reference-03 .reference-main { padding: 30px 44px; }
+.reference-03 .reference-footer { height: 12px; }
+.reference-05 .reference-banner { min-height: 112px; padding: 16px 38px; }
+.reference-05 .reference-05-contact { padding: 12px 42px; border-bottom: 1px solid var(--c-divider); }
+.reference-05 .reference-05-contact .reference-contact { display: flex; flex-wrap: wrap; gap: 10px 28px; }
+.reference-05 .reference-main { padding: 25px 42px; }
+.reference-05 .reference-columns > :first-child { width: 60%; padding-right: 22px; }
+.reference-05 .reference-columns > :last-child { width: 40%; padding-left: 22px; border-left: 1px solid var(--c-divider); }
+.reference-0005 { border-top: 30px solid var(--c-accent); }
+.reference-0005 .reference-banner { justify-content: space-between; min-height: 130px; }
+.reference-0005 .reference-banner .reference-contact { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 10px; }
+.reference-0005 .reference-rail { width: 34%; background: var(--c-accent); color: var(--c-side-text); padding: 30px 25px; }
+.reference-0005 .reference-main { padding: 30px 30px; }
+.reference-0005 .reference-list { columns: 1; }
+.reference-photo .reference-photo-top { width: 34%; height: 32px; background: var(--c-accent); }
+.reference-photo .reference-rail { width: 34%; padding: 30px 28px; }
+.reference-photo .reference-rail .cv-name { text-transform: uppercase; font-size: calc(25px * var(--fill)); overflow-wrap: anywhere; }
+.reference-photo .reference-rail .cv-role { margin: 6px 0 20px; }
+.reference-photo .reference-rail > div:nth-of-type(1) { margin: 0 auto 28px; }
+.reference-photo .reference-main { padding: 30px 30px 30px 8px; }
+.reference-photo .reference-footer { height: 28px; width: 60%; margin-left: auto; }

@@ -1,0 +1,96 @@
+import type { CVData } from "@/lib/cv";
+import { fullName } from "@/lib/cv";
+import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+
+type ReferenceDesign = "reference02" | "reference03" | "reference05" | "reference0005" | "referencephoto";
+
+function Heading({ children }: { children: React.ReactNode }) {
+  return <h2 className="cv-h reference-heading">{children}</h2>;
+}
+
+function List({ items }: { items: string[] }) {
+  return items.length > 0 ? <ul className="cv-bullets cv-body reference-list">{items.map((item, i) => <li key={`${item}-${i}`}>{item}</li>)}</ul> : null;
+}
+
+function Contact({ data, labels = false }: { data: CVData; labels?: boolean }) {
+  return <div className="cv-small reference-contact">{contactRows(data).map(([key, value]) => <div key={key}>{labels && <strong>{key}: </strong>}{value}</div>)}</div>;
+}
+
+function Experience({ data }: { data: CVData }) {
+  return <section className="reference-section"><Heading>{data.template === "reference0005" ? "Work history" : "Experience"}</Heading>
+    {data.isFresher || !data.experience.length ? <p className="cv-body">{fresherLine}</p> :
+      <div className="cv-stack">{data.experience.map(e => <div key={e.id} className="reference-item">
+        <div className="cv-small reference-date">{e.duration}</div>
+        <div className="cv-sub">{e.role}</div>
+        <div className="cv-small">{e.company}</div>
+        {e.details && <List items={bullets(e.details)} />}
+      </div>)}</div>}
+  </section>;
+}
+
+function Education({ data }: { data: CVData }) {
+  return data.education.length > 0 && <section className="reference-section"><Heading>Education</Heading><div className="cv-stack">{data.education.map(e => <div key={e.id}><div className="cv-sub">{e.degree}</div><div className="cv-small">{[e.institute, e.year].filter(Boolean).join(" · ")}</div></div>)}</div></section>;
+}
+
+function Extras({ data }: { data: CVData }) {
+  return <>
+    {data.certificates.length > 0 && <section className="reference-section"><Heading>Certifications</Heading><List items={data.certificates} /></section>}
+    {data.achievements.length > 0 && <section className="reference-section"><Heading>Achievements</Heading><List items={data.achievements} /></section>}
+    {data.projects.length > 0 && <section className="reference-section"><Heading>Projects</Heading><List items={data.projects} /></section>}
+    {data.volunteer.length > 0 && <section className="reference-section"><Heading>Volunteer experience</Heading><List items={data.volunteer} /></section>}
+  </>;
+}
+
+function Personal({ data }: { data: CVData }) {
+  const rows = personalRows(data);
+  return rows.length > 0 && <section className="reference-section"><Heading>Personal details</Heading><div className="cv-small reference-contact">{rows.map(([key, value]) => <div key={key}><strong>{key}: </strong>{value}</div>)}</div></section>;
+}
+
+function Summary({ data }: { data: CVData }) {
+  return data.profile && <section className="reference-section"><Heading>Summary</Heading><p className="cv-body">{data.profile}</p></section>;
+}
+
+function Skills({ data, title = "Skill Highlights" }: { data: CVData; title?: string }) {
+  return (data.skills.length > 0 || data.softSkills.length > 0) && <section className="reference-section"><Heading>{title}</Heading><List items={[...data.skills, ...data.softSkills]} /></section>;
+}
+
+function Languages({ data }: { data: CVData }) {
+  return data.languages.length > 0 && <section className="reference-section"><Heading>Languages</Heading><div className="cv-small reference-contact">{data.languages.map(l => <div key={l}>{l}</div>)}</div></section>;
+}
+
+function Interests({ data }: { data: CVData }) {
+  return data.interests.length > 0 && <section className="reference-section"><Heading>Interests</Heading><List items={data.interests} /></section>;
+}
+
+/** Five editable layouts recreated from the uploaded A4 references. */
+export function TemplateReferences({ data, design }: { data: CVData; design: ReferenceDesign }) {
+  if (design === "reference02") return <div className="cv-page reference-page reference-02">
+    <aside className="reference-rail">
+      <div className="reference-02-name"><h1 className="cv-name">{data.firstName}<br /><em>{data.lastName}</em></h1><div className="cv-role">{data.jobTitle}</div></div>
+      {data.withPhoto && <Photo d={data} w={245} h={170} />}
+      <div className="reference-rail-body"><section className="reference-section"><Heading>Contact</Heading><Contact data={data} labels /></section><Personal data={data} /><Languages data={data} /><Interests data={data} /></div>
+    </aside>
+    <main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Extras data={data} /></main>
+  </div>;
+
+  if (design === "reference03") return <div className="cv-page reference-page reference-03">
+    <header className="reference-banner"><div className="reference-banner-name"><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div></div><Contact data={data} labels />{data.withPhoto && <Photo d={data} w={92} h={92} />}</header>
+    <main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Languages data={data} /><Extras data={data} /><Personal data={data} /></main>
+    <div className="reference-footer" />
+  </div>;
+
+  if (design === "reference05") return <div className="cv-page reference-page reference-05">
+    <header className="reference-banner">{data.withPhoto && <Photo d={data} w={112} h={112} />}<div><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div></div></header>
+    <div className="reference-05-contact"><Contact data={data} /></div>
+    <main className="reference-main"><Summary data={data} /><div className="reference-columns"><div><Experience data={data} /><Extras data={data} /></div><div><Skills data={data} title="Highlights" /><Education data={data} /><Languages data={data} /><Interests data={data} /><Personal data={data} /></div></div></main>
+  </div>;
+
+  if (design === "reference0005") return <div className="cv-page reference-page reference-0005">
+    <header className="reference-banner"><div><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div><Contact data={data} /></div>{data.withPhoto && <Photo d={data} w={100} h={100} />}</header>
+    <div className="reference-columns"><aside className="reference-rail"><Summary data={data} /><Skills data={data} title="Skills" /><Languages data={data} /><Personal data={data} /></aside><main className="reference-main"><Experience data={data} /><Education data={data} /><Extras data={data} /><Interests data={data} /></main></div>
+  </div>;
+
+  return <div className="cv-page reference-page reference-photo">
+    <div className="reference-photo-top" /><div className="reference-columns"><aside className="reference-rail"><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div>{data.withPhoto && <Photo d={data} w={190} h={190} />}<section className="reference-section"><Heading>Contact</Heading><Contact data={data} labels /></section><Languages data={data} /><Personal data={data} /><Interests data={data} /></aside><main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Extras data={data} /></main></div><div className="reference-footer" />
+  </div>;
+}
