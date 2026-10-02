@@ -1,5 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
+import { Photo } from "./parts";
 
 const Block = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <section className="mb-5">
@@ -14,22 +15,11 @@ const Block = ({ title, children }: { title: string; children: React.ReactNode }
 );
 
 export function TemplateModern({ data }: { data: CVData }) {
-  const initials = `${data.firstName?.[0] ?? ""}${data.lastName?.[0] ?? ""}`.toUpperCase();
   return (
     <div className="cv-page flex flex-col text-[length:calc(11px*var(--fs))]">
       {/* Header band */}
       <header className="flex items-center gap-6 border-b-[6px] border-[var(--cv-accent)] bg-[#1b1c1f] px-10 py-7 text-white">
-        {data.withPhoto && (
-          <div className="h-[110px] w-[110px] shrink-0 overflow-hidden rounded-sm border-2 border-[var(--cv-accent)] bg-[#2b2c30]">
-            {data.photo ? (
-              <img src={data.photo} alt={fullName(data)} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center font-display text-[length:calc(34px*var(--fs))] text-[var(--cv-accent)]">
-                {initials}
-              </div>
-            )}
-          </div>
-        )}
+        <Photo d={data} w={110} h={110} ring="var(--cv-accent)" />
         <div className="min-w-0">
           <h1 className="font-display text-[length:calc(38px*var(--fs))] font-bold uppercase leading-none tracking-wide">
             {fullName(data)}

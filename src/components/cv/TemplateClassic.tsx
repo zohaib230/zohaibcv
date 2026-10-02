@@ -1,5 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
+import { Photo } from "./parts";
 
 const H = ({ children }: { children: React.ReactNode }) => (
   <h2 className="mb-2 text-center font-display text-[length:calc(20px*var(--fs))] font-bold uppercase tracking-wide text-[#111]">
@@ -24,13 +25,7 @@ export function TemplateClassic({ data }: { data: CVData }) {
       </h1>
 
       <div className="mt-4 flex gap-5 bg-[#111] p-5 text-white">
-        {data.withPhoto && data.photo && (
-          <img
-            src={data.photo}
-            alt={fullName(data)}
-            className="h-[105px] w-[95px] shrink-0 object-cover"
-          />
-        )}
+        <Photo d={data} w={95} h={105} />
         <div>
           <div className="font-display text-[length:calc(16px*var(--fs))] font-bold uppercase tracking-wide">Profile</div>
           <p className="mt-1 text-[length:calc(10.5px*var(--fs))] leading-relaxed">{data.profile}</p>

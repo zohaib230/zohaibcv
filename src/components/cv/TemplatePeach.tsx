@@ -1,5 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
+import { Photo } from "./parts";
 
 const Head = ({ children }: { children: React.ReactNode }) => (
   <h2 className="mb-1.5 font-display text-[length:calc(19px*var(--fs))] font-bold text-[#2b2b2b]">{children}</h2>
@@ -18,11 +19,7 @@ export function TemplatePeach({ data }: { data: CVData }) {
   return (
     <div className="cv-page flex flex-col bg-white px-8 py-8 text-[length:calc(11px*var(--fs))] text-[#3b3b3b]">
       <header className="relative mb-6 flex items-center gap-5">
-        {data.withPhoto && (
-          <div className="z-10 h-[110px] w-[110px] shrink-0 overflow-hidden rounded-full border-4 border-white bg-[#eee] shadow">
-            {data.photo && <img src={data.photo} alt={fullName(data)} className="h-full w-full object-cover" />}
-          </div>
-        )}
+        <Photo d={data} w={110} h={110} ring="var(--c-page)" />
         <div
           className="flex-1 rounded-l-[40px] rounded-r-[14px] px-8 py-5 text-[#2b2b2b]"
           style={{ background: "var(--cv-accent)" }}

@@ -20,7 +20,7 @@ export function TemplateMonogram({ data }: { data: CVData }) {
       <div className="cv-pad flex-1 flex flex-col" style={{ minWidth: 0 }}>
         <header className="flex items-center" style={{ gap: px(16) }}>
           {data.withPhoto ? (
-            <Photo d={data} w={96} round ring="var(--c-accent)" />
+            <Photo d={data} w={96} h={96} ring="var(--c-accent)" />
           ) : (
             <div
               className="cv-name flex items-center justify-center"

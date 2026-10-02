@@ -73,12 +73,12 @@ export const Route = createFileRoute("/builder")({
       {
         name: "description",
         content:
-          "Guided CV builder: pick from 16 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF.",
+          "Guided CV builder: pick from 21 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF.",
       },
       { property: "og:title", content: "CV Builder — CV Generator by Zohaib" },
       {
         property: "og:description",
-        content: "16 professional CV designs, guided questions, PDF download.",
+        content: "21 professional CV designs, guided questions, PDF download.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -369,7 +369,7 @@ function Splash({ onStart }: { onStart: () => void }) {
       </h1>
       <p className="mt-3 font-display text-2xl uppercase tracking-[0.3em] text-brand">by Zohaib</p>
       <p className="mt-6 max-w-md text-sm text-ink-foreground/70">
-        Pick one of 16 professional designs, answer simple questions with ready-made options, choose
+        Pick one of 21 professional designs, answer simple questions with ready-made options, choose
         your fonts and colours — then download your full-page CV as PDF or HTML.
       </p>
       <Button size="lg" className="mt-8 bg-brand text-brand-foreground hover:bg-brand/90" onClick={onStart}>
@@ -527,8 +527,8 @@ function StepPhoto({ data, set }: { data: CVData; set: SetFn }) {
 
       {data.withPhoto && (
         <div className="flex items-center gap-4 rounded-lg border border-border p-4">
-          <div className="h-20 w-20 shrink-0 overflow-hidden rounded-full bg-secondary">
-            {data.photo && <img src={data.photo} alt="Selected" className="h-full w-full object-cover" />}
+          <div className={`h-20 w-20 shrink-0 overflow-hidden bg-secondary ${data.photoShape === "circle" ? "rounded-full" : data.photoShape === "rounded" ? "rounded-lg" : "rounded-none"}`}>
+            {data.photo && <img src={data.photo} alt="Selected" className="h-full w-full object-cover" style={{ objectPosition: `${data.photoX}% ${data.photoY}%`, transform: `scale(${data.photoZoom})`, transformOrigin: `${data.photoX}% ${data.photoY}%` }} />}
           </div>
           <div>
             <input

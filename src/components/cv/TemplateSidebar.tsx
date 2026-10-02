@@ -1,5 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
+import { Photo } from "./parts";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-4">
@@ -31,11 +32,7 @@ export function TemplateSidebar({ data }: { data: CVData }) {
       <aside className="w-[38%] bg-[#26272b] px-6 pb-8 text-white">
         {data.withPhoto && (
           <div className="-mx-6 mb-5 bg-[var(--cv-accent)] px-6 pb-8 pt-7">
-            <div className="mx-auto h-[135px] w-[135px] overflow-hidden rounded-full border-4 border-white/90 bg-[#26272b]">
-              {data.photo ? (
-                <img src={data.photo} alt={fullName(data)} className="h-full w-full object-cover" />
-              ) : null}
-            </div>
+            <div className="mx-auto w-fit"><Photo d={data} w={135} h={135} ring="var(--c-page)" /></div>
           </div>
         )}
         <h1 className="mt-2 text-center font-display text-[length:calc(26px*var(--fs))] font-bold uppercase leading-tight">

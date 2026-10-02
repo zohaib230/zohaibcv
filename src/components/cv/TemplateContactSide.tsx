@@ -44,7 +44,7 @@ export function TemplateContactSide({ data }: { data: CVData }) {
       >
         {data.withPhoto && (
           <div style={{ marginBottom: px(14) }}>
-            <Photo d={data} w={110} round ring="var(--c-accent)" />
+            <Photo d={data} w={110} h={110} ring="var(--c-accent)" />
           </div>
         )}
 

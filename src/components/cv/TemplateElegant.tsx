@@ -24,7 +24,7 @@ export function TemplateElegant({ data }: { data: CVData }) {
       <header className="flex flex-col items-center" style={{ textAlign: "center" }}>
         {data.withPhoto && (
           <div style={{ marginBottom: px(10) }}>
-            <Photo d={data} w={96} round ring="var(--c-accent)" />
+            <Photo d={data} w={96} h={96} ring="var(--c-accent)" />
           </div>
         )}
         <h1 className="cv-name" style={{ letterSpacing: "0.06em" }}>
