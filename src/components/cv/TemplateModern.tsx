@@ -15,7 +15,6 @@ const Block = ({ title, children }: { title: string; children: React.ReactNode }
 );
 
 export function TemplateModern({ data }: { data: CVData }) {
-  const initials = `${data.firstName?.[0] ?? ""}${data.lastName?.[0] ?? ""}`.toUpperCase();
   return (
     <div className="cv-page flex flex-col text-[length:calc(11px*var(--fs))]">
       {/* Header band */}

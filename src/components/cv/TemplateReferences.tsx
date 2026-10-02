@@ -67,7 +67,7 @@ export function TemplateReferences({ data, design }: { data: CVData; design: Ref
   if (design === "reference02") return <div className="cv-page reference-page reference-02">
     <aside className="reference-rail">
       <div className="reference-02-name"><h1 className="cv-name">{data.firstName}<br /><em>{data.lastName}</em></h1><div className="cv-role">{data.jobTitle}</div></div>
-      {data.withPhoto && <Photo d={data} w={245} h={170} />}
+      {data.withPhoto && <Photo d={data} w={200} h={170} />}
       <div className="reference-rail-body"><section className="reference-section"><Heading>Contact</Heading><Contact data={data} labels /></section><Personal data={data} /><Languages data={data} /><Interests data={data} /></div>
     </aside>
     <main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Extras data={data} /></main>

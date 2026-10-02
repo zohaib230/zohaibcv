@@ -345,7 +345,7 @@
 .reference-02 .reference-02-name .cv-name { font-size: calc(24px * var(--fill)); line-height: 1.05; color: var(--c-side-text); }
 .reference-02 .reference-02-name em { color: var(--c-accent); font-style: normal; }
 .reference-02 .reference-02-name .cv-role { color: var(--c-side-text); margin-top: 7px; }
-.reference-02 .reference-rail > div:nth-child(2) { max-width: 100%; }
+.reference-02 .reference-rail > div:nth-child(2) { max-width: 100%; margin: 0 auto; }
 .reference-02 .reference-rail-body { padding: 26px 28px; }
 .reference-02 .reference-rail .reference-heading, .reference-0005 .reference-rail .reference-heading { color: var(--c-side-heading); border-color: var(--c-side-heading); }
 .reference-02 .reference-rail .cv-small, .reference-0005 .reference-rail .cv-small, .reference-0005 .reference-rail .cv-body { color: var(--c-side-text); }
