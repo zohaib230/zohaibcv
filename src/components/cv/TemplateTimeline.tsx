@@ -1,5 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
+import { Photo } from "./parts";
 
 const SideTitle = ({ children }: { children: React.ReactNode }) => (
   <h3 className="mb-2 mt-5 font-display text-[length:calc(15px*var(--fs))] font-bold uppercase tracking-[0.14em] text-white">
@@ -17,14 +18,7 @@ export function TemplateTimeline({ data }: { data: CVData }) {
   return (
     <div className="cv-page flex text-[length:calc(11px*var(--fs))] text-[#3b3f45]">
       <aside className="flex w-[34%] flex-col bg-[#1f2833] px-6 pb-8 pt-8 text-white">
-        {data.withPhoto && (
-          <div
-            className="mx-auto mb-4 h-[120px] w-[120px] overflow-hidden rounded-full border-[3px]"
-            style={{ borderColor: "var(--cv-accent)" }}
-          >
-            {data.photo && <img src={data.photo} alt={fullName(data)} className="h-full w-full object-cover" />}
-          </div>
-        )}
+        {data.withPhoto && <div className="mx-auto mb-4"><Photo d={data} w={120} h={120} ring="var(--cv-accent)" /></div>}
         <h1 className="text-center font-display text-[length:calc(24px*var(--fs))] font-bold uppercase leading-tight">
           {fullName(data)}
         </h1>

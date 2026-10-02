@@ -29,7 +29,7 @@ export function TemplateGrid({ data }: { data: CVData }) {
         className="cv-pad-sm flex items-center"
         style={{ gap: px(16), background: "var(--c-header-bg)", color: "var(--c-header-text)" }}
       >
-        {data.withPhoto && <Photo d={data} w={92} round ring="var(--c-header-text)" />}
+        {data.withPhoto && <Photo d={data} w={92} h={92} ring="var(--c-header-text)" />}
         <div style={{ flex: 1, minWidth: 0 }}>
           <h1 className="cv-name" style={{ color: "var(--c-header-text)" }}>
             {fullName(data)}

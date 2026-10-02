@@ -1,5 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
+import { Photo } from "./parts";
 
 const SideHead = ({ children }: { children: React.ReactNode }) => (
   <div className="mb-2 mt-5">
@@ -19,11 +20,7 @@ export function TemplateNavy({ data }: { data: CVData }) {
   return (
     <div className="cv-page flex text-[length:calc(11px*var(--fs))] text-[#3a4048]">
       <aside className="w-[33%] bg-[#22313f] px-6 pb-8 pt-8 text-white">
-        {data.withPhoto && (
-          <div className="mx-auto mb-4 h-[115px] w-[115px] overflow-hidden rounded-full bg-[#cfe1ef]">
-            {data.photo && <img src={data.photo} alt={fullName(data)} className="h-full w-full object-cover" />}
-          </div>
-        )}
+        {data.withPhoto && <div className="mx-auto mb-4"><Photo d={data} w={115} h={115} /></div>}
 
         <SideHead>Contact</SideHead>
         <div className="space-y-2 text-[length:calc(10px*var(--fs))] text-white/85">

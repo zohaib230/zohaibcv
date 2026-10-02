@@ -17,6 +17,7 @@ import { TemplateContactSide } from "./TemplateContactSide";
 import { TemplateHeadline } from "./TemplateHeadline";
 import { TemplateMonogram } from "./TemplateMonogram";
 import { TemplateGrid } from "./TemplateGrid";
+import { TemplateReferences } from "./TemplateReferences";
 
 function Inner({ data }: { data: CVData }) {
   switch (data.template) {
@@ -50,6 +51,12 @@ function Inner({ data }: { data: CVData }) {
       return <TemplateMonogram data={data} />;
     case "grid":
       return <TemplateGrid data={data} />;
+    case "reference02":
+    case "reference03":
+    case "reference05":
+    case "reference0005":
+    case "referencephoto":
+      return <TemplateReferences data={data} design={data.template} />;
     default:
       return <TemplateExecutive data={data} />;
   }

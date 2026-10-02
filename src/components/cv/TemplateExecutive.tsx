@@ -44,7 +44,7 @@ export function TemplateExecutive({ data }: { data: CVData }) {
           borderBottom: `${px(5)} solid var(--c-accent)`,
         }}
       >
-        <Photo d={data} w={104} round ring="color-mix(in srgb, var(--c-accent) 90%, transparent)" />
+        <Photo d={data} w={104} h={104} ring="var(--c-accent)" />
         <div className="min-w-0 flex-1">
           <h1 className="cv-name uppercase" style={{ color: "var(--c-header-text)", letterSpacing: "0.04em" }}>
             {fullName(data)}

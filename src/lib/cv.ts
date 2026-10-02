@@ -29,7 +29,12 @@ export type TemplateId =
   | "contactside"
   | "headline"
   | "monogram"
-  | "grid";
+  | "grid"
+  | "reference02"
+  | "reference03"
+  | "reference05"
+  | "reference0005"
+  | "referencephoto";
 
 
 /** Font families available for every single part of the CV (MS-Word style list). */
@@ -491,4 +496,9 @@ export const TEMPLATES: { id: TemplateId; name: string; note: string; preview: s
   { id: "headline", name: "Headline", note: "Big name headline, wide bars", preview: ["#ffffff", "#1d2733", "#C8A24A"] },
   { id: "monogram", name: "Monogram", note: "Initials badge, refined serif", preview: ["#ffffff", "#f4f2ec", "#8a6d3b"] },
   { id: "grid", name: "Grid Cards", note: "Card grid for skills & info", preview: ["#f6f7f9", "#ffffff", "#2F6F4E"] },
+  { id: "reference02", name: "Editorial Rail", note: "Dark left rail and full-width photo", preview: ["#24352e", "#ffffff", "#a4b49a"] },
+  { id: "reference03", name: "Bright Banner", note: "Bold top banner and clean sections", preview: ["#39677b", "#ffffff", "#5d91a3"] },
+  { id: "reference05", name: "Split Profile", note: "Photo header and split experience", preview: ["#344d59", "#ffffff", "#b2a47d"] },
+  { id: "reference0005", name: "Career Column", note: "Accent column with formal work history", preview: ["#2c5e65", "#ffffff", "#84a9ac"] },
+  { id: "referencephoto", name: "Portrait Focus", note: "Large portrait and spacious details", preview: ["#ffffff", "#ffffff", "#677d70"] },
 ];

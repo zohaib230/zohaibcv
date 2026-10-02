@@ -10,19 +10,15 @@ export function Photo({
   d,
   w = 112,
   h = 132,
-  round,
   ring,
 }: {
   d: CVData;
   w?: number;
   h?: number;
-  round?: boolean;
   ring?: string;
 }) {
   if (!d.withPhoto) return null;
-  const radius = round
-    ? "50%"
-    : d.photoShape === "circle"
+  const radius = d.photoShape === "circle"
       ? "50%"
       : d.photoShape === "rounded"
         ? px(8)
@@ -31,7 +27,7 @@ export function Photo({
     <div
       style={{
         width: px(w),
-        height: px(round ? w : h),
+        height: px(d.photoShape === "circle" ? w : h),
         borderRadius: radius,
         overflow: "hidden",
         flexShrink: 0,
