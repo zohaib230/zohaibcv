@@ -1,3 +1,4 @@
+import { ShareAppBox } from "@/components/ShareAppBox";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
@@ -1216,6 +1217,7 @@ function ThankYouDialog({
             <RefreshCcw /> Reset everything
           </Button>
         </div>
+        <ShareAppBox />
         <p className="text-[11px] text-muted-foreground">
           Saving keeps a copy in “My CVs” and then clears this form. Reset simply deletes all details
           without saving.
