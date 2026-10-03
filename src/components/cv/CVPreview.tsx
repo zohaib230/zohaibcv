@@ -56,6 +56,9 @@ function Inner({ data }: { data: CVData }) {
     case "reference05":
     case "reference0005":
     case "referencephoto":
+    case "blob":
+    case "metro":
+    case "pakclassic":
       return <TemplateReferences data={data} design={data.template} />;
     default:
       return <TemplateExecutive data={data} />;

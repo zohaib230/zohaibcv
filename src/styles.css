@@ -373,3 +373,41 @@
 .reference-photo .reference-rail > div:nth-of-type(1) { margin: 0 auto 28px; }
 .reference-photo .reference-main { padding: 30px 30px 30px 8px; }
 .reference-photo .reference-footer { height: 28px; width: 60%; margin-left: auto; }
+
+/* ===== Soft Blob (CV_TEMPLATE_0010) ===== */
+.reference-blob { position: relative; }
+.reference-blob-head { position: relative; display: flex; align-items: center; gap: calc(22px * var(--fill)); margin-bottom: calc(18px * var(--fill)); }
+.reference-blob-shape { position: absolute; top: calc(-30px * var(--fill)); right: calc(-30px * var(--fill)); width: 62%; height: 150%; background: color-mix(in srgb, var(--c-accent) 12%, #ffffff); border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; z-index: 0; }
+.reference-blob-head > * { position: relative; z-index: 1; }
+.reference-blob-title .cv-role { color: var(--c-accent); margin-top: calc(2px * var(--fill)); }
+.reference-blob-contact { margin-top: calc(8px * var(--fill)); color: var(--c-accent); }
+.reference-blob-summary { margin-bottom: calc(16px * var(--fill)); max-width: 92%; }
+.reference-blob-cols { display: flex; gap: calc(30px * var(--fill)); flex: 1; }
+.reference-blob-left { width: 38%; background: color-mix(in srgb, var(--c-accent) 8%, #ffffff); border-radius: calc(28px * var(--fill)); padding: calc(18px * var(--fill)); }
+.reference-blob-right { flex: 1; }
+
+/* ===== Metro Gold (CV_TEMPLATE_0017) ===== */
+.reference-metro { display: flex; }
+.reference-metro-rail { width: 36%; background: var(--c-side-bg, #333333); color: var(--c-side-text, #f0f0f0); padding: calc(34px * var(--fill)) calc(26px * var(--fill)); display: flex; flex-direction: column; gap: calc(14px * var(--fill)); }
+.reference-metro-name em { font-style: normal; color: var(--c-accent); }
+.reference-metro-rail .reference-heading { color: var(--c-accent); }
+.reference-metro-rail .cv-sub, .reference-metro-rail .cv-small, .reference-metro-rail .cv-body { color: inherit; }
+.reference-metro-bar { height: calc(26px * var(--fill)); width: 45%; background: var(--c-accent); margin-top: auto; }
+.reference-metro-main { flex: 1; padding: calc(30px * var(--fill)) calc(30px * var(--fill)) calc(30px * var(--fill)) calc(26px * var(--fill)); }
+.reference-metro-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: calc(16px * var(--fill)); }
+.reference-metro-chip { width: calc(110px * var(--fill)); height: calc(22px * var(--fill)); background: var(--c-accent); }
+
+/* ===== Pak Classic (zohaib_hassan.pdf) ===== */
+.reference-pak .reference-pak-head { text-align: left; margin-bottom: calc(14px * var(--fill)); }
+.reference-pak-kicker { font-style: italic; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-muted); font-size: calc(11px * var(--fill)); }
+.reference-pak .cv-name { text-transform: uppercase; letter-spacing: 0.04em; }
+.reference-pak-rule { height: calc(3px * var(--fill)); background: var(--c-accent); margin: calc(6px * var(--fill)) 0 calc(10px * var(--fill)); }
+.reference-pak-contact { display: flex; flex-direction: column; gap: calc(2px * var(--fill)); }
+.reference-pak-h { text-decoration: underline; font-style: italic; margin-bottom: calc(8px * var(--fill)); }
+.reference-pak-rows { list-style: none; padding: 0; margin: 0; }
+.reference-pak-rows li { display: flex; justify-content: space-between; gap: calc(16px * var(--fill)); padding: calc(2px * var(--fill)) 0; }
+.reference-pak-rows li::before { content: "•"; margin-right: calc(8px * var(--fill)); }
+.reference-pak-rows li span { flex: 1; }
+.reference-pak-tablehead { background: var(--c-accent); color: #ffffff; text-align: center; font-weight: 700; padding: calc(6px * var(--fill)); border: calc(2px * var(--fill)) solid var(--c-sub); border-bottom: none; font-size: calc(13px * var(--fill)); }
+.reference-pak-table { border: calc(2px * var(--fill)) solid var(--c-sub); padding: calc(8px * var(--fill)) calc(14px * var(--fill)); }
+.reference-pak-trow { display: flex; justify-content: space-between; gap: calc(16px * var(--fill)); padding: calc(3px * var(--fill)) 0; }

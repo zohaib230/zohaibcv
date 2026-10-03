@@ -34,7 +34,10 @@ export type TemplateId =
   | "reference03"
   | "reference05"
   | "reference0005"
-  | "referencephoto";
+  | "referencephoto"
+  | "blob"
+  | "metro"
+  | "pakclassic";
 
 
 /** Font families available for every single part of the CV (MS-Word style list). */
@@ -501,4 +504,7 @@ export const TEMPLATES: { id: TemplateId; name: string; note: string; preview: s
   { id: "reference05", name: "Split Profile", note: "Photo header and split experience", preview: ["#344d59", "#ffffff", "#b2a47d"] },
   { id: "reference0005", name: "Career Column", note: "Accent column with formal work history", preview: ["#2c5e65", "#ffffff", "#84a9ac"] },
   { id: "referencephoto", name: "Portrait Focus", note: "Large portrait and spacious details", preview: ["#ffffff", "#ffffff", "#677d70"] },
+  { id: "blob", name: "Soft Blob", note: "Round photo, soft shapes, two columns", preview: ["#efefef", "#ffffff", "#e07840"] },
+  { id: "metro", name: "Metro Gold", note: "Dark sidebar with gold accents", preview: ["#333333", "#ffffff", "#d9a400"] },
+  { id: "pakclassic", name: "Pak Classic", note: "Traditional bio-data format", preview: ["#ffffff", "#ffffff", "#c0392b"] },
 ];

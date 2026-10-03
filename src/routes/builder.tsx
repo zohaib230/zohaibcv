@@ -74,7 +74,7 @@ export const Route = createFileRoute("/builder")({
       {
         name: "description",
         content:
-          "Guided CV builder: pick from 21 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF.",
+          "Guided CV builder: pick from 24 professional designs, answer simple questions, control fonts and colours, then download your CV as PDF.",
       },
       { property: "og:title", content: "CV Builder — CV Generator by Zohaib" },
       {
@@ -370,7 +370,7 @@ function Splash({ onStart }: { onStart: () => void }) {
       </h1>
       <p className="mt-3 font-display text-2xl uppercase tracking-[0.3em] text-brand">by Zohaib</p>
       <p className="mt-6 max-w-md text-sm text-ink-foreground/70">
-        Pick one of 21 professional designs, answer simple questions with ready-made options, choose
+        Pick one of 24 professional designs, answer simple questions with ready-made options, choose
         your fonts and colours — then download your full-page CV as PDF or HTML.
       </p>
       <Button size="lg" className="mt-8 bg-brand text-brand-foreground hover:bg-brand/90" onClick={onStart}>
