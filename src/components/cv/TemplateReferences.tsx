@@ -2,7 +2,7 @@ import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
 import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
-type ReferenceDesign = "reference02" | "reference03" | "reference05" | "reference0005" | "referencephoto";
+type ReferenceDesign = "reference02" | "reference03" | "reference05" | "reference0005" | "referencephoto" | "blob" | "metro" | "pakclassic";
 
 function Heading({ children }: { children: React.ReactNode }) {
   return <h2 className="cv-h reference-heading">{children}</h2>;
@@ -62,7 +62,7 @@ function Interests({ data }: { data: CVData }) {
   return data.interests.length > 0 && <section className="reference-section"><Heading>Interests</Heading><List items={data.interests} /></section>;
 }
 
-/** Five editable layouts recreated from the uploaded A4 references. */
+/** Editable layouts recreated from the uploaded A4 references. */
 export function TemplateReferences({ data, design }: { data: CVData; design: ReferenceDesign }) {
   if (design === "reference02") return <div className="cv-page reference-page reference-02">
     <aside className="reference-rail">
@@ -90,7 +90,95 @@ export function TemplateReferences({ data, design }: { data: CVData; design: Ref
     <div className="reference-columns"><aside className="reference-rail"><Summary data={data} /><Skills data={data} title="Skills" /><Languages data={data} /><Personal data={data} /></aside><main className="reference-main"><Experience data={data} /><Education data={data} /><Extras data={data} /><Interests data={data} /></main></div>
   </div>;
 
-  return <div className="cv-page reference-page reference-photo">
+  if (design === "referencephoto") return <div className="cv-page reference-page reference-photo">
     <div className="reference-photo-top" /><div className="reference-columns"><aside className="reference-rail"><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div>{data.withPhoto && <Photo d={data} w={190} h={190} />}<section className="reference-section"><Heading>Contact</Heading><Contact data={data} labels /></section><Languages data={data} /><Personal data={data} /><Interests data={data} /></aside><main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Extras data={data} /></main></div><div className="reference-footer" />
+  </div>;
+
+  // CV_TEMPLATE_0010 — circle photo + soft blob header, two-column body.
+  if (design === "blob") return <div className="cv-page reference-page reference-blob cv-pad">
+    <header className="reference-blob-head">
+      <div className="reference-blob-shape" />
+      {data.withPhoto && <Photo d={data} w={120} h={120} />}
+      <div className="reference-blob-title">
+        <h1 className="cv-name">{fullName(data)}</h1>
+        <div className="cv-role">{data.jobTitle}</div>
+        <div className="cv-small reference-blob-contact">{contactRows(data).map(([k, v]) => <div key={k}>{v}</div>)}</div>
+      </div>
+    </header>
+    {data.profile && <p className="cv-body reference-blob-summary">{data.profile}</p>}
+    <div className="reference-columns reference-blob-cols">
+      <div className="reference-blob-left">
+        <Skills data={data} title="Skills" />
+        <Education data={data} />
+        <Languages data={data} />
+        <Interests data={data} />
+      </div>
+      <div className="reference-blob-right">
+        <Experience data={data} />
+        <Extras data={data} />
+        <Personal data={data} />
+      </div>
+    </div>
+  </div>;
+
+  // CV_TEMPLATE_0017 — dark sidebar with gold accents, photo, highlights.
+  if (design === "metro") return <div className="cv-page reference-page reference-metro">
+    <aside className="reference-metro-rail">
+      <h1 className="cv-name reference-metro-name">{data.firstName} <em>{data.lastName}</em></h1>
+      {data.withPhoto && <Photo d={data} w={150} h={150} />}
+      <Skills data={data} title="Highlights" />
+      <Education data={data} />
+      {data.certificates.length > 0 && <section className="reference-section"><Heading>Certifications</Heading><List items={data.certificates} /></section>}
+      <Languages data={data} />
+      <div className="reference-metro-bar" />
+    </aside>
+    <main className="reference-metro-main">
+      <div className="reference-metro-top">
+        <Contact data={data} />
+        <div className="reference-metro-chip" />
+      </div>
+      <Summary data={data} />
+      <Experience data={data} />
+      <Extras data={data} />
+      <Personal data={data} />
+      <Interests data={data} />
+    </main>
+  </div>;
+
+  // zohaib_hassan.pdf — classic Pakistani bio-data format.
+  return <div className="cv-page reference-page reference-pak cv-pad">
+    <header className="reference-pak-head">
+      <div className="reference-pak-kicker">Curriculum Vitae</div>
+      <h1 className="cv-name">{fullName(data)}</h1>
+      <div className="reference-pak-rule" />
+      <div className="cv-small reference-pak-contact">
+        {data.address && <div><strong>Address:</strong> {data.address}</div>}
+        {data.phone && <div><strong>Cell No:</strong> {data.phone}</div>}
+        {data.email && <div><strong>Email:</strong> {data.email}</div>}
+      </div>
+    </header>
+    {data.profile && <section className="reference-section"><h2 className="cv-h reference-pak-h">Objective</h2><p className="cv-body">{data.profile}</p></section>}
+    {personalRows(data).length > 0 && <section className="reference-section"><h2 className="cv-h reference-pak-h">Personal Information</h2>
+      <ul className="cv-body reference-pak-rows">{personalRows(data).map(([k, v]) => <li key={k}><span>{k}</span><strong>{v}</strong></li>)}</ul>
+    </section>}
+    {data.education.length > 0 && <section className="reference-section">
+      <div className="reference-pak-tablehead">Qualifications</div>
+      <div className="reference-pak-table">{data.education.map(e => <div key={e.id} className="reference-pak-trow"><strong>{e.degree}</strong><span>{[e.institute, e.year].filter(Boolean).join(" — ")}</span></div>)}</div>
+    </section>}
+    <section className="reference-section"><h2 className="cv-h reference-pak-h">Working Experience</h2>
+      {data.isFresher || !data.experience.length ? <p className="cv-body">{fresherLine}</p> :
+        <div className="cv-stack">{data.experience.map(e => <div key={e.id}>
+          <div className="cv-sub">{e.role}{e.duration ? ` — ${e.duration}` : ""}</div>
+          <div className="cv-small">{e.company}</div>
+          {e.details && <List items={bullets(e.details)} />}
+        </div>)}</div>}
+    </section>
+    <Skills data={data} title="Skills" />
+    {data.languages.length > 0 && <section className="reference-section"><h2 className="cv-h reference-pak-h">Languages</h2><List items={data.languages} /></section>}
+    <Extras data={data} />
+    {(data.references.length > 0 || data.referencesOnRequest) && <section className="reference-section"><h2 className="cv-h reference-pak-h">Reference</h2>
+      {data.references.length > 0 ? <List items={data.references} /> : <p className="cv-body">Reference will be provided on demand.</p>}
+    </section>}
+    {data.declaration && <section className="reference-section"><h2 className="cv-h reference-pak-h">Declaration</h2><p className="cv-body">I hereby declare that the above information is true and correct to the best of my knowledge.</p></section>}
   </div>;
 }
