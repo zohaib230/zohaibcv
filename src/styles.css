@@ -373,3 +373,41 @@
 .reference-photo .reference-rail > div:nth-of-type(1) { margin: 0 auto 28px; }
 .reference-photo .reference-main { padding: 30px 30px 30px 8px; }
 .reference-photo .reference-footer { height: 28px; width: 60%; margin-left: auto; }
+
+/* ===== Soft Blob (CV_TEMPLATE_0010) ===== */
+.reference-blob { position: relative; }
+.reference-blob-head { position: relative; display: flex; align-items: center; gap: px(22); margin-bottom: px(18); }
+.reference-blob-shape { position: absolute; top: px(-30); right: px(-30); width: 62%; height: 150%; background: color-mix(in srgb, var(--c-accent) 12%, #ffffff); border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%; z-index: 0; }
+.reference-blob-head > * { position: relative; z-index: 1; }
+.reference-blob-title .cv-role { color: var(--c-accent); margin-top: px(2); }
+.reference-blob-contact { margin-top: px(8); color: var(--c-accent); }
+.reference-blob-summary { margin-bottom: px(16); max-width: 92%; }
+.reference-blob-cols { display: flex; gap: px(30); flex: 1; }
+.reference-blob-left { width: 38%; background: color-mix(in srgb, var(--c-accent) 8%, #ffffff); border-radius: px(28); padding: px(18); }
+.reference-blob-right { flex: 1; }
+
+/* ===== Metro Gold (CV_TEMPLATE_0017) ===== */
+.reference-metro { display: flex; }
+.reference-metro-rail { width: 36%; background: var(--c-side-bg, #333333); color: var(--c-side-text, #f0f0f0); padding: px(34) px(26); display: flex; flex-direction: column; gap: px(14); }
+.reference-metro-name em { font-style: normal; color: var(--c-accent); }
+.reference-metro-rail .reference-heading { color: var(--c-accent); }
+.reference-metro-rail .cv-sub, .reference-metro-rail .cv-small, .reference-metro-rail .cv-body { color: inherit; }
+.reference-metro-bar { height: px(26); width: 45%; background: var(--c-accent); margin-top: auto; }
+.reference-metro-main { flex: 1; padding: px(30) px(30) px(30) px(26); }
+.reference-metro-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: px(16); }
+.reference-metro-chip { width: px(110); height: px(22); background: var(--c-accent); }
+
+/* ===== Pak Classic (zohaib_hassan.pdf) ===== */
+.reference-pak .reference-pak-head { text-align: left; margin-bottom: px(14); }
+.reference-pak-kicker { font-style: italic; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--c-muted); font-size: calc(11px * var(--fill)); }
+.reference-pak .cv-name { text-transform: uppercase; letter-spacing: 0.04em; }
+.reference-pak-rule { height: px(3); background: var(--c-accent); margin: px(6) 0 px(10); }
+.reference-pak-contact { display: flex; flex-direction: column; gap: px(2); }
+.reference-pak-h { text-decoration: underline; font-style: italic; margin-bottom: px(8); }
+.reference-pak-rows { list-style: none; padding: 0; margin: 0; }
+.reference-pak-rows li { display: flex; justify-content: space-between; gap: px(16); padding: px(2) 0; }
+.reference-pak-rows li::before { content: "•"; margin-right: px(8); }
+.reference-pak-rows li span { flex: 1; }
+.reference-pak-tablehead { background: var(--c-accent); color: #ffffff; text-align: center; font-weight: 700; padding: px(6); border: px(2) solid var(--c-sub); border-bottom: none; font-size: calc(13px * var(--fill)); }
+.reference-pak-table { border: px(2) solid var(--c-sub); padding: px(8) px(14); }
+.reference-pak-trow { display: flex; justify-content: space-between; gap: px(16); padding: px(3) 0; }
