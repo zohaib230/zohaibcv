@@ -13,6 +13,12 @@ import {
   Sparkles,
   Star,
   Users,
+  Smartphone,
+  Share2,
+  Layers,
+  Cloud,
+  ShieldCheck,
+  Globe,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -96,6 +102,20 @@ const FEATURES = [
   { icon: MapPin, title: "City Autocomplete", note: "Type two letters and pick your city instantly." },
   { icon: Sparkles, title: "Ready-Made Phrase Library", note: "Hand-written summary and duty lines for every job type." },
   { icon: ListChecks, title: "Completeness Meter", note: "See exactly which sections are still missing." },
+  { icon: Smartphone, title: "Installable Phone App", note: "Install it on any Android or iPhone — opens like a real app." },
+  { icon: Share2, title: "WhatsApp PDF Sharing", note: "Send your finished CV straight to employers on WhatsApp." },
+  { icon: Layers, title: "Automatic Multi-Page", note: "Long CVs flow neatly onto page two and three." },
+  { icon: Cloud, title: "Save to Your Account", note: "Sign in and keep all your CVs safe in the cloud." },
+  { icon: ShieldCheck, title: "ATS-Friendly Designs", note: "Clean layouts that recruiter software can read." },
+  { icon: Globe, title: "International Fields", note: "LinkedIn, portfolio, visa status, notice period and more." },
+];
+
+const FAQ = [
+  { q: "Is CV Generator really free?", a: "Yes. Every design, the PDF download and WhatsApp sharing are completely free." },
+  { q: "Can I use it on my phone?", a: "Yes. Tap Install App to add it to your home screen — it works like a normal app." },
+  { q: "Will my CV pass ATS systems?", a: "Choose the ATS Minimal or Executive design for the best compatibility with recruiter software." },
+  { q: "Can I add or remove my photo?", a: "Yes. Every design works with or without a photo, in circle, rounded or square shape." },
+  { q: "Is my data safe?", a: "Your CV is saved on your device, and in your private account only if you sign in." },
 ];
 
 const STEPS = [
