@@ -113,6 +113,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/icon-192.png" },
 
     ],
+    scripts: [
+      {
+        children:
+          "window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();window.__bip=e;window.dispatchEvent(new Event('bip-ready'))});",
+      },
+    ],
   }),
 
   shellComponent: RootShell,

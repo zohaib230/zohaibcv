@@ -13,6 +13,12 @@ import {
   Sparkles,
   Star,
   Users,
+  Smartphone,
+  Share2,
+  Layers,
+  Cloud,
+  ShieldCheck,
+  Globe,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -96,6 +102,20 @@ const FEATURES = [
   { icon: MapPin, title: "City Autocomplete", note: "Type two letters and pick your city instantly." },
   { icon: Sparkles, title: "Ready-Made Phrase Library", note: "Hand-written summary and duty lines for every job type." },
   { icon: ListChecks, title: "Completeness Meter", note: "See exactly which sections are still missing." },
+  { icon: Smartphone, title: "Installable Phone App", note: "Install it on any Android or iPhone — opens like a real app." },
+  { icon: Share2, title: "WhatsApp PDF Sharing", note: "Send your finished CV straight to employers on WhatsApp." },
+  { icon: Layers, title: "Automatic Multi-Page", note: "Long CVs flow neatly onto page two and three." },
+  { icon: Cloud, title: "Save to Your Account", note: "Sign in and keep all your CVs safe in the cloud." },
+  { icon: ShieldCheck, title: "ATS-Friendly Designs", note: "Clean layouts that recruiter software can read." },
+  { icon: Globe, title: "International Fields", note: "LinkedIn, portfolio, visa status, notice period and more." },
+];
+
+const FAQ = [
+  { q: "Is CV Generator really free?", a: "Yes. Every design, the PDF download and WhatsApp sharing are completely free." },
+  { q: "Can I use it on my phone?", a: "Yes. Tap Install App to add it to your home screen — it works like a normal app." },
+  { q: "Will my CV pass ATS systems?", a: "Choose the ATS Minimal or Executive design for the best compatibility with recruiter software." },
+  { q: "Can I add or remove my photo?", a: "Yes. Every design works with or without a photo, in circle, rounded or square shape." },
+  { q: "Is my data safe?", a: "Your CV is saved on your device, and in your private account only if you sign in." },
 ];
 
 const STEPS = [
@@ -368,6 +388,22 @@ function Landing() {
         </div>
       </Section>
 
+      {/* FAQ */}
+      <Section id="faq" className="bg-card border-t border-border">
+        <h2 className="text-center font-display text-3xl font-bold md:text-4xl">Frequently asked questions</h2>
+        <div className="mx-auto mt-10 max-w-2xl space-y-3">
+          {FAQ.map((f) => (
+            <details key={f.q} className="group rounded-2xl border border-border bg-background p-5 shadow-sm">
+              <summary className="flex cursor-pointer list-none items-center justify-between font-semibold">
+                {f.q}
+                <span className="text-brand transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 text-sm text-muted-foreground">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </Section>
+
       <footer className="border-t border-border bg-card px-5 py-10">
         <div className="mx-auto grid w-full max-w-6xl gap-8 md:grid-cols-4">
           <div>
@@ -408,6 +444,15 @@ function Landing() {
           © {new Date().getFullYear()} CV Generator by Zohaib • ZM AI Training. All rights reserved.
         </p>
       </footer>
+
+      {/* Mobile sticky action bar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-border bg-background/95 p-3 backdrop-blur md:hidden">
+        <InstallAppButton size="lg" className="flex-1" />
+        <Button asChild size="lg" variant="outline" className="flex-1">
+          <Link to="/builder">Build My CV</Link>
+        </Button>
+      </div>
+      <div className="h-20 md:hidden" />
     </div>
   );
 }
