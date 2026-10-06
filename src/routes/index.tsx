@@ -388,6 +388,22 @@ function Landing() {
         </div>
       </Section>
 
+      {/* FAQ */}
+      <Section id="faq" className="bg-card border-t border-border">
+        <h2 className="text-center font-display text-3xl font-bold md:text-4xl">Frequently asked questions</h2>
+        <div className="mx-auto mt-10 max-w-2xl space-y-3">
+          {FAQ.map((f) => (
+            <details key={f.q} className="group rounded-2xl border border-border bg-background p-5 shadow-sm">
+              <summary className="flex cursor-pointer list-none items-center justify-between font-semibold">
+                {f.q}
+                <span className="text-brand transition-transform group-open:rotate-45">+</span>
+              </summary>
+              <p className="mt-3 text-sm text-muted-foreground">{f.a}</p>
+            </details>
+          ))}
+        </div>
+      </Section>
+
       <footer className="border-t border-border bg-card px-5 py-10">
         <div className="mx-auto grid w-full max-w-6xl gap-8 md:grid-cols-4">
           <div>
@@ -428,6 +444,15 @@ function Landing() {
           © {new Date().getFullYear()} CV Generator by Zohaib • ZM AI Training. All rights reserved.
         </p>
       </footer>
+
+      {/* Mobile sticky action bar */}
+      <div className="fixed inset-x-0 bottom-0 z-40 flex gap-2 border-t border-border bg-background/95 p-3 backdrop-blur md:hidden">
+        <InstallAppButton size="lg" className="flex-1" />
+        <Button asChild size="lg" variant="outline" className="flex-1">
+          <Link to="/builder">Build My CV</Link>
+        </Button>
+      </div>
+      <div className="h-20 md:hidden" />
     </div>
   );
 }
