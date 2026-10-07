@@ -129,7 +129,8 @@ export function StyleRibbon({ data, onChange, part, onPartChange, zoom, onZoomCh
   const t = data.typo[part];
   const commit = (next: CVData) => {
     if (JSON.stringify(next) === JSON.stringify(current.current)) return;
-    setPast(p => [...p.slice(-39), current.current]);
+    const previous = current.current;
+    setPast(p => [...p.slice(-39), previous]);
     setFuture([]);
     current.current = next;
     onChange(next);

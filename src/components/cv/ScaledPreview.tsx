@@ -6,7 +6,7 @@ const A4_W = 794;
 const A4_H = 1123;
 
 /** Shows the CV page scaled to whatever width it is given (responsive). */
-export function ScaledPreview({ data, max = 1, zoom = 1, onSelectPart }: { data: CVData; max?: number; zoom?: number; onSelectPart?: (part: import("@/lib/cv").TypoPart) => void }) {
+export function ScaledPreview({ data, max = 1, zoom = 1, onSelectPart }: { data: CVData; max?: number; zoom?: number; onSelectPart?: ((part: import("@/lib/cv").TypoPart) => void) | undefined }) {
   const ref = useRef<HTMLDivElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const [s, setS] = useState(0.5);

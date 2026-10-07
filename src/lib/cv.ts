@@ -101,9 +101,9 @@ export type TypoStyle = {
   caps: boolean;
   /** letter spacing in px */
   spacing: number;
-  align?: "left" | "center" | "right" | "justify";
+  align?: "left" | "center" | "right" | "justify" | undefined;
   strike?: boolean;
-  highlight?: string;
+  highlight?: string | undefined;
 };
 
 export type Typography = Record<TypoPart, TypoStyle>;

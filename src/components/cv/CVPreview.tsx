@@ -70,7 +70,7 @@ function Inner({ data }: { data: CVData }) {
 const PAGE_H = 1122;
 const MAX_PAGES = 4;
 
-export function CVPreview({ data, onSelectPart }: { data: CVData; onSelectPart?: (part: TypoPart) => void }) {
+export function CVPreview({ data, onSelectPart }: { data: CVData; onSelectPart?: ((part: TypoPart) => void) | undefined }) {
   const ref = useRef<HTMLDivElement>(null);
 
   // Auto-fit: grows or shrinks all type + spacing so every page is always
