@@ -11,3 +11,5 @@
 
 - Keep the five uploaded-reference CV layouts in the shared TemplateReferences renderer, with their distinct page treatments in src/styles.css; this centralizes repeated CV fields while retaining separate selectable designs.
 - Render CV photos through the shared Photo helper in every template so shape, crop, and zoom settings work consistently in previews and exports.
+- Commit Step 9 edits as whole-CV snapshots with bounded undo/redo history; atomic edits preserve multi-field replacements and presets.
+- Store optional text and paragraph formatting in CVData and render through shared preview CSS variables so saved CVs and PDF exports agree.

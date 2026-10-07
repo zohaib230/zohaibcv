@@ -411,3 +411,79 @@
 .reference-pak-tablehead { background: var(--c-accent); color: #ffffff; text-align: center; font-weight: 700; padding: calc(6px * var(--fill)); border: calc(2px * var(--fill)) solid var(--c-sub); border-bottom: none; font-size: calc(13px * var(--fill)); }
 .reference-pak-table { border: calc(2px * var(--fill)) solid var(--c-sub); padding: calc(8px * var(--fill)) calc(14px * var(--fill)); }
 .reference-pak-trow { display: flex; justify-content: space-between; gap: calc(16px * var(--fill)); padding: calc(3px * var(--fill)) 0; }
+
+.cv-root .cv-name {
+ font-size: calc(var(--pt-name) * 1.3333px * var(--fill)) !important;
+ font-style: var(--fi-name) !important;
+ font-weight: var(--fw-name) !important;
+ text-decoration: var(--fu-name) !important;
+ text-transform: var(--fc-name) !important;
+ letter-spacing: calc(var(--ls-name, 0px) * var(--fill)) !important;
+ text-align: var(--align-name);
+ background-color: var(--highlight-name, transparent);
+}
+.cv-root[data-color-overrides~="name"] .cv-name { color: var(--c-name) !important; }
+
+.cv-root .cv-role {
+ font-size: calc(var(--pt-role) * 1.3333px * var(--fill)) !important;
+ font-style: var(--fi-role) !important;
+ font-weight: var(--fw-role) !important;
+ text-decoration: var(--fu-role) !important;
+ text-transform: var(--fc-role) !important;
+ letter-spacing: calc(var(--ls-role, 0px) * var(--fill)) !important;
+ text-align: var(--align-role);
+ background-color: var(--highlight-role, transparent);
+}
+.cv-root[data-color-overrides~="role"] .cv-role { color: var(--c-role) !important; }
+
+.cv-root .cv-h {
+ font-size: calc(var(--pt-heading) * 1.3333px * var(--fill)) !important;
+ font-style: var(--fi-heading) !important;
+ font-weight: var(--fw-heading) !important;
+ text-decoration: var(--fu-heading) !important;
+ text-transform: var(--fc-heading) !important;
+ letter-spacing: calc(var(--ls-heading, 0px) * var(--fill)) !important;
+ text-align: var(--align-heading);
+ background-color: var(--highlight-heading, transparent);
+}
+.cv-root[data-color-overrides~="heading"] .cv-h { color: var(--c-heading) !important; }
+
+.cv-root .cv-sub {
+ font-size: calc(var(--pt-sub) * 1.3333px * var(--fill)) !important;
+ font-style: var(--fi-sub) !important;
+ font-weight: var(--fw-sub) !important;
+ text-decoration: var(--fu-sub) !important;
+ text-transform: var(--fc-sub) !important;
+ letter-spacing: calc(var(--ls-sub, 0px) * var(--fill)) !important;
+ text-align: var(--align-sub);
+ background-color: var(--highlight-sub, transparent);
+}
+.cv-root[data-color-overrides~="sub"] .cv-sub { color: var(--c-sub) !important; }
+
+.cv-root .cv-body {
+ font-size: calc(var(--pt-body) * 1.3333px * var(--fill)) !important;
+ font-style: var(--fi-body) !important;
+ font-weight: var(--fw-body) !important;
+ text-decoration: var(--fu-body) !important;
+ text-transform: var(--fc-body) !important;
+ letter-spacing: calc(var(--ls-body, 0px) * var(--fill)) !important;
+ text-align: var(--align-body);
+ background-color: var(--highlight-body, transparent);
+}
+.cv-root[data-color-overrides~="body"] .cv-body { color: var(--c-body) !important; }
+
+.cv-root .cv-small {
+ font-size: calc(var(--pt-small) * 1.3333px * var(--fill)) !important;
+ font-style: var(--fi-small) !important;
+ font-weight: var(--fw-small) !important;
+ text-decoration: var(--fu-small) !important;
+ text-transform: var(--fc-small) !important;
+ letter-spacing: calc(var(--ls-small, 0px) * var(--fill)) !important;
+ text-align: var(--align-small);
+ background-color: var(--highlight-small, transparent);
+}
+.cv-root[data-color-overrides~="small"] .cv-small { color: var(--c-muted) !important; }
+
+.cv-root p.cv-body { margin-bottom: calc(var(--paragraph-gap, 0px) * var(--fill)); text-indent: calc(var(--paragraph-indent, 0px) * var(--fill)); }
+.cv-root .cv-body { line-height: calc(var(--lh-body) + (var(--fill) - 1) * 0.55) !important; }
+.cv-root .cv-bullets { list-style: var(--bullet) !important; }
