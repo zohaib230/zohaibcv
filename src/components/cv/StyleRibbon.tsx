@@ -76,7 +76,7 @@ const LINE_SPACING = [1, 1.15, 1.3, 1.42, 1.5, 1.75, 2];
 /** One ribbon group with a caption underneath, exactly like MS Word. */
 function Group({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex shrink-0 flex-col gap-1 border-r border-border px-3 last:border-r-0">
+    <div className="flex max-w-[420px] shrink-0 flex-col gap-1 border-r border-border px-3 last:border-r-0">
       <div className="flex flex-wrap items-center gap-1.5">{children}</div>
       <span className="text-center text-[10px] uppercase tracking-wider text-muted-foreground">
         {label}
@@ -380,6 +380,7 @@ export function StyleRibbon({ data, onChange, part, onPartChange, zoom, onZoomCh
                   <Button
                     key={p.name}
                     type="button"
+                    variant="outline"
                     onClick={() => {
                       commit({ ...data, typo: p.typo, page: p.page });
                     }}
@@ -415,6 +416,7 @@ export function StyleRibbon({ data, onChange, part, onPartChange, zoom, onZoomCh
                 <Button
                   key={tpl.id}
                   type="button"
+                  variant="outline"
                   title={tpl.note}
                   onClick={() => set("template", tpl.id)}
                   className={`flex w-[86px] shrink-0 flex-col items-center gap-1 rounded-md border-2 p-1.5 text-[10px] transition-colors ${
@@ -444,6 +446,7 @@ export function StyleRibbon({ data, onChange, part, onPartChange, zoom, onZoomCh
                   <Button
                     key={p.name}
                     type="button"
+                    variant="outline"
                     title={p.name}
                     onClick={() => {
                       commit({ ...data, colors: { ...data.colors, ...p.colors }, accent: p.colors.accent ?? data.accent, textColorOverrides: [] });
@@ -461,6 +464,7 @@ export function StyleRibbon({ data, onChange, part, onPartChange, zoom, onZoomCh
                   <Button
                     key={a.value}
                     type="button"
+                    variant="outline"
                     title={a.name}
                     onClick={() => setColor("accent", a.value)}
                     className={`h-7 w-7 rounded-full border-2 ${
