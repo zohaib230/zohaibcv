@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  AlignJustify,
+  AlignJustify, AlignLeft, AlignCenter, AlignRight, Undo2, Redo2, Paintbrush, Strikethrough, Highlighter, Copy, ZoomIn, ZoomOut, Image as ImageIcon,
   Bold,
   CaseUpper,
   Italic,
@@ -14,6 +14,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { replaceCVText } from "@/lib/cv-editing";
 import { Switch } from "@/components/ui/switch";
 import {
   ACCENTS,
@@ -99,6 +101,8 @@ function Toggle({
       type="button"
       size="icon"
       title={title}
+      aria-label={title}
+      aria-pressed={on}
       variant={on ? "default" : "outline"}
       className="h-8 w-8"
       onClick={onClick}
@@ -108,89 +112,84 @@ function Toggle({
   );
 }
 
-export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
-  const [tab, setTab] = useState<"home" | "design" | "colours" | "layout">("home");
-  const [part, setPart] = useState<TypoPart>("body");
+export function StyleRibbon({ data, onChange, part, onPartChange, zoom, onZoomChange }: {
+  data: CVData; onChange: (data: CVData) => void; part: TypoPart; onPartChange: (part: TypoPart) => void;
+  zoom: number; onZoomChange: (zoom: number) => void;
+}) {
+  const [tab, setTab] = useState<"home" | "design" | "colours" | "layout" | "picture" | "editing">("home");
   const [find, setFind] = useState("");
   const [replace, setReplace] = useState("");
+  const [matchCase, setMatchCase] = useState(false);
+  const [wholeWord, setWholeWord] = useState(false);
+  const [paint, setPaint] = useState<TypoStyle | null>(null);
+  const [past, setPast] = useState<CVData[]>([]);
+  const [future, setFuture] = useState<CVData[]>([]);
+  const current = useRef(data);
+  current.current = data;
   const t = data.typo[part];
-
+  const commit = (next: CVData) => {
+    if (JSON.stringify(next) === JSON.stringify(current.current)) return;
+    setPast(p => [...p.slice(-39), current.current]);
+    setFuture([]);
+    current.current = next;
+    onChange(next);
+  };
+  const set: SetFn = (key, value) => commit({ ...current.current, [key]: value });
+  const undo = () => {
+    const previous = past.at(-1);
+    if (!previous) return;
+    setFuture(f => [...f, current.current]); setPast(p => p.slice(0, -1)); onChange(previous);
+  };
+  const redo = () => {
+    const next = future.at(-1);
+    if (!next) return;
+    setPast(p => [...p, current.current]); setFuture(f => f.slice(0, -1)); onChange(next);
+  };
+  useEffect(() => {
+    const handler = (event: KeyboardEvent) => {
+      if (!(event.ctrlKey || event.metaKey) || event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement || event.target instanceof HTMLSelectElement) return;
+      if (event.key.toLowerCase() === "z") { event.preventDefault(); event.shiftKey ? redo() : undo(); }
+      if (event.key.toLowerCase() === "y") { event.preventDefault(); redo(); }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  });
   const setTypo = (p: TypoPart, patch: Partial<TypoStyle>) =>
-    set("typo", { ...data.typo, [p]: { ...data.typo[p], ...patch } });
-
-  const setPage = (patch: Partial<PageSetup>) => set("page", { ...data.page, ...patch });
-
+    set("typo", { ...current.current.typo, [p]: { ...current.current.typo[p], ...patch } });
+  const setPage = (patch: Partial<PageSetup>) => set("page", { ...current.current.page, ...patch });
   const setColor = (key: keyof ThemeColors, value: string) => {
-    set("colors", { ...data.colors, [key]: value });
-    if (key === "accent") set("accent", value);
+    const target = TYPO_PARTS.find(p => PART_COLOR[p.id] === key)?.id;
+    commit({ ...current.current, colors: { ...current.current.colors, [key]: value },
+      ...(key === "accent" ? { accent: value } : {}),
+      ...(target ? { textColorOverrides: [...new Set([...(current.current.textColorOverrides ?? []), target])] } : {}) });
   };
-
-  const scaleAll = (delta: number) =>
-    set(
-      "typo",
-      Object.fromEntries(
-        (Object.keys(data.typo) as TypoPart[]).map((k) => [
-          k,
-          { ...data.typo[k], size: Math.max(6, Math.round((data.typo[k].size + delta) * 10) / 10) },
-        ]),
-      ) as typeof data.typo,
-    );
-
-  /** Find & replace across every piece of written text in the CV. */
+  const scaleAll = (delta: number) => set("typo", Object.fromEntries(
+    (Object.keys(data.typo) as TypoPart[]).map(k => [k, { ...data.typo[k], size: Math.min(72, Math.max(6, data.typo[k].size + delta)) }])
+  ) as CVData["typo"]);
   const runReplace = () => {
-    if (!find) return;
-    const re = new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi");
-    const s = (v: string) => v.replace(re, replace);
-    const list = (v: string[]) => v.map(s);
-    set("firstName", s(data.firstName));
-    set("lastName", s(data.lastName));
-    set("jobTitle", s(data.jobTitle));
-    set("profile", s(data.profile));
-    set("address", s(data.address));
-    set("skills", list(data.skills));
-    set("softSkills", list(data.softSkills));
-    set("certificates", list(data.certificates));
-    set("achievements", list(data.achievements));
-    set("interests", list(data.interests));
-    set("projects", list(data.projects));
-    set("volunteer", list(data.volunteer));
-    set("references", list(data.references));
-    set(
-      "experience",
-      data.experience.map((e) => ({
-        ...e,
-        role: s(e.role),
-        company: s(e.company),
-        duration: s(e.duration),
-        details: s(e.details),
-      })),
-    );
-    set(
-      "education",
-      data.education.map((e) => ({
-        ...e,
-        degree: s(e.degree),
-        institute: s(e.institute),
-        year: s(e.year),
-      })),
-    );
+    const result = replaceCVText(current.current, find, replace, matchCase, wholeWord);
+    if (result.count) { commit(result.data); toast.success(`${result.count} replacements made`); }
+    else toast.info("No matches found");
   };
-
   const TABS = [
     { id: "home", label: "Home" },
     { id: "design", label: "Design" },
     { id: "colours", label: "Colours" },
     { id: "layout", label: "Layout" },
+    { id: "picture", label: "Picture" },
+    { id: "editing", label: "Editing" },
   ] as const;
 
   return (
     <div className="no-print sticky top-[68px] z-20 border-b border-border bg-card shadow-sm">
       <div className="mx-auto max-w-6xl">
-        <div className="flex gap-1 px-3 pt-2">
+        <div className="flex items-center gap-1 overflow-x-auto px-3 pt-2" role="tablist" aria-label="Formatting tabs">
           {TABS.map((x) => (
-            <button
+            <Button
               key={x.id}
               type="button"
+              role="tab" aria-selected={tab === x.id}
+              variant="ghost"
               onClick={() => setTab(x.id)}
               className={`rounded-t-md px-4 py-1.5 text-xs font-semibold uppercase tracking-wide transition-colors ${
                 tab === x.id
@@ -199,17 +198,32 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
               }`}
             >
               {x.label}
-            </button>
+            </Button>
           ))}
         </div>
 
-        <div className="flex items-stretch gap-1 overflow-x-auto bg-secondary/60 px-2 py-2">
+        <div className="flex items-center justify-between gap-2 border-t border-border px-3 py-2">
+          <div className="flex items-center gap-1">
+            <Button size="icon" variant="ghost" title="Undo" aria-label="Undo" disabled={!past.length} onClick={undo}><Undo2 className="h-4 w-4" /></Button>
+            <Button size="icon" variant="ghost" title="Redo" aria-label="Redo" disabled={!future.length} onClick={redo}><Redo2 className="h-4 w-4" /></Button>
+            <span className="ml-2 text-xs font-medium">{TYPO_PARTS.find(p => p.id === part)?.label}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Button size="icon" variant="ghost" title="Zoom out" aria-label="Zoom out" disabled={zoom <= .5} onClick={() => onZoomChange(Math.max(.5, zoom - .1))}><ZoomOut className="h-4 w-4" /></Button>
+            <select aria-label="Preview zoom" value={Number(zoom.toFixed(1))} onChange={e => onZoomChange(Number(e.target.value))} className="h-8 rounded border border-input bg-background text-xs">
+              {[.5,.6,.7,.8,.9,1,1.1,1.2,1.3,1.4,1.5].map(z => <option key={z} value={z}>{Math.round(z*100)}%</option>)}
+            </select>
+            <Button size="icon" variant="ghost" title="Zoom in" aria-label="Zoom in" disabled={zoom >= 1.5} onClick={() => onZoomChange(Math.min(1.5, zoom + .1))}><ZoomIn className="h-4 w-4" /></Button>
+          </div>
+        </div>
+        <div className="flex items-stretch gap-1 overflow-x-auto bg-secondary/60 px-2 py-2 max-sm:max-h-[190px]">
           {tab === "home" && (
             <>
               <Group label="Apply to">
                 <select
                   value={part}
-                  onChange={(e) => setPart(e.target.value as TypoPart)}
+                  aria-label="Apply formatting to"
+                  onChange={(e) => onPartChange(e.target.value as TypoPart)}
                   className="h-8 rounded-md border border-input bg-background px-2 text-sm"
                 >
                   {TYPO_PARTS.map((p) => (
@@ -222,6 +236,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
 
               <Group label="Font">
                 <select
+                  aria-label="Font family"
                   value={t.font}
                   onChange={(e) => setTypo(part, { font: e.target.value })}
                   style={{ fontFamily: fontStack(t.font) }}
@@ -249,8 +264,9 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                     step="0.5"
                     min={6}
                     max={72}
+                    aria-label="Font size"
                     value={t.size}
-                    onChange={(e) => setTypo(part, { size: Number(e.target.value) || 10 })}
+                    onChange={(e) => setTypo(part, { size: Math.min(72, Math.max(6, Number(e.target.value) || 6)) })}
                     className="h-8 w-16 text-center"
                   />
                   <Button
@@ -321,7 +337,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                   <TypeIcon className="h-3 w-3" /> A−
                 </Button>
                 <Button type="button" size="sm" variant="outline" className="h-8" onClick={() => scaleAll(0.5)}>
-                  <Bold className="h-3.5 w-3.5" /> A+
+                  <TypeIcon className="h-3.5 w-3.5" /> A+
                 </Button>
                 <select
                   value=""
@@ -351,8 +367,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                   variant="ghost"
                   className="h-8"
                   onClick={() => {
-                    set("typo", defaultTypography);
-                    set("page", defaultPage);
+                    commit({ ...data, typo: defaultTypography, page: defaultPage, textColorOverrides: [] });
                   }}
                 >
                   <RotateCcw className="h-3.5 w-3.5" /> Reset
@@ -361,12 +376,11 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
 
               <Group label="Styles">
                 {STYLE_PRESETS.map((p) => (
-                  <button
+                  <Button
                     key={p.name}
                     type="button"
                     onClick={() => {
-                      set("typo", p.typo);
-                      set("page", p.page);
+                      commit({ ...data, typo: p.typo, page: p.page });
                     }}
                     className="flex h-12 w-20 flex-col items-center justify-center rounded-md border border-border bg-background text-[11px] hover:bg-secondary"
                   >
@@ -374,26 +388,22 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                       AaBbCc
                     </span>
                     <span className="text-[9px] text-muted-foreground">{p.name}</span>
-                  </button>
+                  </Button>
                 ))}
               </Group>
 
-              <Group label="Editing">
-                <Input
-                  value={find}
-                  onChange={(e) => setFind(e.target.value)}
-                  placeholder="Find"
-                  className="h-8 w-24"
-                />
-                <Input
-                  value={replace}
-                  onChange={(e) => setReplace(e.target.value)}
-                  placeholder="Replace with"
-                  className="h-8 w-28"
-                />
-                <Button type="button" size="sm" variant="outline" className="h-8" onClick={runReplace}>
-                  <Replace className="h-3.5 w-3.5" /> Replace all
-                </Button>
+              <Group label="Paragraph">
+                {([{ id: "left", icon: AlignLeft }, { id: "center", icon: AlignCenter }, { id: "right", icon: AlignRight }, { id: "justify", icon: AlignJustify }] as const).map(a =>
+                  <Toggle key={a.id} on={t.align === a.id} title={`Align ${a.id}`} onClick={() => setTypo(part, { align: a.id })}><a.icon className="h-4 w-4" /></Toggle>
+                )}
+                <Toggle on={!!t.strike} title="Strikethrough" onClick={() => setTypo(part, { strike: !t.strike })}><Strikethrough className="h-4 w-4" /></Toggle>
+                <label title="Text highlight" className="flex items-center gap-1"><Highlighter className="h-4 w-4" /><input aria-label="Text highlight" type="color" value={t.highlight || data.colors.accent} onChange={e => setTypo(part, { highlight: e.target.value })} className="h-6 w-6" /></label>
+                <Button size="sm" variant="ghost" onClick={() => setTypo(part, { highlight: undefined })}>Clear highlight</Button>
+              </Group>
+              <Group label="Format painter">
+                <Button title="Copy formatting" size="icon" variant="outline" onClick={() => { setPaint({ ...t }); toast.success("Formatting copied"); }}><Copy className="h-4 w-4" /></Button>
+                <Button title="Apply copied formatting" size="icon" variant="outline" disabled={!paint} onClick={() => { if (paint) setTypo(part, paint); }}><Paintbrush className="h-4 w-4" /></Button>
+                <Button title="Clear selected formatting" size="icon" variant="outline" onClick={() => setTypo(part, { ...defaultTypography[part], align: undefined, strike: false, highlight: undefined })}><RotateCcw className="h-4 w-4" /></Button>
               </Group>
             </>
           )}
@@ -401,7 +411,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
           {tab === "design" && (
             <Group label="Template — works with every style setting">
               {TEMPLATES.map((tpl) => (
-                <button
+                <Button
                   key={tpl.id}
                   type="button"
                   title={tpl.note}
@@ -421,7 +431,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                     </span>
                   </span>
                   <span className="truncate">{tpl.name}</span>
-                </button>
+                </Button>
               ))}
             </Group>
           )}
@@ -430,25 +440,24 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
             <>
               <Group label="Themes">
                 {COLOR_PRESETS.map((p) => (
-                  <button
+                  <Button
                     key={p.name}
                     type="button"
                     title={p.name}
                     onClick={() => {
-                      set("colors", { ...data.colors, ...p.colors });
-                      if (p.colors.accent) set("accent", p.colors.accent);
+                      commit({ ...data, colors: { ...data.colors, ...p.colors }, accent: p.colors.accent ?? data.accent, textColorOverrides: [] });
                     }}
                     className="flex items-center gap-1.5 rounded-full border border-border bg-background px-2.5 py-1 text-[11px] hover:bg-secondary"
                   >
                     <span className="h-3.5 w-3.5 rounded-full" style={{ background: p.colors.accent }} />
                     {p.name}
-                  </button>
+                  </Button>
                 ))}
               </Group>
 
               <Group label="Accent">
                 {ACCENTS.map((a) => (
-                  <button
+                  <Button
                     key={a.value}
                     type="button"
                     title={a.name}
@@ -486,7 +495,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
             <>
               <Group label="Auto-fill">
                 <div className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs">
-                  <Switch checked={data.autoFit} onCheckedChange={(v) => set("autoFit", v)} />
+                  <Switch aria-label="Fill the whole A4 page" checked={data.autoFit} onCheckedChange={(v) => set("autoFit", v)} />
                   Fill the whole A4 page
                 </div>
               </Group>
@@ -495,6 +504,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                 <label className="flex items-center gap-1 text-[11px]" title="Line spacing">
                   <AlignJustify className="h-3.5 w-3.5 text-muted-foreground" />
                   <select
+                    aria-label="Line spacing"
                     value={data.page.lineHeight}
                     onChange={(e) => setPage({ lineHeight: Number(e.target.value) })}
                     className="h-8 rounded-md border border-input bg-background px-2 text-sm"
@@ -509,6 +519,7 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                 <label className="flex items-center gap-1 text-[11px]" title="Bullet style">
                   <List className="h-3.5 w-3.5 text-muted-foreground" />
                   <select
+                    aria-label="Bullet style"
                     value={data.page.bullet}
                     onChange={(e) => setPage({ bullet: e.target.value as PageSetup["bullet"] })}
                     className="h-8 rounded-md border border-input bg-background px-2 text-sm"
@@ -529,8 +540,9 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                     type="number"
                     min={4}
                     max={40}
+                    aria-label="Section spacing"
                     value={data.page.sectionGap}
-                    onChange={(e) => setPage({ sectionGap: Number(e.target.value) || 12 })}
+                    onChange={(e) => setPage({ sectionGap: Math.min(40, Math.max(4, Number(e.target.value) || 4)) })}
                     className="h-8 w-16 text-center"
                   />
                 </div>
@@ -540,16 +552,25 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                     type="number"
                     min={12}
                     max={60}
+                    aria-label="Page margins"
                     value={data.page.margin}
-                    onChange={(e) => setPage({ margin: Number(e.target.value) || 30 })}
+                    onChange={(e) => setPage({ margin: Math.min(60, Math.max(12, Number(e.target.value) || 12)) })}
                     className="h-8 w-16 text-center"
                   />
                 </div>
               </Group>
 
+              <Group label="Paragraph spacing">
+                <label className="flex items-center gap-1 text-xs">After<Input aria-label="Paragraph spacing" type="number" min={0} max={30} value={data.page.paragraphGap ?? 0} onChange={e => setPage({ paragraphGap: Math.max(0, Math.min(30, Number(e.target.value))) })} className="h-8 w-16" /></label>
+                <label className="flex items-center gap-1 text-xs">First line<Input aria-label="First line indent" type="number" min={0} max={60} value={data.page.indent ?? 0} onChange={e => setPage({ indent: Math.max(0, Math.min(60, Number(e.target.value))) })} className="h-8 w-16" /></label>
+                <Button variant="outline" size="sm" onClick={() => set("page", defaultPage)}><RotateCcw className="h-4 w-4" />Reset layout</Button>
+              </Group>
+            </>
+          )}
+          {tab === "picture" && <>
               <Group label="Photo">
                 <div className="flex items-center gap-2 rounded-md border border-border bg-background px-2 py-1.5 text-xs">
-                  <Switch checked={data.withPhoto} onCheckedChange={(v) => set("withPhoto", v)} />
+                  <Switch aria-label="Show picture" checked={data.withPhoto} onCheckedChange={(v) => set("withPhoto", v)} />
                   Show picture
                 </div>
                 {(["circle", "rounded", "square"] as const).map((s) => (
@@ -565,8 +586,18 @@ export function StyleRibbon({ data, set }: { data: CVData; set: SetFn }) {
                   </Button>
                 ))}
               </Group>
-            </>
-          )}
+            <Group label="Crop and position">
+              {([{ key: "photoZoom", label: "Photo zoom", min: 1, max: 3, step: .05 }, { key: "photoX", label: "Horizontal position", min: 0, max: 100, step: 1 }, { key: "photoY", label: "Vertical position", min: 0, max: 100, step: 1 }] as const).map(x => <label key={x.key} className="flex flex-col gap-1 text-[11px]">{x.label}<input aria-label={x.label} type="range" min={x.min} max={x.max} step={x.step} value={data[x.key]} onChange={e => set(x.key, Number(e.target.value))} className="w-28 accent-primary" /></label>)}
+              <Button size="icon" variant="outline" title="Reset photo crop" onClick={() => commit({ ...data, photoX: 50, photoY: 50, photoZoom: 1 })}><ImageIcon className="h-4 w-4" /></Button>
+            </Group>
+          </>}
+          {tab === "editing" && <Group label="Find and replace">
+            <Input aria-label="Find text" value={find} onChange={e => setFind(e.target.value)} placeholder="Find" className="h-8 w-32" />
+            <Input aria-label="Replacement text" value={replace} onChange={e => setReplace(e.target.value)} placeholder="Replace with" className="h-8 w-32" />
+            <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={matchCase} onChange={e => setMatchCase(e.target.checked)} />Match case</label>
+            <label className="flex items-center gap-1 text-xs"><input type="checkbox" checked={wholeWord} onChange={e => setWholeWord(e.target.checked)} />Whole words</label>
+            <Button size="sm" variant="outline" disabled={!find} onClick={runReplace}><Replace className="h-4 w-4" />Replace all</Button>
+          </Group>}
         </div>
       </div>
     </div>
