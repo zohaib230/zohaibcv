@@ -79,7 +79,7 @@ export const Route = createFileRoute("/builder")({
       { property: "og:title", content: "CV Builder — CV Generator by Zohaib" },
       {
         property: "og:description",
-        content: "21 professional CV designs, guided questions, PDF download.",
+        content: "24 professional CV designs, advanced Word-style editing, guided questions and PDF download.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -152,6 +152,8 @@ function App() {
   const [started, setStarted] = useState(false);
   const [step, setStep] = useState(0);
   const [data, setData] = useState<CVData>(emptyCV);
+  const [styleZoom, setStyleZoom] = useState(1);
+  const [stylePart, setStylePart] = useState<import("@/lib/cv").TypoPart>("body");
   const [autoProfile, setAutoProfile] = useState(false);
   const { user, signOut } = useAuth();
 
@@ -300,7 +302,7 @@ function App() {
         </div>
       </header>
 
-      {step === STYLE_STEP && <StyleRibbon data={data} set={set} />}
+      {step === STYLE_STEP && <StyleRibbon data={data} onChange={setData} part={stylePart} onPartChange={setStylePart} zoom={styleZoom} onZoomChange={setStyleZoom} />}
 
       <main
         className={`mx-auto grid max-w-6xl gap-6 px-4 py-6 sm:px-5 sm:py-8 ${
@@ -324,7 +326,7 @@ function App() {
           {step === 5 && <StepExperience data={data} set={set} />}
           {step === 6 && <StepEducation data={data} set={set} />}
           {step === 7 && <StepSkills data={data} set={set} />}
-          {step === STYLE_STEP && <StepStyle />}
+          
           {step === FINISH_STEP && (
             <StepFinish
               data={preview}
@@ -343,7 +345,7 @@ function App() {
             Live preview
           </p>
           <div className={wide ? "mx-auto w-full max-w-[720px]" : ""}>
-            <ScaledPreview data={preview} max={1} />
+            <ScaledPreview data={preview} max={wide ? 2 : 1} zoom={wide ? styleZoom : 1} onSelectPart={wide ? setStylePart : undefined} />
           </div>
           {!wide && <CompletenessMeter data={preview} />}
         </aside>
@@ -462,32 +464,6 @@ function StepDesign({ data, set }: { data: CVData; set: SetFn }) {
     </Card>
   );
 }
-
-function StepStyle() {
-  return (
-    <Card
-      title="Writing style"
-      hint="Use the toolbar above — just like MS Word. Pick the part (Name, Headings, Body…), then its font, exact point size and colour. Your CV updates live."
-    >
-      <ul className="list-disc space-y-1 pl-5 text-sm text-muted-foreground">
-        <li>
-          <b className="text-foreground">Font tab</b> — choose which part of the CV you are styling,
-          then set its font and size in points (or use A− / A+ for the whole CV).
-        </li>
-        <li>
-          <b className="text-foreground">Colours tab</b> — one-click themes, accent colours and a
-          separate colour for every single area of the page.
-        </li>
-        <li>
-          <b className="text-foreground">Page tab</b> — auto-fill the A4 page, show or hide your
-          picture and choose its shape.
-        </li>
-      </ul>
-    </Card>
-  );
-}
-
-
 
 function StepPhoto({ data, set }: { data: CVData; set: SetFn }) {
   const fileRef = useRef<HTMLInputElement>(null);

@@ -87,7 +87,7 @@ export const GOOGLE_FONT_HREF = `https://fonts.googleapis.com/css2?${FONT_LIST.f
   .join("&")}&display=swap`;
 
 export const fontStack = (id: string) =>
-  FONT_LIST.find((f) => f.id === id)?.stack ?? FONT_LIST[0]!.stack;
+  FONT_LIST.find((f) => f.id === id)?.stack ?? FONT_LIST[0]?.stack ?? "Arial, sans-serif";
 
 /** Every text part of the CV can pick its own family + point size (like MS Word). */
 export type TypoPart = "name" | "role" | "heading" | "sub" | "body" | "small";
@@ -101,6 +101,9 @@ export type TypoStyle = {
   caps: boolean;
   /** letter spacing in px */
   spacing: number;
+  align?: "left" | "center" | "right" | "justify";
+  strike?: boolean;
+  highlight?: string;
 };
 
 export type Typography = Record<TypoPart, TypoStyle>;
@@ -111,6 +114,8 @@ export type PageSetup = {
   sectionGap: number;
   margin: number;
   bullet: "disc" | "circle" | "square" | "dash" | "none";
+  paragraphGap?: number;
+  indent?: number;
 };
 
 /** Every coloured area of the CV can be changed independently. */
@@ -180,6 +185,7 @@ export type CVData = {
   typo: Typography;
   page: PageSetup;
   autoFit: boolean;
+  textColorOverrides?: TypoPart[];
 };
 
 

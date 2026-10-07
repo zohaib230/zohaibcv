@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
-import type { CVData } from "@/lib/cv";
+import type { CVData, TypoPart } from "@/lib/cv";
 import { fontStack } from "@/lib/cv";
 import { TemplateSidebar } from "./TemplateSidebar";
 import { TemplateClassic } from "./TemplateClassic";
@@ -70,7 +70,7 @@ function Inner({ data }: { data: CVData }) {
 const PAGE_H = 1122;
 const MAX_PAGES = 4;
 
-export function CVPreview({ data }: { data: CVData }) {
+export function CVPreview({ data, onSelectPart }: { data: CVData; onSelectPart?: (part: TypoPart) => void }) {
   const ref = useRef<HTMLDivElement>(null);
 
   // Auto-fit: grows or shrinks all type + spacing so every page is always
@@ -86,6 +86,7 @@ export function CVPreview({ data }: { data: CVData }) {
       el.style.setProperty("--fill", "1");
       page.style.height = "";
       page.style.minHeight = "";
+      el.dataset["pages"] = String(Math.max(1, Math.ceil(page.scrollHeight / PAGE_H)));
       return;
     }
 
@@ -119,7 +120,7 @@ export function CVPreview({ data }: { data: CVData }) {
     el.dataset['pages'] = String(pages);
   };
 
-  useLayoutEffect(fit);
+  useLayoutEffect(fit, [data]);
 
   useEffect(() => {
     const t = setTimeout(fit, 250);
@@ -142,9 +143,11 @@ export function CVPreview({ data }: { data: CVData }) {
     partVars[`--pt-${k}`] = String(s.size);
     partVars[`--fw-${k}`] = s.bold ? "800" : k === "name" || k === "heading" ? "500" : "400";
     partVars[`--fi-${k}`] = s.italic ? "italic" : "normal";
-    partVars[`--fu-${k}`] = s.underline ? "underline" : "none";
+    partVars[`--fu-${k}`] = [s.underline && "underline", s.strike && "line-through"].filter(Boolean).join(" ") || "none";
     partVars[`--fc-${k}`] = s.caps ? "uppercase" : "none";
     partVars[`--ls-${k}`] = `${s.spacing}px`;
+    if (s.align) partVars[`--align-${k}`] = s.align;
+    partVars[`--highlight-${k}`] = s.highlight || "transparent";
   });
 
   return (
@@ -152,6 +155,15 @@ export function CVPreview({ data }: { data: CVData }) {
       id="cv-root"
       className="cv-root"
       ref={ref}
+      data-color-overrides={data.textColorOverrides?.join(" ")}
+      onClick={onSelectPart ? (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const node = target.closest(".cv-name, .cv-role, .cv-h, .cv-sub, .cv-body, .cv-small");
+        if (!node) return;
+        const match = (["name", "role", "heading", "sub", "body", "small"] as const).find(p => node.classList.contains(p === "heading" ? "cv-h" : `cv-${p}`));
+        if (match) onSelectPart(match);
+      } : undefined}
       style={
         {
           ...partVars,
@@ -159,6 +171,8 @@ export function CVPreview({ data }: { data: CVData }) {
           "--sec-gap": `${pg.sectionGap}px`,
           "--pg-margin": `${pg.margin}px`,
           "--bullet": bullet,
+          "--paragraph-gap": `${pg.paragraphGap ?? 0}px`,
+          "--paragraph-indent": `${pg.indent ?? 0}px`,
           "--c-accent": c.accent,
           "--cv-accent": c.accent,
           "--fs": String(t.body.size / 9.5),
