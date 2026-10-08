@@ -13,7 +13,7 @@ export function InstallAppButton({ size = "sm", className = "" }: { size?: "sm" 
   const [evt, setEvt] = useState<PromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [env, setEnv] = useState({ ios: false, android: false, inApp: false });
+  const [env, setEnv] = useState({ ios: false, android: false, inApp: false, desktop: false, framed: false });
 
   useEffect(() => {
     const w = window as W;
@@ -24,10 +24,12 @@ export function InstallAppButton({ size = "sm", className = "" }: { size?: "sm" 
       ios: /iphone|ipad|ipod/i.test(ua),
       android: /android/i.test(ua),
       inApp: /FBAN|FBAV|Instagram|WhatsApp|Line\/|wv\)|Snapchat|TikTok/i.test(ua),
+      desktop: !/android|iphone|ipad|ipod|mobile/i.test(ua),
+      framed: window.self !== window.top || location.hostname !== APP_HOST,
     });
     const onReady = () => setEvt(w.__bip ?? null);
     const onPrompt = (e: Event) => { e.preventDefault(); w.__bip = e as PromptEvent; setEvt(e as PromptEvent); };
-    const onInstalled = () => { setInstalled(true); toast.success("CV Generator installed on your phone!"); };
+    const onInstalled = () => { setInstalled(true); toast.success("CV Generator installed!"); };
     window.addEventListener("bip-ready", onReady);
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
@@ -73,7 +75,23 @@ export function InstallAppButton({ size = "sm", className = "" }: { size?: "sm" 
             </DialogDescription>
           </DialogHeader>
 
-          {env.android && env.inApp ? (
+          {env.framed ? (
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">
+                Installing works only on the live website. Open it in a new tab, then press Install App again.
+              </p>
+              <Button className="w-full gap-2" onClick={() => window.open(`https://${APP_HOST}`, "_blank", "noopener")}>
+                <Download className="h-4 w-4" /> Open live website
+              </Button>
+            </div>
+          ) : env.desktop ? (
+            <ol className="space-y-3 text-sm">
+              <Step n={1} icon={<Chrome className="h-4 w-4" />}>Use <b>Google Chrome</b> or <b>Microsoft Edge</b></Step>
+              <Step n={2} icon={<Download className="h-4 w-4" />}>Click the <b>install icon</b> at the right end of the address bar</Step>
+              <Step n={3} icon={<MoreVertical className="h-4 w-4" />}>Or open menu <b>⋮</b> → <b>Cast, save and share</b> → <b>Install page as app</b></Step>
+              <p className="text-xs text-muted-foreground">Firefox and Safari on PC do not support installing web apps.</p>
+            </ol>
+          ) : env.android && env.inApp ? (
             <div className="space-y-3">
               <p className="text-sm text-muted-foreground">
                 You opened the link inside another app. Open it in Chrome to install with one tap.
