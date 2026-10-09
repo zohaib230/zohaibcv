@@ -10,6 +10,8 @@
   "background_color": "#1d2733",
   "theme_color": "#1d2733",
   "categories": ["productivity", "business"],
+  "prefer_related_applications": false,
+  "related_applications": [{ "platform": "webapp", "url": "https://zohaibcv.lovable.app/manifest.webmanifest" }],
   "icons": [
     { "src": "/icon-192-v2.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "/icon-512-v2.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },

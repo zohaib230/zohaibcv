@@ -9,16 +9,32 @@ type W = Window & { __bip?: PromptEvent | null };
 
 const APP_HOST = "zohaibcv.lovable.app";
 
+type NavWithApps = Navigator & { getInstalledRelatedApps?: () => Promise<unknown[]> };
+
+function waitForPrompt(ms: number): Promise<PromptEvent | null> {
+  const w = window as W;
+  if (w.__bip) return Promise.resolve(w.__bip);
+  return new Promise((resolve) => {
+    const done = () => { window.removeEventListener("bip-ready", done); clearTimeout(t); resolve(w.__bip ?? null); };
+    const t = setTimeout(done, ms);
+    window.addEventListener("bip-ready", done);
+  });
+}
+
 export function InstallAppButton({ size = "sm", className = "" }: { size?: "sm" | "lg"; className?: string }) {
   const [evt, setEvt] = useState<PromptEvent | null>(null);
   const [installed, setInstalled] = useState(false);
+  const [alreadyOnDevice, setAlreadyOnDevice] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [open, setOpen] = useState(false);
   const [env, setEnv] = useState({ ios: false, android: false, inApp: false, desktop: false, framed: false });
 
   useEffect(() => {
     const w = window as W;
-    if (window.matchMedia("(display-mode: standalone)").matches) setInstalled(true);
+    if (window.matchMedia("(display-mode: standalone)").matches || (navigator as Navigator & { standalone?: boolean }).standalone) setInstalled(true);
     if (w.__bip) setEvt(w.__bip);
+    const nav = navigator as NavWithApps;
+    nav.getInstalledRelatedApps?.().then((apps) => { if (apps.length) setAlreadyOnDevice(true); }).catch(() => {});
     const ua = navigator.userAgent;
     setEnv({
       ios: /iphone|ipad|ipod/i.test(ua),
@@ -29,7 +45,7 @@ export function InstallAppButton({ size = "sm", className = "" }: { size?: "sm" 
     });
     const onReady = () => setEvt(w.__bip ?? null);
     const onPrompt = (e: Event) => { e.preventDefault(); w.__bip = e as PromptEvent; setEvt(e as PromptEvent); };
-    const onInstalled = () => { setInstalled(true); toast.success("CV Generator installed!"); };
+    const onInstalled = () => { setInstalled(true); w.__bip = null; toast.success("CV Generator installed! Open it from your home screen or app list."); };
     window.addEventListener("bip-ready", onReady);
     window.addEventListener("beforeinstallprompt", onPrompt);
     window.addEventListener("appinstalled", onInstalled);
@@ -42,15 +58,31 @@ export function InstallAppButton({ size = "sm", className = "" }: { size?: "sm" 
 
   if (installed) return null;
 
-  const install = async () => {
-    if (evt) {
-      await evt.prompt();
-      const { outcome } = await evt.userChoice;
+  const runPrompt = async (p: PromptEvent) => {
+    try {
+      await p.prompt();
+      const { outcome } = await p.userChoice;
       if (outcome === "accepted") toast.success("Installing CV Generator…");
+    } catch {
+      setOpen(true);
+    } finally {
       (window as W).__bip = null;
       setEvt(null);
+    }
+  };
+
+  const install = async () => {
+    if (evt) return runPrompt(evt);
+    if (alreadyOnDevice) {
+      toast.success("CV Generator is already installed on this device. Open it from your home screen or app list.");
       return;
     }
+    if (env.framed || env.ios || (env.android && env.inApp)) { setOpen(true); return; }
+    // The browser may still be preparing the install prompt — wait briefly, then install in one tap.
+    setBusy(true);
+    const p = await waitForPrompt(2500);
+    setBusy(false);
+    if (p) return runPrompt(p);
     setOpen(true);
   };
 
@@ -60,8 +92,8 @@ export function InstallAppButton({ size = "sm", className = "" }: { size?: "sm" 
 
   return (
     <>
-      <Button size={size} onClick={install} className={`gap-2 ${className}`}>
-        <Download className="h-4 w-4" /> Install App
+      <Button size={size} onClick={install} disabled={busy} className={`gap-2 ${className}`}>
+        <Download className={`h-4 w-4 ${busy ? "animate-bounce" : ""}`} /> {busy ? "Installing…" : "Install App"}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-sm">
