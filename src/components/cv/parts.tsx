@@ -90,6 +90,7 @@ export const contactRows = (d: CVData): [string, string][] =>
   (
     [
       ["Phone", d.phone],
+      ["Phone 2", d.phone2],
       ["Email", d.email],
       ["Address", d.address],
       ["Website", d.website],
@@ -97,6 +98,15 @@ export const contactRows = (d: CVData): [string, string][] =>
       ["Portfolio", d.portfolio],
     ] as [string, string][]
   ).filter(([, v]) => !!v);
+
+/** The user's own added sections (heading + detail lines) for the CV. */
+export const customList = (d: CVData): { heading: string; points: string[] }[] =>
+  (d.customSections ?? [])
+    .filter((s) => s.heading.trim() || s.details.trim())
+    .map((s) => ({ heading: s.heading.trim() || "Additional Details", points: bullets(s.details) }));
+
+export const DECLARATION_TEXT =
+  "I declare that the information provided in this CV is true and complete to the best of my knowledge.";
 
 
 export const fresherLine =

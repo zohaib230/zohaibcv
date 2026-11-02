@@ -77,7 +77,12 @@ export function InstallAppButton({ size = "sm", className = "" }: { size?: "sm" 
       toast.success("CV Generator is already installed on this device. Open it from your home screen or app list.");
       return;
     }
-    if (env.framed || env.ios || (env.android && env.inApp)) { setOpen(true); return; }
+    if (env.framed) {
+      // One tap from the preview: jump straight to the live website.
+      window.open(`https://${APP_HOST}`, "_blank", "noopener");
+      return;
+    }
+    if (env.ios || (env.android && env.inApp)) { setOpen(true); return; }
     // The browser may still be preparing the install prompt — wait briefly, then install in one tap.
     setBusy(true);
     const p = await waitForPrompt(2500);

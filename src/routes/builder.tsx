@@ -64,6 +64,7 @@ import {
   TEMPLATES,
   uid,
   type CVData,
+  type CustomSection,
 } from "@/lib/cv";
 
 
@@ -98,12 +99,14 @@ const STEPS = [
   "Experience",
   "Education",
   "Skills",
+  "Custom",
   "Style",
   "Finish",
 ];
 
-const STYLE_STEP = 8;
-const FINISH_STEP = 9;
+const CUSTOM_STEP = 8;
+const STYLE_STEP = 9;
+const FINISH_STEP = 10;
 const EDU_FLAT_SET = new Set(EDU_PRESETS.flatMap((g) => g.items));
 
 
@@ -326,6 +329,8 @@ function App() {
           {step === 5 && <StepExperience data={data} set={set} />}
           {step === 6 && <StepEducation data={data} set={set} />}
           {step === 7 && <StepSkills data={data} set={set} />}
+          {step === CUSTOM_STEP && <StepCustom data={data} set={set} />}
+
           
           {step === FINISH_STEP && (
             <StepFinish
@@ -684,6 +689,10 @@ function StepContact({ data, set }: { data: CVData; set: SetFn }) {
           />
         </Field>
       </div>
+      <Field label="Second phone number (optional)">
+        <Input value={data.phone2} placeholder="+92 321 7654321" onChange={(e) => set("phone2", e.target.value)} />
+        <p className="mt-1 text-xs text-muted-foreground">Use two numbers? Both appear on the CV in every design.</p>
+      </Field>
       <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Website (optional)">
           <Input

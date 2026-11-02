@@ -136,6 +136,12 @@ export type ThemeColors = {
   divider: string;
 };
 
+export type CustomSection = {
+  id: string;
+  heading: string;
+  details: string;
+};
+
 export type CVData = {
   withPhoto: boolean;
   photo: string | null;
@@ -155,6 +161,7 @@ export type CVData = {
   dob: string;
   age: string;
   phone: string;
+  phone2: string;
   email: string;
   address: string;
   website: string;
@@ -177,6 +184,7 @@ export type CVData = {
   interests: string[];
   achievements: string[];
   references: string[];
+  customSections: CustomSection[];
   referencesOnRequest: boolean;
   declaration: boolean;
   template: TemplateId;
@@ -323,6 +331,7 @@ export const emptyCV: CVData = {
   dob: "",
   age: "",
   phone: "",
+  phone2: "",
   email: "",
   address: "",
   website: "",
@@ -345,6 +354,7 @@ export const emptyCV: CVData = {
   interests: [],
   achievements: [],
   references: [],
+  customSections: [],
   referencesOnRequest: true,
   declaration: false,
   template: "executive",
