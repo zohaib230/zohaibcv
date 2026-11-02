@@ -736,6 +736,65 @@ function StepContact({ data, set }: { data: CVData; set: SetFn }) {
   );
 }
 
+function StepCustom({ data, set }: { data: CVData; set: SetFn }) {
+  const sections = data.customSections ?? [];
+  const update = (id: string, patch: Partial<CustomSection>) =>
+    set("customSections", sections.map((s) => (s.id === id ? { ...s, ...patch } : s)));
+
+  return (
+    <Card title="Add your own content" hint="Any extra heading with details — it appears in every design.">
+      {sections.map((s) => (
+        <div key={s.id} className="space-y-3 rounded-lg border border-border p-4">
+          <Field label="Heading">
+            <Input
+              value={s.heading}
+              placeholder="e.g. Career Objective"
+              onChange={(ev) => update(s.id, { heading: ev.target.value })}
+            />
+            <OptionChips
+              value={s.heading}
+              onPick={(v) => update(s.id, { heading: v })}
+              options={[
+                "Career Objective",
+                "Strengths",
+                "Awards",
+                "Sports Achievements",
+                "Extra Curricular Activities",
+                "Work Samples",
+                "Attach With CV",
+              ]}
+            />
+          </Field>
+          <Field label="Details (one point per line)">
+            <Textarea
+              rows={4}
+              value={s.details}
+              placeholder={"Write each point on its own line…"}
+              onChange={(ev) => update(s.id, { details: ev.target.value })}
+            />
+          </Field>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => set("customSections", sections.filter((x) => x.id !== s.id))}
+          >
+            <Trash2 /> Remove
+          </Button>
+        </div>
+      ))}
+      <Button
+        variant="outline"
+        onClick={() => set("customSections", [...sections, { id: uid(), heading: "", details: "" }])}
+      >
+        <Plus /> Add heading
+      </Button>
+      <p className="text-xs text-muted-foreground">
+        Whatever you add here appears on your CV in every design, together with the other sections.
+      </p>
+    </Card>
+  );
+}
+
 function StepProfile({
   data,
   set,
