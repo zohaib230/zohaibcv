@@ -1,5 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
+import { CustomSections, personalRows } from "./parts";
 
 /**
  * ATS-safe minimal template: single column, no graphics, no colour blocks,
@@ -20,7 +21,7 @@ const H = ({ children }: { children: React.ReactNode }) => (
 );
 
 export function TemplateAts({ data }: { data: CVData }) {
-  const contact = [data.phone, data.email, data.address, data.website, data.linkedin, data.portfolio]
+  const contact = [data.phone, data.phone2, data.email, data.address, data.website, data.linkedin, data.portfolio]
     .filter(Boolean)
     .join("  |  ");
 
@@ -62,6 +63,20 @@ export function TemplateAts({ data }: { data: CVData }) {
           <div style={{ color: "var(--c-muted)", marginTop: "calc(4px * var(--fill))" }}>{contact}</div>
         )}
       </header>
+
+      {personalRows(data).length > 0 && (
+        <section>
+          <H>Personal Details</H>
+          <div className="grid grid-cols-2 gap-x-8 gap-y-1">
+            {personalRows(data).map(([k, v]) => (
+              <div key={k}>
+                <span className="font-bold" style={{ color: "var(--c-sub)" }}>{k}: </span>
+                <span>{v}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {data.profile && (
         <section>
@@ -179,6 +194,8 @@ export function TemplateAts({ data }: { data: CVData }) {
           {data.interests.length > 0 && <p>Interests: {data.interests.join(", ")}</p>}
         </section>
       )}
+
+      <CustomSections d={data} head={(t) => <H>{t}</H>} sectionClass="" listClass="ml-4 list-disc leading-relaxed" />
 
       {(data.references.length > 0 || data.referencesOnRequest) && (
         <section>
