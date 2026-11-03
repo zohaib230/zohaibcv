@@ -1,5 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
+import { CustomSections, DeclarationSection, personalRows, ReferencesSection } from "./parts";
 import { Photo } from "./parts";
 
 const Block = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -25,7 +26,7 @@ export function TemplateModern({ data }: { data: CVData }) {
             {fullName(data)}
           </h1>
           <p className="mt-2 text-[length:calc(10.5px*var(--fs))] text-white/70">
-            {[data.phone, data.email, data.address].filter(Boolean).join("  ·  ")}
+            {[data.phone, data.phone2, data.email, data.address].filter(Boolean).join("  ·  ")}
           </p>
         </div>
       </header>
@@ -70,27 +71,52 @@ export function TemplateModern({ data }: { data: CVData }) {
               </div>
             </Block>
           )}
+
+          {data.projects.length > 0 && (
+            <Block title="Projects">
+              <ul className="ml-4 list-disc space-y-0.5">
+                {data.projects.map((p, i) => (
+                  <li key={i}>{p}</li>
+                ))}
+              </ul>
+            </Block>
+          )}
+
+          {data.volunteer.length > 0 && (
+            <Block title="Volunteer Experience">
+              <ul className="ml-4 list-disc space-y-0.5">
+                {data.volunteer.map((v, i) => (
+                  <li key={i}>{v}</li>
+                ))}
+              </ul>
+            </Block>
+          )}
+
+          <CustomSections d={data} head={(t) => <Block title={t}><span /></Block>} sectionClass="contents" />
         </main>
 
         <aside className="w-[38%] bg-[#f4f2ec] px-7 py-7">
-          <Block title="Personal">
-            <div className="space-y-1">
-              {data.fatherName && <div>Father: {data.fatherName}</div>}
-              {data.gender && <div>Gender: {data.gender}</div>}
-              {data.dob && <div>D.O.B: {data.dob}</div>}
-              {data.age && <div>Age: {data.age}</div>}
-              {data.cnic && <div>CNIC: {data.cnic}</div>}
-              {data.nationality && <div>Nationality: {data.nationality}</div>}
-              {data.religion && <div>Religion: {data.religion}</div>}
-              {data.maritalStatus && <div>Status: {data.maritalStatus}</div>}
-            </div>
-          </Block>
+          {personalRows(data).length > 0 && (
+            <Block title="Personal">
+              <div className="space-y-1">
+                {personalRows(data).map(([k, v]) => (
+                  <div key={k}>{k}: {v}</div>
+                ))}
+                {data.phone2 && <div>Phone 2: {data.phone2}</div>}
+              </div>
+            </Block>
+          )}
 
           {data.skills.length > 0 && (
             <Block title="Skills">
               <div className="flex flex-wrap gap-1">
                 {data.skills.map((s) => (
                   <span key={s} className="bg-[#1b1c1f] px-2 py-[3px] text-[length:calc(9.5px*var(--fs))] text-white">
+                    {s}
+                  </span>
+                ))}
+                {data.softSkills.map((s) => (
+                  <span key={s} className="bg-[#3a3a3a] px-2 py-[3px] text-[length:calc(9.5px*var(--fs))] text-white">
                     {s}
                   </span>
                 ))}

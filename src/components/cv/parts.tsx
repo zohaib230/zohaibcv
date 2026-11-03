@@ -111,3 +111,111 @@ export const DECLARATION_TEXT =
 
 export const fresherLine =
   "Fresh candidate — no prior work experience, highly motivated, disciplined and ready to learn quickly from day one.";
+
+/* ---- Shared, style-adaptable section blocks (used by every template) ---- */
+
+export function BulletSection({
+  head,
+  title,
+  items,
+  listClass = "cv-bullets cv-body",
+  sectionClass = "cv-sec",
+}: {
+  head: (title: string) => React.ReactNode;
+  title: string;
+  items: string[];
+  listClass?: string;
+  sectionClass?: string;
+}) {
+  if (items.length === 0) return null;
+  return (
+    <section className={sectionClass}>
+      {head(title)}
+      <ul className={listClass}>
+        {items.map((t) => (
+          <li key={t}>{t}</li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** The user's own added sections (heading + detail lines) in the template's style. */
+export function CustomSections({
+  d,
+  head,
+  listClass = "cv-bullets cv-body",
+  sectionClass = "cv-sec",
+}: {
+  d: CVData;
+  head: (title: string) => React.ReactNode;
+  listClass?: string;
+  sectionClass?: string;
+}) {
+  const list = customList(d);
+  if (list.length === 0) return null;
+  return (
+    <>
+      {list.map((s) => (
+        <section key={s.heading} className={sectionClass}>
+          {head(s.heading)}
+          <ul className={listClass}>
+            {s.points.map((p, i) => (
+              <li key={i}>{p}</li>
+            ))}
+          </ul>
+        </section>
+      ))}
+    </>
+  );
+}
+
+export function DeclarationSection({
+  d,
+  head,
+  bodyClass = "cv-body",
+  sectionClass = "cv-sec",
+}: {
+  d: CVData;
+  head: (title: string) => React.ReactNode;
+  bodyClass?: string;
+  sectionClass?: string;
+}) {
+  if (!d.declaration) return null;
+  return (
+    <section className={sectionClass}>
+      {head("Declaration")}
+      <p className={bodyClass}>{DECLARATION_TEXT}</p>
+    </section>
+  );
+}
+
+export function ReferencesSection({
+  d,
+  head,
+  listClass = "cv-bullets cv-body",
+  bodyClass = "cv-body",
+  sectionClass = "cv-sec",
+}: {
+  d: CVData;
+  head: (title: string) => React.ReactNode;
+  listClass?: string;
+  bodyClass?: string;
+  sectionClass?: string;
+}) {
+  if (d.references.length === 0 && !d.referencesOnRequest) return null;
+  return (
+    <section className={sectionClass}>
+      {head("References")}
+      {d.references.length > 0 ? (
+        <ul className={listClass}>
+          {d.references.map((r) => (
+            <li key={r}>{r}</li>
+          ))}
+        </ul>
+      ) : (
+        <p className={bodyClass}>References available on request.</p>
+      )}
+    </section>
+  );
+}
