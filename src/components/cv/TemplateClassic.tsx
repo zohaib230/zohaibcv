@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { BulletSection, CustomSections, DeclarationSection, personalRows, ReferencesSection } from "./parts";
+import { CustomSections, personalRows } from "./parts";
 import { Photo } from "./parts";
 
 const H = ({ children }: { children: React.ReactNode }) => (
