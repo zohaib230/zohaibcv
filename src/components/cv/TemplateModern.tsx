@@ -71,6 +71,28 @@ export function TemplateModern({ data }: { data: CVData }) {
               </div>
             </Block>
           )}
+
+          {data.projects.length > 0 && (
+            <Block title="Projects">
+              <ul className="ml-4 list-disc space-y-0.5">
+                {data.projects.map((p, i) => (
+                  <li key={i}>{p}</li>
+                ))}
+              </ul>
+            </Block>
+          )}
+
+          {data.volunteer.length > 0 && (
+            <Block title="Volunteer Experience">
+              <ul className="ml-4 list-disc space-y-0.5">
+                {data.volunteer.map((v, i) => (
+                  <li key={i}>{v}</li>
+                ))}
+              </ul>
+            </Block>
+          )}
+
+          <CustomSections d={data} head={(t) => <Block title={t}><span /></Block>} sectionClass="contents" />
         </main>
 
         <aside className="w-[38%] bg-[#f4f2ec] px-7 py-7">
@@ -90,6 +112,11 @@ export function TemplateModern({ data }: { data: CVData }) {
               <div className="flex flex-wrap gap-1">
                 {data.skills.map((s) => (
                   <span key={s} className="bg-[#1b1c1f] px-2 py-[3px] text-[length:calc(9.5px*var(--fs))] text-white">
+                    {s}
+                  </span>
+                ))}
+                {data.softSkills.map((s) => (
+                  <span key={s} className="bg-[#3a3a3a] px-2 py-[3px] text-[length:calc(9.5px*var(--fs))] text-white">
                     {s}
                   </span>
                 ))}
