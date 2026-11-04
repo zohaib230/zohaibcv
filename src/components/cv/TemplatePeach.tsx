@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo } from "./parts";
+import { CustomSections, DeclarationSection, personalRows, Photo, ReferencesSection } from "./parts";
 
 const Head = ({ children }: { children: React.ReactNode }) => (
   <h2 className="mb-1.5 font-display text-[length:calc(19px*var(--fs))] font-bold text-[#2b2b2b]">{children}</h2>
@@ -28,6 +28,7 @@ export function TemplatePeach({ data }: { data: CVData }) {
           {data.jobTitle && <p className="text-[length:calc(11px*var(--fs))] uppercase tracking-[0.2em]">{data.jobTitle}</p>}
           <div className="mt-2 space-y-[1px] text-[length:calc(9.5px*var(--fs))]">
             {data.phone && <div>{data.phone}</div>}
+            {data.phone2 && <div>{data.phone2}</div>}
             {data.email && <div>{data.email}</div>}
             {data.website && <div>{data.website}</div>}
             {data.address && <div>{data.address}</div>}
@@ -57,14 +58,9 @@ export function TemplatePeach({ data }: { data: CVData }) {
 
           <Head>Personal</Head>
           <div className="mb-4 space-y-0.5 text-[length:calc(9.5px*var(--fs))]">
-            {data.fatherName && <div>Father: {data.fatherName}</div>}
-            {data.gender && <div>Gender: {data.gender}</div>}
-            {data.dob && <div>D.O.B: {data.dob}</div>}
-            {data.age && <div>Age: {data.age}</div>}
-            {data.cnic && <div>CNIC: {data.cnic}</div>}
-            {data.nationality && <div>Nationality: {data.nationality}</div>}
-            {data.religion && <div>Religion: {data.religion}</div>}
-            {data.maritalStatus && <div>Status: {data.maritalStatus}</div>}
+            {personalRows(data).map(([k, v]) => (
+              <div key={k}>{k}: {v}</div>
+            ))}
           </div>
 
           {data.languages.length > 0 && (
@@ -155,7 +151,7 @@ export function TemplatePeach({ data }: { data: CVData }) {
           )}
 
           {data.achievements.length > 0 && (
-            <section>
+            <section className="mb-4">
               <Head>Achievements</Head>
               <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
                 {data.achievements.map((a) => (
@@ -164,6 +160,49 @@ export function TemplatePeach({ data }: { data: CVData }) {
               </ul>
             </section>
           )}
+
+          {data.projects.length > 0 && (
+            <section className="mb-4">
+              <Head>Projects</Head>
+              <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
+                {data.projects.map((p, i) => (
+                  <li key={i}>{p}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {data.volunteer.length > 0 && (
+            <section className="mb-4">
+              <Head>Volunteer Experience</Head>
+              <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
+                {data.volunteer.map((v, i) => (
+                  <li key={i}>{v}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <CustomSections
+            d={data}
+            head={(t) => <Head>{t}</Head>}
+            sectionClass="mb-4"
+            listClass="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]"
+          />
+
+          <ReferencesSection
+            d={data}
+            head={(t) => <Head>{t}</Head>}
+            sectionClass="mb-4"
+            listClass="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]"
+          />
+
+          <DeclarationSection
+            d={data}
+            head={(t) => <Head>{t}</Head>}
+            sectionClass="mb-4"
+            bodyClass="text-[length:calc(10px*var(--fs))]"
+          />
         </main>
       </div>
     </div>

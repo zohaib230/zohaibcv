@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { CustomSections, DeclarationSection, personalRows, ReferencesSection } from "./parts";
+import { customList, personalRows } from "./parts";
 import { Photo } from "./parts";
 
 const Block = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -92,7 +92,15 @@ export function TemplateModern({ data }: { data: CVData }) {
             </Block>
           )}
 
-          <CustomSections d={data} head={(t) => <Block title={t}><span /></Block>} sectionClass="contents" />
+          {customList(data).map((s) => (
+            <Block key={s.heading} title={s.heading}>
+              <ul className="ml-4 list-disc space-y-0.5">
+                {s.points.map((p, i) => (
+                  <li key={i}>{p}</li>
+                ))}
+              </ul>
+            </Block>
+          ))}
         </main>
 
         <aside className="w-[38%] bg-[#f4f2ec] px-7 py-7">
@@ -136,11 +144,43 @@ export function TemplateModern({ data }: { data: CVData }) {
 
           {data.interests.length > 0 && (
             <Block title="Interests">
-              <ul className="space-y-1">
+              <ul className="ml-4 list-disc space-y-0.5">
                 {data.interests.map((i) => (
                   <li key={i}>{i}</li>
                 ))}
               </ul>
+            </Block>
+          )}
+
+          {data.certificates.length > 0 && (
+            <Block title="Certificates">
+              <ul className="ml-4 list-disc space-y-0.5">
+                {data.certificates.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+            </Block>
+          )}
+
+          {data.references.length > 0 && (
+            <Block title="References">
+              <ul className="ml-4 list-disc space-y-0.5">
+                {data.references.map((r) => (
+                  <li key={r}>{r}</li>
+                ))}
+              </ul>
+            </Block>
+          )}
+
+          {data.references.length === 0 && data.referencesOnRequest && (
+            <Block title="References">
+              <p>References available on request.</p>
+            </Block>
+          )}
+
+          {data.declaration && (
+            <Block title="Declaration">
+              <p>I declare that the information provided in this CV is true and complete to the best of my knowledge.</p>
             </Block>
           )}
         </aside>

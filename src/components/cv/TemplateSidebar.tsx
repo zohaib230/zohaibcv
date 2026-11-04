@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo } from "./parts";
+import { CustomSections, DeclarationSection, personalRows, Photo, ReferencesSection } from "./parts";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-4">
@@ -53,6 +53,18 @@ export function TemplateSidebar({ data }: { data: CVData }) {
               <div>{data.phone}</div>
             </div>
           )}
+          {data.phone2 && (
+            <div>
+              <div className="text-[var(--cv-accent)]">Phone 2</div>
+              <div>{data.phone2}</div>
+            </div>
+          )}
+          {data.website && (
+            <div>
+              <div className="text-[var(--cv-accent)]">Website</div>
+              <div className="break-all">{data.website}</div>
+            </div>
+          )}
           {data.dob && (
             <div>
               <div className="text-[var(--cv-accent)]">Date of Birth</div>
@@ -72,12 +84,9 @@ export function TemplateSidebar({ data }: { data: CVData }) {
 
         <SideHeading title="Personal" />
         <div className="space-y-1 text-[length:calc(10.5px*var(--fs))]">
-          {data.fatherName && <div>Father: {data.fatherName}</div>}
-          {data.gender && <div>Gender: {data.gender}</div>}
-          {data.cnic && <div>CNIC: {data.cnic}</div>}
-          {data.nationality && <div>Nationality: {data.nationality}</div>}
-          {data.religion && <div>Religion: {data.religion}</div>}
-          {data.maritalStatus && <div>Marital Status: {data.maritalStatus}</div>}
+          {personalRows(data).map(([k, v]) => (
+            <div key={k}>{k}: {v}</div>
+          ))}
         </div>
 
         {data.languages.length > 0 && (
@@ -150,6 +159,76 @@ export function TemplateSidebar({ data }: { data: CVData }) {
                 <li key={s}>{s}</li>
               ))}
             </ul>
+          </Section>
+        )}
+
+        {data.softSkills.length > 0 && (
+          <Section title="Soft Skills">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.softSkills.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {data.certificates.length > 0 && (
+          <Section title="Certificates">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.certificates.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {data.achievements.length > 0 && (
+          <Section title="Achievements">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.achievements.map((a) => (
+                <li key={a}>{a}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {data.projects.length > 0 && (
+          <Section title="Projects">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.projects.map((p, i) => (
+                <li key={i}>{p}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {data.volunteer.length > 0 && (
+          <Section title="Volunteer Experience">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.volunteer.map((v, i) => (
+                <li key={i}>{v}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        <CustomSections
+          d={data}
+          head={(t) => <Section title={t}><span /></Section>}
+          sectionClass="contents"
+          listClass="list-disc space-y-0.5 pl-4"
+        />
+
+        <ReferencesSection
+          d={data}
+          head={(t) => <Section title={t}><span /></Section>}
+          sectionClass="contents"
+          listClass="list-disc space-y-0.5 pl-4"
+        />
+
+        {data.declaration && (
+          <Section title="Declaration">
+            <p>I declare that the information provided in this CV is true and complete to the best of my knowledge.</p>
           </Section>
         )}
       </main>
