@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo } from "./parts";
+import { CustomSections, DeclarationSection, personalRows, Photo, ReferencesSection } from "./parts";
 
 const Section = ({ title, children }: { title: string; children: React.ReactNode }) => (
   <div className="mb-4">
@@ -53,6 +53,18 @@ export function TemplateSidebar({ data }: { data: CVData }) {
               <div>{data.phone}</div>
             </div>
           )}
+          {data.phone2 && (
+            <div>
+              <div className="text-[var(--cv-accent)]">Phone 2</div>
+              <div>{data.phone2}</div>
+            </div>
+          )}
+          {data.website && (
+            <div>
+              <div className="text-[var(--cv-accent)]">Website</div>
+              <div className="break-all">{data.website}</div>
+            </div>
+          )}
           {data.dob && (
             <div>
               <div className="text-[var(--cv-accent)]">Date of Birth</div>
@@ -72,12 +84,9 @@ export function TemplateSidebar({ data }: { data: CVData }) {
 
         <SideHeading title="Personal" />
         <div className="space-y-1 text-[length:calc(10.5px*var(--fs))]">
-          {data.fatherName && <div>Father: {data.fatherName}</div>}
-          {data.gender && <div>Gender: {data.gender}</div>}
-          {data.cnic && <div>CNIC: {data.cnic}</div>}
-          {data.nationality && <div>Nationality: {data.nationality}</div>}
-          {data.religion && <div>Religion: {data.religion}</div>}
-          {data.maritalStatus && <div>Marital Status: {data.maritalStatus}</div>}
+          {personalRows(data).map(([k, v]) => (
+            <div key={k}>{k}: {v}</div>
+          ))}
         </div>
 
         {data.languages.length > 0 && (
