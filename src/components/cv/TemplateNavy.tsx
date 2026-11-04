@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo } from "./parts";
+import { CustomSections, DeclarationSection, personalRows, Photo, ReferencesSection } from "./parts";
 
 const SideHead = ({ children }: { children: React.ReactNode }) => (
   <div className="mb-2 mt-5">
@@ -36,6 +36,12 @@ export function TemplateNavy({ data }: { data: CVData }) {
               <div>{data.phone}</div>
             </div>
           )}
+          {data.phone2 && (
+            <div>
+              <div className="font-semibold text-white">Phone 2</div>
+              <div>{data.phone2}</div>
+            </div>
+          )}
           {data.email && (
             <div>
               <div className="font-semibold text-white">Email</div>
@@ -52,15 +58,21 @@ export function TemplateNavy({ data }: { data: CVData }) {
 
         <SideHead>Personal</SideHead>
         <div className="space-y-1 text-[length:calc(10px*var(--fs))] text-white/85">
-          {data.fatherName && <div>Father: {data.fatherName}</div>}
-          {data.gender && <div>Gender: {data.gender}</div>}
-          {data.dob && <div>D.O.B: {data.dob}</div>}
-          {data.age && <div>Age: {data.age}</div>}
-          {data.cnic && <div>CNIC: {data.cnic}</div>}
-          {data.nationality && <div>Nationality: {data.nationality}</div>}
-          {data.religion && <div>Religion: {data.religion}</div>}
-          {data.maritalStatus && <div>Status: {data.maritalStatus}</div>}
+          {personalRows(data).map(([k, v]) => (
+            <div key={k}>{k}: {v}</div>
+          ))}
         </div>
+
+        {data.softSkills.length > 0 && (
+          <>
+            <SideHead>Soft Skills</SideHead>
+            <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))] text-white/85">
+              {data.softSkills.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </>
+        )}
 
         {data.skills.length > 0 && (
           <>

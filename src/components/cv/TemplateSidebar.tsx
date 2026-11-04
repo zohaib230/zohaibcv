@@ -161,6 +161,76 @@ export function TemplateSidebar({ data }: { data: CVData }) {
             </ul>
           </Section>
         )}
+
+        {data.softSkills.length > 0 && (
+          <Section title="Soft Skills">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.softSkills.map((s) => (
+                <li key={s}>{s}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {data.certificates.length > 0 && (
+          <Section title="Certificates">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.certificates.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {data.achievements.length > 0 && (
+          <Section title="Achievements">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.achievements.map((a) => (
+                <li key={a}>{a}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {data.projects.length > 0 && (
+          <Section title="Projects">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.projects.map((p, i) => (
+                <li key={i}>{p}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        {data.volunteer.length > 0 && (
+          <Section title="Volunteer Experience">
+            <ul className="list-disc space-y-0.5 pl-4">
+              {data.volunteer.map((v, i) => (
+                <li key={i}>{v}</li>
+              ))}
+            </ul>
+          </Section>
+        )}
+
+        <CustomSections
+          d={data}
+          head={(t) => <Section title={t}><span /></Section>}
+          sectionClass="contents"
+          listClass="list-disc space-y-0.5 pl-4"
+        />
+
+        <ReferencesSection
+          d={data}
+          head={(t) => <Section title={t}><span /></Section>}
+          sectionClass="contents"
+          listClass="list-disc space-y-0.5 pl-4"
+        />
+
+        {data.declaration && (
+          <Section title="Declaration">
+            <p>I declare that the information provided in this CV is true and complete to the best of my knowledge.</p>
+          </Section>
+        )}
       </main>
     </div>
   );
