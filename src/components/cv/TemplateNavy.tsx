@@ -185,6 +185,49 @@ export function TemplateNavy({ data }: { data: CVData }) {
             </ul>
           </section>
         )}
+
+        {data.projects.length > 0 && (
+          <section className="mb-5">
+            <MainHead>Projects</MainHead>
+            <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
+              {data.projects.map((p, i) => (
+                <li key={i}>{p}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {data.volunteer.length > 0 && (
+          <section className="mb-5">
+            <MainHead>Volunteer Experience</MainHead>
+            <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
+              {data.volunteer.map((v, i) => (
+                <li key={i}>{v}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <CustomSections
+          d={data}
+          head={(t) => <MainHead>{t}</MainHead>}
+          sectionClass="mb-5"
+          listClass="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]"
+        />
+
+        <ReferencesSection
+          d={data}
+          head={(t) => <MainHead>{t}</MainHead>}
+          sectionClass="mb-5"
+          listClass="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]"
+        />
+
+        <DeclarationSection
+          d={data}
+          head={(t) => <MainHead>{t}</MainHead>}
+          sectionClass="mb-5"
+          bodyClass="text-[length:calc(10px*var(--fs))]"
+        />
       </main>
     </div>
   );

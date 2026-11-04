@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo } from "./parts";
+import { CustomSections, DeclarationSection, personalRows, Photo, ReferencesSection } from "./parts";
 
 const Head = ({ children }: { children: React.ReactNode }) => (
   <h2 className="mb-1.5 font-display text-[length:calc(19px*var(--fs))] font-bold text-[#2b2b2b]">{children}</h2>
@@ -28,6 +28,7 @@ export function TemplatePeach({ data }: { data: CVData }) {
           {data.jobTitle && <p className="text-[length:calc(11px*var(--fs))] uppercase tracking-[0.2em]">{data.jobTitle}</p>}
           <div className="mt-2 space-y-[1px] text-[length:calc(9.5px*var(--fs))]">
             {data.phone && <div>{data.phone}</div>}
+            {data.phone2 && <div>{data.phone2}</div>}
             {data.email && <div>{data.email}</div>}
             {data.website && <div>{data.website}</div>}
             {data.address && <div>{data.address}</div>}
@@ -57,14 +58,9 @@ export function TemplatePeach({ data }: { data: CVData }) {
 
           <Head>Personal</Head>
           <div className="mb-4 space-y-0.5 text-[length:calc(9.5px*var(--fs))]">
-            {data.fatherName && <div>Father: {data.fatherName}</div>}
-            {data.gender && <div>Gender: {data.gender}</div>}
-            {data.dob && <div>D.O.B: {data.dob}</div>}
-            {data.age && <div>Age: {data.age}</div>}
-            {data.cnic && <div>CNIC: {data.cnic}</div>}
-            {data.nationality && <div>Nationality: {data.nationality}</div>}
-            {data.religion && <div>Religion: {data.religion}</div>}
-            {data.maritalStatus && <div>Status: {data.maritalStatus}</div>}
+            {personalRows(data).map(([k, v]) => (
+              <div key={k}>{k}: {v}</div>
+            ))}
           </div>
 
           {data.languages.length > 0 && (
