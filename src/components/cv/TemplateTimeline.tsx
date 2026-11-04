@@ -160,7 +160,7 @@ export function TemplateTimeline({ data }: { data: CVData }) {
         )}
 
         {data.achievements.length > 0 && (
-          <section>
+          <section className="mb-5">
             <MainTitle>Achievements</MainTitle>
             <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
               {data.achievements.map((a) => (
@@ -169,6 +169,49 @@ export function TemplateTimeline({ data }: { data: CVData }) {
             </ul>
           </section>
         )}
+
+        {data.projects.length > 0 && (
+          <section className="mb-5">
+            <MainTitle>Projects</MainTitle>
+            <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
+              {data.projects.map((p, i) => (
+                <li key={i}>{p}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {data.volunteer.length > 0 && (
+          <section className="mb-5">
+            <MainTitle>Volunteer Experience</MainTitle>
+            <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
+              {data.volunteer.map((v, i) => (
+                <li key={i}>{v}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <CustomSections
+          d={data}
+          head={(t) => <MainTitle>{t}</MainTitle>}
+          sectionClass="mb-5"
+          listClass="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]"
+        />
+
+        <ReferencesSection
+          d={data}
+          head={(t) => <MainTitle>{t}</MainTitle>}
+          sectionClass="mb-5"
+          listClass="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]"
+        />
+
+        <DeclarationSection
+          d={data}
+          head={(t) => <MainTitle>{t}</MainTitle>}
+          sectionClass="mb-5"
+          bodyClass="text-[length:calc(10px*var(--fs))]"
+        />
       </main>
     </div>
   );

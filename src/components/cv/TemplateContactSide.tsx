@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+import { CustomSections, DeclarationSection, Photo, ReferencesSection, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
 const SH = ({ children }: { children: React.ReactNode }) => (
   <h2
@@ -205,16 +205,33 @@ export function TemplateContactSide({ data }: { data: CVData }) {
           </section>
         )}
 
-        {data.references.length > 0 && (
+        {data.projects.length > 0 && (
           <section className="cv-sec">
-            <H>References</H>
+            <H>Projects</H>
             <ul className="cv-bullets cv-body">
-              {data.references.map((r) => (
-                <li key={r}>{r}</li>
+              {data.projects.map((p, i) => (
+                <li key={i}>{p}</li>
               ))}
             </ul>
           </section>
         )}
+
+        {data.volunteer.length > 0 && (
+          <section className="cv-sec">
+            <H>Volunteer Experience</H>
+            <ul className="cv-bullets cv-body">
+              {data.volunteer.map((v, i) => (
+                <li key={i}>{v}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <CustomSections d={data} head={(t) => <H>{t}</H>} />
+
+        <ReferencesSection d={data} head={(t) => <H>{t}</H>} />
+
+        <DeclarationSection d={data} head={(t) => <H>{t}</H>} />
       </main>
     </div>
   );
