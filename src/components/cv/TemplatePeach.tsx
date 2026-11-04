@@ -151,7 +151,7 @@ export function TemplatePeach({ data }: { data: CVData }) {
           )}
 
           {data.achievements.length > 0 && (
-            <section>
+            <section className="mb-4">
               <Head>Achievements</Head>
               <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
                 {data.achievements.map((a) => (
@@ -160,6 +160,49 @@ export function TemplatePeach({ data }: { data: CVData }) {
               </ul>
             </section>
           )}
+
+          {data.projects.length > 0 && (
+            <section className="mb-4">
+              <Head>Projects</Head>
+              <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
+                {data.projects.map((p, i) => (
+                  <li key={i}>{p}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {data.volunteer.length > 0 && (
+            <section className="mb-4">
+              <Head>Volunteer Experience</Head>
+              <ul className="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]">
+                {data.volunteer.map((v, i) => (
+                  <li key={i}>{v}</li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <CustomSections
+            d={data}
+            head={(t) => <Head>{t}</Head>}
+            sectionClass="mb-4"
+            listClass="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]"
+          />
+
+          <ReferencesSection
+            d={data}
+            head={(t) => <Head>{t}</Head>}
+            sectionClass="mb-4"
+            listClass="list-disc space-y-0.5 pl-4 text-[length:calc(10px*var(--fs))]"
+          />
+
+          <DeclarationSection
+            d={data}
+            head={(t) => <Head>{t}</Head>}
+            sectionClass="mb-4"
+            bodyClass="text-[length:calc(10px*var(--fs))]"
+          />
         </main>
       </div>
     </div>

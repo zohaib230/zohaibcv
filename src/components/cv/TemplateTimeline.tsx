@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo } from "./parts";
+import { CustomSections, DeclarationSection, personalRows, Photo, ReferencesSection } from "./parts";
 
 const SideTitle = ({ children }: { children: React.ReactNode }) => (
   <h3 className="mb-2 mt-5 font-display text-[length:calc(15px*var(--fs))] font-bold uppercase tracking-[0.14em] text-white">
@@ -31,6 +31,7 @@ export function TemplateTimeline({ data }: { data: CVData }) {
         <SideTitle>Contact</SideTitle>
         <div className="space-y-1.5 text-[length:calc(10px*var(--fs))] text-white/85">
           {data.phone && <div>{data.phone}</div>}
+          {data.phone2 && <div>{data.phone2}</div>}
           {data.email && <div className="break-all">{data.email}</div>}
           {data.website && <div className="break-all">{data.website}</div>}
           {data.address && <div>{data.address}</div>}
@@ -38,15 +39,24 @@ export function TemplateTimeline({ data }: { data: CVData }) {
 
         <SideTitle>Personal</SideTitle>
         <div className="space-y-1 text-[length:calc(10px*var(--fs))] text-white/85">
-          {data.fatherName && <div>Father: {data.fatherName}</div>}
-          {data.gender && <div>Gender: {data.gender}</div>}
-          {data.dob && <div>D.O.B: {data.dob}</div>}
-          {data.age && <div>Age: {data.age}</div>}
-          {data.cnic && <div>CNIC: {data.cnic}</div>}
-          {data.nationality && <div>Nationality: {data.nationality}</div>}
-          {data.religion && <div>Religion: {data.religion}</div>}
-          {data.maritalStatus && <div>Status: {data.maritalStatus}</div>}
+          {personalRows(data).map(([k, v]) => (
+            <div key={k}>{k}: {v}</div>
+          ))}
         </div>
+
+        {data.softSkills.length > 0 && (
+          <>
+            <SideTitle>Strengths</SideTitle>
+            <ul className="space-y-1 text-[length:calc(10px*var(--fs))] text-white/85">
+              {data.softSkills.map((s) => (
+                <li key={s} className="flex gap-2">
+                  <span style={{ color: "var(--cv-accent)" }}>▪</span>
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
 
         {data.skills.length > 0 && (
           <>
