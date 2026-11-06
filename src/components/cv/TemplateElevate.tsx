@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+import { CustomSections, DeclarationSection, Photo, ReferencesSection, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
 const H = ({ children }: { children: React.ReactNode }) => (
   <h2
@@ -98,6 +98,10 @@ export function TemplateElevate({ data }: { data: CVData }) {
               </ul>
             </section>
           )}
+          {data.projects.length > 0 && <section className="cv-sec"><H>Projects</H><ul className="cv-bullets cv-body">{data.projects.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {data.volunteer.length > 0 && <section className="cv-sec"><H>Volunteer Experience</H><ul className="cv-bullets cv-body">{data.volunteer.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          <CustomSections d={data} head={(title) => <H>{title}</H>} />
+          <DeclarationSection d={data} head={(title) => <H>{title}</H>} />
         </main>
 
         <aside style={{ width: "38%" }}>
@@ -175,6 +179,7 @@ export function TemplateElevate({ data }: { data: CVData }) {
               </ul>
             </section>
           )}
+          <ReferencesSection d={data} head={(title) => <H>{title}</H>} />
         </aside>
       </div>
     </div>

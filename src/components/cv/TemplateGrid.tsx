@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+import { CustomSections, DeclarationSection, Photo, ReferencesSection, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -113,6 +113,11 @@ export function TemplateGrid({ data }: { data: CVData }) {
                 </ul>
               </Card>
             )}
+            {data.projects.length > 0 && <Card title="Projects"><ul className="cv-bullets cv-body">{data.projects.map((item) => <li key={item}>{item}</li>)}</ul></Card>}
+            {data.volunteer.length > 0 && <Card title="Volunteer Experience"><ul className="cv-bullets cv-body">{data.volunteer.map((item) => <li key={item}>{item}</li>)}</ul></Card>}
+            <CustomSections d={data} head={(title) => <Card title={title}><span /></Card>} sectionClass="contents" />
+            <ReferencesSection d={data} head={(title) => <Card title={title}><span /></Card>} sectionClass="contents" />
+            <DeclarationSection d={data} head={(title) => <Card title={title}><span /></Card>} sectionClass="contents" />
           </div>
 
           <div style={{ width: "42%", minWidth: 0 }}>

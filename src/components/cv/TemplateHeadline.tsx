@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+import { CustomSections, DeclarationSection, Photo, ReferencesSection, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
 const H = ({ children }: { children: React.ReactNode }) => (
   <h2
@@ -113,6 +113,8 @@ export function TemplateHeadline({ data }: { data: CVData }) {
           </div>
         </section>
       )}
+      {data.projects.length > 0 && <section className="cv-sec"><H>Projects</H><ul className="cv-bullets cv-body">{data.projects.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+      {data.volunteer.length > 0 && <section className="cv-sec"><H>Volunteer Experience</H><ul className="cv-bullets cv-body">{data.volunteer.map((item) => <li key={item}>{item}</li>)}</ul></section>}
 
       <div className="flex flex-1" style={{ gap: px(24), marginTop: px(12) }}>
         <div style={{ width: "50%" }}>
@@ -181,8 +183,11 @@ export function TemplateHeadline({ data }: { data: CVData }) {
               </ul>
             </section>
           )}
+          {data.references.length === 0 && data.referencesOnRequest && <ReferencesSection d={data} head={(title) => <H>{title}</H>} />}
         </div>
       </div>
+      <CustomSections d={data} head={(title) => <H>{title}</H>} />
+      <DeclarationSection d={data} head={(title) => <H>{title}</H>} />
     </div>
   );
 }

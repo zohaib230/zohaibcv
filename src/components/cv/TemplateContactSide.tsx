@@ -227,6 +227,10 @@ export function TemplateContactSide({ data }: { data: CVData }) {
           </section>
         )}
 
+        <ReferencesSection d={data} head={(t) => <H>{t}</H>} />
+        <CustomSections d={data} head={(t) => <H>{t}</H>} />
+        <DeclarationSection d={data} head={(t) => <H>{t}</H>} />
+
         <CustomSections d={data} head={(t) => <H>{t}</H>} />
 
         <ReferencesSection d={data} head={(t) => <H>{t}</H>} />

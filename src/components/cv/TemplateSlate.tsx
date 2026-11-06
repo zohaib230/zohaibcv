@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+import { CustomSections, DeclarationSection, Photo, ReferencesSection, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
 const H = ({ children }: { children: React.ReactNode }) => (
   <div className="flex items-center" style={{ gap: px(8), marginBottom: px(6) }}>
@@ -102,6 +102,10 @@ export function TemplateSlate({ data }: { data: CVData }) {
       <div className="flex flex-1">
         <main className="cv-pad" style={{ width: "64%" }}>
           {left}
+          {data.projects.length > 0 && <section className="cv-sec"><H>Projects</H><ul className="cv-bullets cv-body">{data.projects.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          {data.volunteer.length > 0 && <section className="cv-sec"><H>Volunteer Experience</H><ul className="cv-bullets cv-body">{data.volunteer.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+          <CustomSections d={data} head={(title) => <H>{title}</H>} />
+          <DeclarationSection d={data} head={(title) => <H>{title}</H>} />
         </main>
         <aside
           className="cv-pad-sm"
@@ -192,6 +196,7 @@ export function TemplateSlate({ data }: { data: CVData }) {
               </ul>
             </section>
           )}
+          {data.references.length === 0 && data.referencesOnRequest && <ReferencesSection d={data} head={(title) => <H>{title}</H>} />}
         </aside>
       </div>
     </div>

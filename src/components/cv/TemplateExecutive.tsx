@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+import { CustomSections, Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
 const Rule = () => (
   <div style={{ height: px(2), background: "var(--c-accent)", marginTop: px(4), marginBottom: px(7) }} />
@@ -187,6 +187,7 @@ export function TemplateExecutive({ data }: { data: CVData }) {
               <p className="cv-body">I declare that the information provided in this CV is true and complete to the best of my knowledge.</p>
             </section>
           )}
+          <CustomSections d={data} head={(title) => <H>{title}</H>} />
         </main>
 
         {/* Sidebar */}
