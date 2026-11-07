@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { CustomSections, DeclarationSection, Photo, ReferencesSection, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+import { customList, Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
 function Card({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -104,20 +104,19 @@ export function TemplateGrid({ data }: { data: CVData }) {
               </Card>
             )}
 
-            {data.references.length > 0 && (
-              <Card title="References">
-                <ul className="cv-bullets cv-body">
-                  {data.references.map((r) => (
-                    <li key={r}>{r}</li>
-                  ))}
-                </ul>
-              </Card>
-            )}
             {data.projects.length > 0 && <Card title="Projects"><ul className="cv-bullets cv-body">{data.projects.map((item) => <li key={item}>{item}</li>)}</ul></Card>}
             {data.volunteer.length > 0 && <Card title="Volunteer Experience"><ul className="cv-bullets cv-body">{data.volunteer.map((item) => <li key={item}>{item}</li>)}</ul></Card>}
-            <CustomSections d={data} head={(title) => <Card title={title}><span /></Card>} sectionClass="contents" />
-            <ReferencesSection d={data} head={(title) => <Card title={title}><span /></Card>} sectionClass="contents" />
-            <DeclarationSection d={data} head={(title) => <Card title={title}><span /></Card>} sectionClass="contents" />
+            {customList(data).map((section) => (
+              <Card key={section.heading} title={section.heading}>
+                <ul className="cv-bullets cv-body">{section.points.map((point, index) => <li key={`${section.heading}-${index}`}>{point}</li>)}</ul>
+              </Card>
+            ))}
+            {(data.references.length > 0 || data.referencesOnRequest) && (
+              <Card title="References">
+                {data.references.length > 0 ? <ul className="cv-bullets cv-body">{data.references.map((reference, index) => <li key={`${reference}-${index}`}>{reference}</li>)}</ul> : <p className="cv-body">References available on request.</p>}
+              </Card>
+            )}
+            {data.declaration && <Card title="Declaration"><p className="cv-body">I declare that the information provided in this CV is true and complete to the best of my knowledge.</p></Card>}
           </div>
 
           <div style={{ width: "42%", minWidth: 0 }}>

@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { customList, personalRows } from "./parts";
+import { contactRows, customList, personalRows } from "./parts";
 import { Photo } from "./parts";
 
 const Block = ({ title, children }: { title: string; children: React.ReactNode }) => (
@@ -25,8 +25,8 @@ export function TemplateModern({ data }: { data: CVData }) {
           <h1 className="font-display text-[length:calc(38px*var(--fs))] font-bold uppercase leading-none tracking-wide">
             {fullName(data)}
           </h1>
-          <p className="mt-2 text-[length:calc(10.5px*var(--fs))] text-white/70">
-            {[data.phone, data.phone2, data.email, data.address].filter(Boolean).join("  ·  ")}
+          <p className="mt-2 flex flex-wrap gap-x-2 text-[length:calc(10.5px*var(--fs))] text-white/70">
+            {contactRows(data).map(([label, value]) => <span key={label}>{value}</span>)}
           </p>
         </div>
       </header>
@@ -69,6 +69,12 @@ export function TemplateModern({ data }: { data: CVData }) {
                   </div>
                 ))}
               </div>
+            </Block>
+          )}
+
+          {data.achievements.length > 0 && (
+            <Block title="Achievements">
+              <ul className="ml-4 list-disc space-y-0.5">{data.achievements.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}</ul>
             </Block>
           )}
 

@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { CustomSections, personalRows } from "./parts";
+import { CustomSections, Photo, personalRows } from "./parts";
 
 /**
  * ATS-safe minimal template: single column, no graphics, no colour blocks,
@@ -37,7 +37,9 @@ export function TemplateAts({ data }: { data: CVData }) {
         gap: "calc(14px * var(--fill))",
       }}
     >
-      <header>
+      <header className="flex items-start gap-4">
+        <Photo d={data} w={82} h={100} />
+        <div className="min-w-0 flex-1">
         <h1
           className="font-bold uppercase tracking-[0.06em]"
           style={{
@@ -62,6 +64,7 @@ export function TemplateAts({ data }: { data: CVData }) {
         {contact && (
           <div style={{ color: "var(--c-muted)", marginTop: "calc(4px * var(--fill))" }}>{contact}</div>
         )}
+        </div>
       </header>
 
       {personalRows(data).length > 0 && (

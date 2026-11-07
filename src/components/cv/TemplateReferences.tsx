@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { Photo, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
+import { CustomSections, DeclarationSection, Photo, ReferencesSection, bullets, contactRows, fresherLine, personalRows, px } from "./parts";
 
 type ReferenceDesign = "reference02" | "reference03" | "reference05" | "reference0005" | "referencephoto" | "blob" | "metro" | "pakclassic";
 
@@ -41,6 +41,14 @@ function Extras({ data }: { data: CVData }) {
   </>;
 }
 
+function Supplemental({ data }: { data: CVData }) {
+  return <>
+    <CustomSections d={data} head={(title) => <Heading>{title}</Heading>} sectionClass="reference-section" listClass="cv-bullets cv-body reference-list" />
+    <ReferencesSection d={data} head={(title) => <Heading>{title}</Heading>} sectionClass="reference-section" listClass="cv-bullets cv-body reference-list" bodyClass="cv-body" />
+    <DeclarationSection d={data} head={(title) => <Heading>{title}</Heading>} sectionClass="reference-section" bodyClass="cv-body" />
+  </>;
+}
+
 function Personal({ data }: { data: CVData }) {
   const rows = personalRows(data);
   return rows.length > 0 && <section className="reference-section"><Heading>Personal details</Heading><div className="cv-small reference-contact">{rows.map(([key, value]) => <div key={key}><strong>{key}: </strong>{value}</div>)}</div></section>;
@@ -70,28 +78,28 @@ export function TemplateReferences({ data, design }: { data: CVData; design: Ref
       {data.withPhoto && <Photo d={data} w={200} h={170} />}
       <div className="reference-rail-body"><section className="reference-section"><Heading>Contact</Heading><Contact data={data} labels /></section><Personal data={data} /><Languages data={data} /><Interests data={data} /></div>
     </aside>
-    <main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Extras data={data} /></main>
+    <main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Extras data={data} /><Supplemental data={data} /></main>
   </div>;
 
   if (design === "reference03") return <div className="cv-page reference-page reference-03">
     <header className="reference-banner"><div className="reference-banner-name"><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div></div><Contact data={data} labels />{data.withPhoto && <Photo d={data} w={92} h={92} />}</header>
-    <main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Languages data={data} /><Extras data={data} /><Personal data={data} /></main>
+    <main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Languages data={data} /><Extras data={data} /><Personal data={data} /><Supplemental data={data} /></main>
     <div className="reference-footer" />
   </div>;
 
   if (design === "reference05") return <div className="cv-page reference-page reference-05">
     <header className="reference-banner">{data.withPhoto && <Photo d={data} w={112} h={112} />}<div><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div></div></header>
     <div className="reference-05-contact"><Contact data={data} /></div>
-    <main className="reference-main"><Summary data={data} /><div className="reference-columns"><div><Experience data={data} /><Extras data={data} /></div><div><Skills data={data} title="Highlights" /><Education data={data} /><Languages data={data} /><Interests data={data} /><Personal data={data} /></div></div></main>
+    <main className="reference-main"><Summary data={data} /><div className="reference-columns"><div><Experience data={data} /><Extras data={data} /></div><div><Skills data={data} title="Highlights" /><Education data={data} /><Languages data={data} /><Interests data={data} /><Personal data={data} /><Supplemental data={data} /></div></div></main>
   </div>;
 
   if (design === "reference0005") return <div className="cv-page reference-page reference-0005">
     <header className="reference-banner"><div><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div><Contact data={data} /></div>{data.withPhoto && <Photo d={data} w={100} h={100} />}</header>
-    <div className="reference-columns"><aside className="reference-rail"><Summary data={data} /><Skills data={data} title="Skills" /><Languages data={data} /><Personal data={data} /></aside><main className="reference-main"><Experience data={data} /><Education data={data} /><Extras data={data} /><Interests data={data} /></main></div>
+    <div className="reference-columns"><aside className="reference-rail"><Summary data={data} /><Skills data={data} title="Skills" /><Languages data={data} /><Personal data={data} /></aside><main className="reference-main"><Experience data={data} /><Education data={data} /><Extras data={data} /><Interests data={data} /><Supplemental data={data} /></main></div>
   </div>;
 
   if (design === "referencephoto") return <div className="cv-page reference-page reference-photo">
-    <div className="reference-photo-top" /><div className="reference-columns"><aside className="reference-rail"><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div>{data.withPhoto && <Photo d={data} w={190} h={190} />}<section className="reference-section"><Heading>Contact</Heading><Contact data={data} labels /></section><Languages data={data} /><Personal data={data} /><Interests data={data} /></aside><main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Extras data={data} /></main></div><div className="reference-footer" />
+    <div className="reference-photo-top" /><div className="reference-columns"><aside className="reference-rail"><h1 className="cv-name">{fullName(data)}</h1><div className="cv-role">{data.jobTitle}</div>{data.withPhoto && <Photo d={data} w={190} h={190} />}<section className="reference-section"><Heading>Contact</Heading><Contact data={data} labels /></section><Languages data={data} /><Personal data={data} /><Interests data={data} /></aside><main className="reference-main"><Summary data={data} /><Skills data={data} /><Experience data={data} /><Education data={data} /><Extras data={data} /><Supplemental data={data} /></main></div><div className="reference-footer" />
   </div>;
 
   // CV_TEMPLATE_0010 — circle photo + soft blob header, two-column body.
@@ -117,6 +125,7 @@ export function TemplateReferences({ data, design }: { data: CVData; design: Ref
         <Experience data={data} />
         <Extras data={data} />
         <Personal data={data} />
+        <Supplemental data={data} />
       </div>
     </div>
   </div>;
@@ -134,7 +143,7 @@ export function TemplateReferences({ data, design }: { data: CVData; design: Ref
     </aside>
     <main className="reference-metro-main">
       <div className="reference-metro-top">
-        <Contact data={data} />
+      <Contact data={data} />
         <div className="reference-metro-chip" />
       </div>
       <Summary data={data} />
@@ -142,6 +151,7 @@ export function TemplateReferences({ data, design }: { data: CVData; design: Ref
       <Extras data={data} />
       <Personal data={data} />
       <Interests data={data} />
+      <Supplemental data={data} />
     </main>
   </div>;
 
@@ -151,11 +161,7 @@ export function TemplateReferences({ data, design }: { data: CVData; design: Ref
       <div className="reference-pak-kicker">Curriculum Vitae</div>
       <h1 className="cv-name">{fullName(data)}</h1>
       <div className="reference-pak-rule" />
-      <div className="cv-small reference-pak-contact">
-        {data.address && <div><strong>Address:</strong> {data.address}</div>}
-        {data.phone && <div><strong>Cell No:</strong> {data.phone}</div>}
-        {data.email && <div><strong>Email:</strong> {data.email}</div>}
-      </div>
+      <div className="cv-small reference-pak-contact"><Contact data={data} labels /></div>
     </header>
     {data.profile && <section className="reference-section"><h2 className="cv-h reference-pak-h">Objective</h2><p className="cv-body">{data.profile}</p></section>}
     {personalRows(data).length > 0 && <section className="reference-section"><h2 className="cv-h reference-pak-h">Personal Information</h2>
@@ -176,9 +182,6 @@ export function TemplateReferences({ data, design }: { data: CVData; design: Ref
     <Skills data={data} title="Skills" />
     {data.languages.length > 0 && <section className="reference-section"><h2 className="cv-h reference-pak-h">Languages</h2><List items={data.languages} /></section>}
     <Extras data={data} />
-    {(data.references.length > 0 || data.referencesOnRequest) && <section className="reference-section"><h2 className="cv-h reference-pak-h">Reference</h2>
-      {data.references.length > 0 ? <List items={data.references} /> : <p className="cv-body">Reference will be provided on demand.</p>}
-    </section>}
-    {data.declaration && <section className="reference-section"><h2 className="cv-h reference-pak-h">Declaration</h2><p className="cv-body">I hereby declare that the above information is true and correct to the best of my knowledge.</p></section>}
+    <Supplemental data={data} />
   </div>;
 }

@@ -116,6 +116,8 @@ export function TemplateHeadline({ data }: { data: CVData }) {
       {data.projects.length > 0 && <section className="cv-sec"><H>Projects</H><ul className="cv-bullets cv-body">{data.projects.map((item) => <li key={item}>{item}</li>)}</ul></section>}
       {data.volunteer.length > 0 && <section className="cv-sec"><H>Volunteer Experience</H><ul className="cv-bullets cv-body">{data.volunteer.map((item) => <li key={item}>{item}</li>)}</ul></section>}
 
+      {data.softSkills.length > 0 && <section className="cv-sec"><H>Soft Skills</H><ul className="cv-bullets cv-body">{data.softSkills.map((item) => <li key={item}>{item}</li>)}</ul></section>}
+
       <div className="flex flex-1" style={{ gap: px(24), marginTop: px(12) }}>
         <div style={{ width: "50%" }}>
           {personalRows(data).length > 0 && (

@@ -1,6 +1,6 @@
 import type { CVData } from "@/lib/cv";
 import { fullName } from "@/lib/cv";
-import { CustomSections, personalRows } from "./parts";
+import { CustomSections, contactRows, personalRows } from "./parts";
 import { Photo } from "./parts";
 
 const H = ({ children }: { children: React.ReactNode }) => (
@@ -37,12 +37,12 @@ export function TemplateClassic({ data }: { data: CVData }) {
         <section>
           <H>Bio Data</H>
           <div className="text-[length:calc(10.5px*var(--fs))]">
+            {contactRows(data).map(([k, v]) => (
+              <Row key={k} label={k} value={v} />
+            ))}
             {personalRows(data).map(([k, v]) => (
               <Row key={k} label={k} value={v} />
             ))}
-            <Row label="Call No" value={data.phone} />
-            <Row label="Phone 2" value={data.phone2} />
-            <Row label="Email" value={data.email} />
           </div>
         </section>
 
